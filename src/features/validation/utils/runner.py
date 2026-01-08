@@ -1,9 +1,9 @@
 """Main orchestrator that runs enabled validators."""
 
 from features.config import Config
-from features.validation.utils.validator_structure import validate_structure
 from features.validation.utils.validator_line_limits import validate_line_limits
 from features.validation.utils.validator_one_per_file import validate_one_per_file
+from features.validation.utils.validator_structure import validate_structure
 
 
 def run_validations(config: Config, verbose: bool = False) -> int:
@@ -20,7 +20,7 @@ def run_validations(config: Config, verbose: bool = False) -> int:
         0 if all pass, 1 if any fail
     """
     if not config.enabled:
-        print("ℹ️  structure-lint is disabled in configuration")
+        print("INFO: structure-lint is disabled in configuration")
         return 0
 
     results = []
@@ -60,8 +60,8 @@ def run_validations(config: Config, verbose: bool = False) -> int:
         print("✓ All validations passed!")
         print("=" * 60)
         return 0
-    else:
-        print("\n" + "=" * 60)
-        print("✗ Some validations failed")
-        print("=" * 60)
-        return 1
+
+    print("\n" + "=" * 60)
+    print("✗ Some validations failed")
+    print("=" * 60)
+    return 1

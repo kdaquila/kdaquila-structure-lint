@@ -28,18 +28,14 @@ from features.test_fixtures.utils import (
 )
 
 __all__ = [
-    # Project fixtures
+    "custom_config",
+    "minimal_config",
+    "python_file_factory",
+    "sample_empty_file_content",
+    "sample_multiple_definitions_content",
+    "sample_syntax_error_content",
+    "sample_too_long_file_content",
+    "sample_valid_file_content",
     "temp_project",
     "temp_project_with_pyproject",
-    # Config fixtures
-    "minimal_config",
-    "custom_config",
-    # File factory fixtures
-    "python_file_factory",
-    # Content fixtures
-    "sample_valid_file_content",
-    "sample_too_long_file_content",
-    "sample_multiple_definitions_content",
-    "sample_empty_file_content",
-    "sample_syntax_error_content",
 ]

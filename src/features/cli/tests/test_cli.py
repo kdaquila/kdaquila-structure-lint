@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 from features.cli import main
-from features.test_fixtures import python_file_factory
 
 
 class TestCLIArgumentParsing:
@@ -140,7 +139,7 @@ max_lines = 5
 
         # Create file that violates line limit
         (tmp_path / "src").mkdir()
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 20)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 20)])
         python_file_factory("src/module.py", long_content, tmp_path)
 
         exit_code = main(["--project-root", str(tmp_path)])
@@ -293,7 +292,7 @@ structure = false
         exit_code = main(["--project-root", "."])
         assert exit_code == 0
 
-    def test_cli_empty_project_with_validators_enabled(self, tmp_path: Path, capsys):
+    def test_cli_empty_project_with_validators_enabled(self, tmp_path: Path):
         """Should handle empty project (no Python files) gracefully."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -334,5 +333,8 @@ structure = false
 
         # Should show progress and results
         assert "Running line limit validation" in captured.out
-        assert "All validations passed" in captured.out or "All Python files are within" in captured.out
+        assert (
+            "All validations passed" in captured.out
+            or "All Python files are within" in captured.out
+        )
         assert exit_code == 0

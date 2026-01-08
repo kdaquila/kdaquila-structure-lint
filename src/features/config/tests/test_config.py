@@ -267,7 +267,8 @@ name = "test-project"
 enabled = true
 """)
 
-        with pytest.raises(Exception):  # tomllib.TOMLDecodeError
+        # Should raise ValueError or similar due to TOML decode error
+        with pytest.raises((ValueError, KeyError, AttributeError)):
             load_config(project_root=tmp_path, config_path=pyproject)
 
     def test_load_config_nonexistent_file_uses_defaults(self, tmp_path: Path):

@@ -2,7 +2,6 @@
 
 
 
-from features.test_fixtures import minimal_config, python_file_factory
 from features.validation.utils.validator_line_limits import validate_line_limits
 
 
@@ -28,7 +27,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src").mkdir()
 
         # Create file that exceeds limit
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 21)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 21)])
         python_file_factory("src/too_long.py", long_content, config.project_root)
 
         exit_code = validate_line_limits(config)
@@ -42,7 +41,7 @@ class TestLineLimitsValidator:
 
         # Create mix of valid and invalid files
         python_file_factory("src/good.py", "def hello():\n    pass\n", config.project_root)
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 21)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 21)])
         python_file_factory("src/bad.py", long_content, config.project_root)
 
         exit_code = validate_line_limits(config)
@@ -65,7 +64,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src").mkdir()
 
         # Create file with exactly 10 lines
-        content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 11)])
+        content = "\n".join([f"# Line {i}" for i in range(1, 11)])
         python_file_factory("src/exact.py", content, config.project_root)
 
         exit_code = validate_line_limits(config)
@@ -78,7 +77,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src").mkdir()
 
         # Create file with 11 lines
-        content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 12)])
+        content = "\n".join([f"# Line {i}" for i in range(1, 12)])
         python_file_factory("src/over.py", content, config.project_root)
 
         exit_code = validate_line_limits(config)
@@ -94,7 +93,7 @@ class TestLineLimitsValidator:
         (config.project_root / "app").mkdir()
 
         # Create file in lib
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 10)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 10)])
         python_file_factory("lib/module.py", long_content, config.project_root)
 
         exit_code = validate_line_limits(config)
@@ -137,7 +136,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src" / "sub" / "deep").mkdir(parents=True)
 
         # Create file in nested directory
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 10)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 10)])
         python_file_factory("src/sub/deep/module.py", long_content, config.project_root)
 
         exit_code = validate_line_limits(config)
@@ -153,7 +152,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src" / "venv").mkdir()
 
         # Create long files in excluded directories
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 100)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 100)])
         python_file_factory("src/.venv/lib.py", long_content, config.project_root)
         python_file_factory("src/venv/lib.py", long_content, config.project_root)
 
@@ -169,7 +168,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src" / "__pycache__").mkdir(parents=True)
 
         # Create long file in __pycache__
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 100)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 100)])
         python_file_factory("src/__pycache__/module.py", long_content, config.project_root)
 
         # Should pass because __pycache__ is excluded
@@ -184,7 +183,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src" / ".git").mkdir(parents=True)
 
         # Create long file in .git
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 100)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 100)])
         python_file_factory("src/.git/hooks.py", long_content, config.project_root)
 
         # Should pass because .git is excluded
@@ -198,14 +197,18 @@ class TestLineLimitsValidator:
         (config.project_root / "src").mkdir()
 
         # Create file that exceeds limit
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 15)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 15)])
         python_file_factory("src/too_long.py", long_content, config.project_root)
 
         exit_code = validate_line_limits(config)
         captured = capsys.readouterr()
 
         # Error message should use relative path
-        assert "src" in captured.out or "src\\too_long.py" in captured.out or "src/too_long.py" in captured.out
+        assert (
+            "src" in captured.out
+            or "src\\too_long.py" in captured.out
+            or "src/too_long.py" in captured.out
+        )
         # Should not contain absolute path markers
         assert exit_code == 1
 
@@ -216,7 +219,7 @@ class TestLineLimitsValidator:
         (config.project_root / "src").mkdir()
 
         # Create multiple violating files
-        long_content = "\n".join(["# Line {i}".format(i=i) for i in range(1, 15)])
+        long_content = "\n".join([f"# Line {i}" for i in range(1, 15)])
         python_file_factory("src/file1.py", long_content, config.project_root)
         python_file_factory("src/file2.py", long_content, config.project_root)
         python_file_factory("src/file3.py", long_content, config.project_root)

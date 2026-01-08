@@ -7,6 +7,7 @@ Trees:
 See utils/structure/ modules for detailed validation logic.
 """
 
+import sys
 
 from features.config import Config
 from features.validation.utils.structure_scripts_tree import validate_scripts_tree
@@ -53,12 +54,13 @@ def validate_structure(config: Config) -> int:
         for error in all_errors:
             print(f"  • {error}")
         return 1
-    else:
-        print("✅ All folder structures are valid!")
-        return 0
+
+    print("✅ All folder structures are valid!")
+    return 0
 
 
 if __name__ == "__main__":
     from features.config import load_config
+
     config = load_config()
-    exit(validate_structure(config))
+    sys.exit(validate_structure(config))

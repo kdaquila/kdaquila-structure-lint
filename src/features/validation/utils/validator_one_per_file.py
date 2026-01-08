@@ -3,10 +3,11 @@
 Encourages focused, single-responsibility modules.
 """
 
+import sys
 
 from features.config import Config
-from features.validation.utils.file_finder import find_python_files
 from features.validation.utils.definition_counter_validator import validate_file_definitions
+from features.validation.utils.file_finder import find_python_files
 
 
 def validate_one_per_file(config: Config) -> int:
@@ -45,12 +46,13 @@ def validate_one_per_file(config: Config) -> int:
             print(f"  • {error}")
         print("\n💡 Consider splitting into separate files for better modularity.")
         return 1
-    else:
-        print("\n✅ All files have at most one top-level function or class!")
-        return 0
+
+    print("\n✅ All files have at most one top-level function or class!")
+    return 0
 
 
 if __name__ == "__main__":
     from features.config import load_config
+
     config = load_config()
-    exit(validate_one_per_file(config))
+    sys.exit(validate_one_per_file(config))

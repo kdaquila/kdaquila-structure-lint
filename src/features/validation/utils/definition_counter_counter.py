@@ -7,7 +7,7 @@ from pathlib import Path
 def count_top_level_definitions(file_path: Path) -> tuple[int, list[str]] | None:
     """Count top-level functions and classes. Returns (count, names) or None on error."""
     try:
-        with open(file_path, encoding="utf-8") as f:
+        with file_path.open(encoding="utf-8") as f:
             tree = ast.parse(f.read(), filename=str(file_path))
     except (OSError, SyntaxError, UnicodeDecodeError):
         return None

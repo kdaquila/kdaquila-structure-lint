@@ -3,6 +3,7 @@
 Enforces a line limit to encourage modular, focused files.
 """
 
+import sys
 
 from features.config import Config
 from features.validation.utils.file_finder import find_python_files
@@ -46,12 +47,13 @@ def validate_line_limits(config: Config) -> int:
             print(f"  • {error}")
         print("\n💡 Consider splitting large files into smaller, focused modules.")
         return 1
-    else:
-        print(f"\n✅ All Python files are within {max_lines} line limit!")
-        return 0
+
+    print(f"\n✅ All Python files are within {max_lines} line limit!")
+    return 0
 
 
 if __name__ == "__main__":
     from features.config import load_config
+
     config = load_config()
-    exit(validate_line_limits(config))
+    sys.exit(validate_line_limits(config))

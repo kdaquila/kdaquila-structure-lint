@@ -2,7 +2,6 @@
 
 
 
-from features.test_fixtures import minimal_config, python_file_factory
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
@@ -308,7 +307,11 @@ def sync_func():
         captured = capsys.readouterr()
 
         # Error message should use relative path
-        assert "src" in captured.out or "src\\multi.py" in captured.out or "src/multi.py" in captured.out
+        assert (
+            "src" in captured.out
+            or "src\\multi.py" in captured.out
+            or "src/multi.py" in captured.out
+        )
         assert exit_code == 1
 
     def test_multiple_violations_all_reported(self, minimal_config, python_file_factory, capsys):
@@ -331,7 +334,9 @@ def sync_func():
         assert "file3.py" in captured.out
         assert exit_code == 1
 
-    def test_error_message_shows_definition_names(self, minimal_config, python_file_factory, capsys):
+    def test_error_message_shows_definition_names(
+        self, minimal_config, python_file_factory, capsys
+    ):
         """Should show names of definitions in error message."""
         config = minimal_config
         (config.project_root / "src").mkdir()
@@ -389,7 +394,9 @@ def decorated():
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_file_with_multiple_decorated_functions_fails(self, minimal_config, python_file_factory):
+    def test_file_with_multiple_decorated_functions_fails(
+        self, minimal_config, python_file_factory
+    ):
         """Should count each decorated function separately."""
         config = minimal_config
         (config.project_root / "src").mkdir()

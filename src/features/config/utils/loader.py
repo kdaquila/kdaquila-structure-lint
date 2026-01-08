@@ -1,14 +1,14 @@
 """Configuration loading from pyproject.toml."""
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from features.config.types import (
     Config,
-    ValidatorToggles,
     LineLimitsConfig,
     OnePerFileConfig,
     StructureConfig,
+    ValidatorToggles,
 )
 from features.config.utils.project_root import find_project_root
 
@@ -34,10 +34,7 @@ def load_config(
     """
     # Step 1: Determine project root
     if project_root is None:
-        if config_path is not None:
-            project_root = config_path.parent
-        else:
-            project_root = find_project_root()
+        project_root = config_path.parent if config_path is not None else find_project_root()
 
     # Step 2: Find pyproject.toml
     if config_path is None:
@@ -46,7 +43,7 @@ def load_config(
     # Step 3: Parse TOML (if file exists)
     user_config = {}
     if config_path.exists():
-        with open(config_path, "rb") as f:
+        with config_path.open("rb") as f:
             toml_data = tomllib.load(f)
             user_config = toml_data.get("tool", {}).get("structure-lint", {})
 
@@ -80,7 +77,9 @@ def load_config(
         src_root=structure_data.get("src_root", "src"),
         src_base_folders=set(structure_data.get("src_base_folders", ["features"])),
         scripts_root=structure_data.get("scripts_root", "scripts"),
-        standard_folders=set(structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])),
+        standard_folders=set(
+            structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
+        ),
         general_folder=structure_data.get("general_folder", "general"),
         free_form_bases=set(structure_data.get("free_form_bases", [])),
         allowed_files=set(structure_data.get("allowed_files", ["README.md"])),

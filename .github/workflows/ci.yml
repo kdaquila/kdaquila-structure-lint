@@ -28,11 +28,11 @@ jobs:
 
     - name: Run mypy type checking
       run: |
-        mypy src/structure_lint --strict
+        mypy src/features --strict
 
     - name: Run ruff linting
       run: |
-        ruff check src/structure_lint tests
+        ruff check src/features
 
     - name: Run pytest with coverage
       run: |

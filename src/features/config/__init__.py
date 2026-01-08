@@ -2,20 +2,20 @@
 
 from features.config.types import (
     Config,
-    ValidatorToggles,
     LineLimitsConfig,
     OnePerFileConfig,
     StructureConfig,
+    ValidatorToggles,
 )
-from features.config.utils.project_root import find_project_root
 from features.config.utils.loader import load_config
+from features.config.utils.project_root import find_project_root
 
 __all__ = [
     "Config",
-    "ValidatorToggles",
     "LineLimitsConfig",
     "OnePerFileConfig",
     "StructureConfig",
+    "ValidatorToggles",
     "find_project_root",
     "load_config",
 ]

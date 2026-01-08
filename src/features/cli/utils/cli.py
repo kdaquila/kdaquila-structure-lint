@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import traceback
 from pathlib import Path
 
 from features import __version__
@@ -62,8 +63,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
         # Run validations
-        exit_code = run_validations(config, verbose=args.verbose)
-        return exit_code
+        return run_validations(config, verbose=args.verbose)
 
     except FileNotFoundError as e:
         print(f"❌ Error: {e}", file=sys.stderr)
@@ -71,7 +71,6 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as e:
         print(f"❌ Unexpected error: {e}", file=sys.stderr)
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 2
 

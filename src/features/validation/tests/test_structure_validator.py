@@ -2,7 +2,6 @@
 
 
 
-from features.test_fixtures import custom_config, minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 
@@ -278,8 +277,7 @@ class TestStructureValidatorEdgeCases:
         # Create structure with multiple issues
         src = config.project_root / "src"
         src.mkdir()
-        # Missing: features
-        # Extra: wrong1, wrong2
+        # Wrong folders instead of features
         (src / "wrong1").mkdir()
         (src / "wrong2").mkdir()
         # Files in root
