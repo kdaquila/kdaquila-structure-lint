@@ -71,6 +71,26 @@ class TestStructureValidatorBasic:
         exit_code = validate_structure(config)
         assert exit_code == 1
 
+    def test_files_in_base_folder_fails(self, minimal_config, capsys):
+        """Should fail when files exist directly in base folders like features/."""
+        config = minimal_config
+
+        src = config.project_root / "src"
+        features = src / "features"
+        features.mkdir(parents=True)
+
+        # Add files directly in features/ (not allowed)
+        (features / "calculator.py").touch()
+        (features / "validator.py").touch()
+        (features / "process_data.py").touch()
+
+        exit_code = validate_structure(config)
+        captured = capsys.readouterr()
+
+        assert exit_code == 1
+        assert "Files not allowed in root" in captured.out
+        assert "calculator.py" in captured.out
+
 
 class TestStructureValidatorScriptsTree:
     """Tests for scripts tree validation."""
