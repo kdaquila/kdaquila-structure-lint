@@ -1,7 +1,6 @@
 """Tests for CLI argument parsing and exit codes."""
 
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 

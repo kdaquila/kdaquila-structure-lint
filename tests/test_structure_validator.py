@@ -1,8 +1,6 @@
 """Tests for structure validator."""
 
-from pathlib import Path
 
-import pytest
 
 from structure_lint.validators.structure import validate_structure
 

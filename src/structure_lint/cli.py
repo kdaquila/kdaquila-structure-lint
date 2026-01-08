@@ -18,6 +18,15 @@ def main(argv: list[str] | None = None) -> int:
     Returns:
         Exit code (0 = success, 1 = validation failed, 2 = config error)
     """
+    # Ensure UTF-8 encoding for stdout/stderr on Windows
+    if sys.platform == "win32":
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")  # type: ignore
+            sys.stderr.reconfigure(encoding="utf-8")  # type: ignore
+        except Exception:
+            # If reconfigure fails, continue with default encoding
+            pass
+
     parser = argparse.ArgumentParser(
         prog="structure-lint",
         description="Opinionated Python project structure and code quality linter",

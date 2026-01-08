@@ -1,8 +1,6 @@
 """Shared fixtures for all tests."""
 
-import tempfile
 from pathlib import Path
-from typing import Iterator
 
 import pytest
 

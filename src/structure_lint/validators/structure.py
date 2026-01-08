@@ -7,7 +7,6 @@ Trees:
 See utils/structure/ modules for detailed validation logic.
 """
 
-from pathlib import Path
 
 from structure_lint.config import Config
 from structure_lint.utils.structure.scripts_tree import validate_scripts_tree

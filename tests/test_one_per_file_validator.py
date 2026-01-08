@@ -1,8 +1,6 @@
 """Tests for one-per-file validator."""
 
-from pathlib import Path
 
-import pytest
 
 from structure_lint.validators.one_per_file import validate_one_per_file
 

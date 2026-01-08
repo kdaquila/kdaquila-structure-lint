@@ -1,8 +1,6 @@
 """Tests for line limits validator."""
 
-from pathlib import Path
 
-import pytest
 
 from structure_lint.validators.line_limits import validate_line_limits
 

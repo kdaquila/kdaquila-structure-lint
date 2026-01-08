@@ -3,7 +3,6 @@
 Encourages focused, single-responsibility modules.
 """
 
-from pathlib import Path
 
 from structure_lint.config import Config
 from structure_lint.utils.file_finder import find_python_files
