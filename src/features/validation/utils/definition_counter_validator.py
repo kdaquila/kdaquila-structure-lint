@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from features.validation.utils.definition_counter.counter import count_top_level_definitions
+from features.validation.utils.definition_counter_counter import count_top_level_definitions
 
 
 def validate_file_definitions(file_path: Path) -> str | None:

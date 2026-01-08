@@ -2,7 +2,7 @@
 
 
 
-from features.validation.validators.structure import validate_structure
+from features.validation.utils.validator_structure import validate_structure
 
 
 class TestStructureValidatorBasic:

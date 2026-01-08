@@ -9,8 +9,8 @@ See utils/structure/ modules for detailed validation logic.
 
 
 from features.config import Config
-from features.validation.utils.structure.scripts_tree import validate_scripts_tree
-from features.validation.utils.structure.src_tree import validate_src_tree
+from features.validation.utils.structure_scripts_tree import validate_scripts_tree
+from features.validation.utils.structure_src_tree import validate_src_tree
 
 
 def validate_structure(config: Config) -> int:

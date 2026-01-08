@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
-from features.validation.utils.structure.script_folder import validate_script_folder
+from features.validation.utils.structure_script_folder import validate_script_folder
 
 
 def validate_scripts_tree(root: Path, config: Config) -> list[str]:

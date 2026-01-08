@@ -2,7 +2,7 @@
 
 
 
-from features.validation.validators.one_per_file import validate_one_per_file
+from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
 class TestOnePerFileValidator:

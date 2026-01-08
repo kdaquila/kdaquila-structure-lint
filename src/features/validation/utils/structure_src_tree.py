@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
-from features.validation.utils.structure.base_folder import validate_base_folder
+from features.validation.utils.structure_base_folder import validate_base_folder
 
 
 def validate_src_tree(root: Path, config: Config) -> list[str]:

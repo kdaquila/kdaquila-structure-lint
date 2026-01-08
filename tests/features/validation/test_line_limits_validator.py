@@ -2,7 +2,7 @@
 
 
 
-from features.validation.validators.line_limits import validate_line_limits
+from features.validation.utils.validator_line_limits import validate_line_limits
 
 
 class TestLineLimitsValidator:

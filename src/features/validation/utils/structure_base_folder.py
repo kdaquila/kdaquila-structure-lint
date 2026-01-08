@@ -4,7 +4,7 @@ from pathlib import Path
 
 from features.config import Config
 from features.validation.constants import INTERNALLY_ALLOWED_FILES
-from features.validation.utils.structure.custom_folder import validate_custom_folder
+from features.validation.utils.structure_custom_folder import validate_custom_folder
 
 
 def validate_base_folder(base_path: Path, config: Config) -> list[str]:

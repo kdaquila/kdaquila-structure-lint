@@ -1,9 +1,0 @@
-"""Counts and validates lines in files."""
-
-from features.validation.utils.line_counter.counter import count_file_lines
-from features.validation.utils.line_counter.validator import validate_file_lines
-
-__all__ = [
-    "count_file_lines",
-    "validate_file_lines",
-]

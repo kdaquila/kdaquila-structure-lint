@@ -1,5 +1,5 @@
 """CLI module for structure-lint."""
 
-from features.cli.cli import main
+from features.cli.utils.cli import main
 
 __all__ = ["main"]

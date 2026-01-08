@@ -1,21 +1,22 @@
-"""Validates that Python files contain at most one top-level function or class.
+"""Validates that Python files do not exceed maximum line count.
 
-Encourages focused, single-responsibility modules.
+Enforces a line limit to encourage modular, focused files.
 """
 
 
 from features.config import Config
 from features.validation.utils.file_finder import find_python_files
-from features.validation.utils.definition_counter import validate_file_definitions
+from features.validation.utils.line_counter_validator import validate_file_lines
 
 
-def validate_one_per_file(config: Config) -> int:
+def validate_line_limits(config: Config) -> int:
     """Run validation and return exit code."""
     project_root = config.project_root
-    search_paths = config.one_per_file.search_paths
+    max_lines = config.line_limits.max_lines
+    search_paths = config.line_limits.search_paths
     errors = []
 
-    print("🔍 Checking for one function/class per file...\n")
+    print(f"🔍 Checking Python files for {max_lines} line limit...\n")
 
     for search_path in search_paths:
         path = project_root / search_path
@@ -33,24 +34,24 @@ def validate_one_per_file(config: Config) -> int:
             except ValueError:
                 relative_path = file_path
 
-            error = validate_file_definitions(file_path)
+            error = validate_file_lines(file_path, max_lines)
             if error:
                 # Replace absolute path with relative path in error message
                 error = error.replace(str(file_path), str(relative_path))
                 errors.append(error)
 
     if errors:
-        print(f"\n❌ Found {len(errors)} file(s) with multiple definitions:\n")
+        print(f"\n❌ Found {len(errors)} file(s) exceeding {max_lines} line limit:\n")
         for error in errors:
             print(f"  • {error}")
-        print("\n💡 Consider splitting into separate files for better modularity.")
+        print("\n💡 Consider splitting large files into smaller, focused modules.")
         return 1
     else:
-        print("\n✅ All files have at most one top-level function or class!")
+        print(f"\n✅ All Python files are within {max_lines} line limit!")
         return 0
 
 
 if __name__ == "__main__":
     from features.config import load_config
     config = load_config()
-    exit(validate_one_per_file(config))
+    exit(validate_line_limits(config))
