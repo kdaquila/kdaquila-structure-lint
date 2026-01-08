@@ -14,3 +14,4 @@ build/
 # Virtual environments
 venv/
 .venv/
+.coverage
