@@ -8,9 +8,9 @@ See utils/structure/ modules for detailed validation logic.
 """
 
 
-from structure_lint.config import Config
-from structure_lint.utils.structure.scripts_tree import validate_scripts_tree
-from structure_lint.utils.structure.src_tree import validate_src_tree
+from features.config import Config
+from features.validation.utils.structure.scripts_tree import validate_scripts_tree
+from features.validation.utils.structure.src_tree import validate_src_tree
 
 
 def validate_structure(config: Config) -> int:
@@ -59,6 +59,6 @@ def validate_structure(config: Config) -> int:
 
 
 if __name__ == "__main__":
-    from structure_lint.config import load_config
+    from features.config import load_config
     config = load_config()
     exit(validate_structure(config))

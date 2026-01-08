@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from structure_lint.cli import main
+from features.cli import main
 
 
 class TestCLIArgumentParsing:

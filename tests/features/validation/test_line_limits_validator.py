@@ -2,7 +2,7 @@
 
 
 
-from structure_lint.validators.line_limits import validate_line_limits
+from features.validation.validators.line_limits import validate_line_limits
 
 
 class TestLineLimitsValidator:

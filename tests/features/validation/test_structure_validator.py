@@ -2,7 +2,7 @@
 
 
 
-from structure_lint.validators.structure import validate_structure
+from features.validation.validators.structure import validate_structure
 
 
 class TestStructureValidatorBasic:

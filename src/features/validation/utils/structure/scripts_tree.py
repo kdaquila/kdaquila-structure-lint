@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from structure_lint.config import Config
-from structure_lint.utils.structure.script_folder import validate_script_folder
+from features.config import Config
+from features.validation.utils.structure.script_folder import validate_script_folder
 
 
 def validate_scripts_tree(root: Path, config: Config) -> list[str]:

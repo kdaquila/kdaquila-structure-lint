@@ -4,9 +4,9 @@ Enforces a line limit to encourage modular, focused files.
 """
 
 
-from structure_lint.config import Config
-from structure_lint.utils.file_finder import find_python_files
-from structure_lint.utils.line_counter import validate_file_lines
+from features.config import Config
+from features.validation.utils.file_finder import find_python_files
+from features.validation.utils.line_counter import validate_file_lines
 
 
 def validate_line_limits(config: Config) -> int:
@@ -52,6 +52,6 @@ def validate_line_limits(config: Config) -> int:
 
 
 if __name__ == "__main__":
-    from structure_lint.config import load_config
+    from features.config import load_config
     config = load_config()
     exit(validate_line_limits(config))

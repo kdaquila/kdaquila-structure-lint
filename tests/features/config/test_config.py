@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from structure_lint.config import (
+from features.config import (
     LineLimitsConfig,
     OnePerFileConfig,
     StructureConfig,

@@ -3,14 +3,14 @@
 from pathlib import Path
 import sys
 
-from structure_lint.config.types import (
+from features.config.types import (
     Config,
     ValidatorToggles,
     LineLimitsConfig,
     OnePerFileConfig,
     StructureConfig,
 )
-from structure_lint.config.project_root import find_project_root
+from features.config.utils.project_root import find_project_root
 
 # Python 3.11+ has tomllib, older versions need tomli
 if sys.version_info >= (3, 11):

@@ -1,9 +1,9 @@
 """Main orchestrator that runs enabled validators."""
 
-from structure_lint.config import Config
-from structure_lint.validators.structure import validate_structure
-from structure_lint.validators.line_limits import validate_line_limits
-from structure_lint.validators.one_per_file import validate_one_per_file
+from features.config import Config
+from features.validation.validators.structure import validate_structure
+from features.validation.validators.line_limits import validate_line_limits
+from features.validation.validators.one_per_file import validate_one_per_file
 
 
 def run_validations(config: Config, verbose: bool = False) -> int:

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from structure_lint.config import Config
+from features.config import Config
 
 
 def validate_general_folder(path: Path, config: Config) -> list[str]:

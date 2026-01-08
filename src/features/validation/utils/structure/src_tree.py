@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from structure_lint.config import Config
-from structure_lint.utils.structure.base_folder import validate_base_folder
+from features.config import Config
+from features.validation.utils.structure.base_folder import validate_base_folder
 
 
 def validate_src_tree(root: Path, config: Config) -> list[str]:

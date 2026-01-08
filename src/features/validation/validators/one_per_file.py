@@ -4,9 +4,9 @@ Encourages focused, single-responsibility modules.
 """
 
 
-from structure_lint.config import Config
-from structure_lint.utils.file_finder import find_python_files
-from structure_lint.utils.definition_counter import validate_file_definitions
+from features.config import Config
+from features.validation.utils.file_finder import find_python_files
+from features.validation.utils.definition_counter import validate_file_definitions
 
 
 def validate_one_per_file(config: Config) -> int:
@@ -51,6 +51,6 @@ def validate_one_per_file(config: Config) -> int:
 
 
 if __name__ == "__main__":
-    from structure_lint.config import load_config
+    from features.config import load_config
     config = load_config()
     exit(validate_one_per_file(config))

@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from structure_lint.config import Config
-from structure_lint.utils.structure.custom_folder import validate_custom_folder
+from features.config import Config
+from features.validation.utils.structure.custom_folder import validate_custom_folder
 
 
 def validate_base_folder(base_path: Path, config: Config) -> list[str]:

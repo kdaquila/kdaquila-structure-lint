@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from structure_lint.utils.line_counter.counter import count_file_lines
+from features.validation.utils.line_counter.counter import count_file_lines
 
 
 def validate_file_lines(file_path: Path, max_lines: int) -> str | None:
