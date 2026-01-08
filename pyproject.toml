@@ -40,10 +40,10 @@ Repository = "https://github.com/kdaquila/kdaquila-structure-lint"
 Issues = "https://github.com/kdaquila/kdaquila-structure-lint/issues"
 
 [project.scripts]
-structure-lint = "structure_lint.cli:main"
+structure-lint = "features.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/structure_lint"]
+packages = ["src/features"]
 
 [tool.structure-lint]
 enabled = true
