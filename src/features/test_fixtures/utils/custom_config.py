@@ -33,7 +33,6 @@ def custom_config(tmp_path: Path) -> Config:
         ),
         structure=StructureConfig(
             src_root="lib",
-            src_base_folders={"apps", "features"},
             standard_folders={"types", "utils", "helpers"},
             general_folder="common",
             free_form_roots={"experimental"},

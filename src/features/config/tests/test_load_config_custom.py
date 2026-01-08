@@ -56,7 +56,6 @@ search_paths = ["modules"]
         pyproject.write_text("""
 [tool.structure-lint.structure]
 src_root = "lib"
-src_base_folders = ["apps", "features"]
 standard_folders = ["types", "helpers"]
 general_folder = "common"
 free_form_roots = ["experimental"]
@@ -66,7 +65,6 @@ allowed_files = ["README.md", "NOTES.md"]
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
         assert config.structure.src_root == "lib"
-        assert config.structure.src_base_folders == {"apps", "features"}
         assert config.structure.standard_folders == {"types", "helpers"}
         assert config.structure.general_folder == "common"
         assert config.structure.free_form_roots == {"experimental"}
@@ -93,7 +91,6 @@ search_paths = ["src"]
 
 [tool.structure-lint.structure]
 src_root = "source"
-src_base_folders = ["apps"]
 standard_folders = ["utils"]
 general_folder = "shared"
 free_form_roots = ["sandbox"]
@@ -111,7 +108,6 @@ allowed_files = ["README.md"]
         assert config.line_limits.search_paths == ["src"]
         assert config.one_per_file.search_paths == ["src"]
         assert config.structure.src_root == "source"
-        assert config.structure.src_base_folders == {"apps"}
         assert config.structure.standard_folders == {"utils"}
         assert config.structure.general_folder == "shared"
         assert config.structure.free_form_roots == {"sandbox"}

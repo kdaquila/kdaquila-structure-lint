@@ -21,7 +21,6 @@ class TestLoadConfigDefaults:
         assert config.line_limits.search_paths == ["src"]
         assert config.one_per_file.search_paths == ["src"]
         assert config.structure.src_root == "src"
-        assert config.structure.src_base_folders == {"features"}
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.structure.general_folder == "general"
         assert config.structure.free_form_roots == set()

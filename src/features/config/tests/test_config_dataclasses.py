@@ -33,7 +33,6 @@ class TestConfigDataclasses:
         """Should have correct default values."""
         config = StructureConfig()
         assert config.src_root == "src"
-        assert config.src_base_folders == {"features"}
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.general_folder == "general"
         assert config.free_form_roots == set()

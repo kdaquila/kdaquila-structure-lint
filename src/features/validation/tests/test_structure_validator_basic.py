@@ -34,28 +34,6 @@ class TestStructureValidatorBasic:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_missing_base_folder_fails(self, minimal_config):
-        """Should fail when required base folder is missing."""
-        config = minimal_config
-
-        # Create src but not features
-        (config.project_root / "src").mkdir()
-
-        exit_code = validate_structure(config)
-        assert exit_code == 1
-
-    def test_extra_base_folder_fails(self, minimal_config):
-        """Should fail when extra folders exist in src."""
-        config = minimal_config
-
-        src = config.project_root / "src"
-        src.mkdir()
-        (src / "features").mkdir()
-        (src / "extra_folder").mkdir()  # Not in src_base_folders
-
-        exit_code = validate_structure(config)
-        assert exit_code == 1
-
     def test_files_in_src_root_fails(self, minimal_config):
         """Should fail when files exist in src root."""
         config = minimal_config
@@ -89,3 +67,21 @@ class TestStructureValidatorBasic:
         assert exit_code == 1
         assert "Files not allowed in root" in captured.out
         assert "calculator.py" in captured.out
+
+    def test_multiple_base_folders_accepted(self, minimal_config):
+        """Any base folders in src/ should be accepted automatically."""
+        config = minimal_config
+
+        # Create multiple base folders
+        src = config.project_root / "src"
+        (src / "features").mkdir(parents=True)
+        (src / "features" / "__init__.py").touch()
+        (src / "apps").mkdir(parents=True)
+        (src / "apps" / "__init__.py").touch()
+        (src / "libs").mkdir(parents=True)
+        (src / "libs" / "__init__.py").touch()
+
+        exit_code = validate_structure(config)
+
+        # Should pass - all base folders automatically accepted
+        assert exit_code == 0
