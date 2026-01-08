@@ -73,10 +73,9 @@ class TestLoadConfig:
         assert config.one_per_file.search_paths == ["src", "scripts"]
         assert config.structure.src_root == "src"
         assert config.structure.src_base_folders == {"features"}
-        assert config.structure.scripts_root == "scripts"
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.structure.general_folder == "general"
-        assert config.structure.free_form_bases == set()
+        assert config.structure.free_form_roots == set()
         assert config.structure.allowed_files == {"README.md"}
 
     def test_load_config_with_minimal_toml(self, tmp_path: Path):
@@ -143,10 +142,9 @@ search_paths = ["modules"]
 [tool.structure-lint.structure]
 src_root = "lib"
 src_base_folders = ["apps", "features"]
-scripts_root = "tools"
 standard_folders = ["types", "helpers"]
 general_folder = "common"
-free_form_bases = ["experimental"]
+free_form_roots = ["experimental"]
 allowed_files = ["README.md", "NOTES.md"]
 """)
 
@@ -154,10 +152,9 @@ allowed_files = ["README.md", "NOTES.md"]
 
         assert config.structure.src_root == "lib"
         assert config.structure.src_base_folders == {"apps", "features"}
-        assert config.structure.scripts_root == "tools"
         assert config.structure.standard_folders == {"types", "helpers"}
         assert config.structure.general_folder == "common"
-        assert config.structure.free_form_bases == {"experimental"}
+        assert config.structure.free_form_roots == {"experimental"}
         assert config.structure.allowed_files == {"README.md", "NOTES.md"}
 
     def test_load_config_with_full_custom_config(self, tmp_path: Path):
@@ -182,10 +179,9 @@ search_paths = ["src"]
 [tool.structure-lint.structure]
 src_root = "source"
 src_base_folders = ["apps"]
-scripts_root = "bin"
 standard_folders = ["utils"]
 general_folder = "shared"
-free_form_bases = ["sandbox"]
+free_form_roots = ["sandbox"]
 allowed_files = ["README.md"]
 """)
 
@@ -201,10 +197,9 @@ allowed_files = ["README.md"]
         assert config.one_per_file.search_paths == ["src"]
         assert config.structure.src_root == "source"
         assert config.structure.src_base_folders == {"apps"}
-        assert config.structure.scripts_root == "bin"
         assert config.structure.standard_folders == {"utils"}
         assert config.structure.general_folder == "shared"
-        assert config.structure.free_form_bases == {"sandbox"}
+        assert config.structure.free_form_roots == {"sandbox"}
         assert config.structure.allowed_files == {"README.md"}
 
     def test_load_config_partial_overrides(self, tmp_path: Path):
@@ -305,8 +300,7 @@ class TestConfigDataclasses:
         config = StructureConfig()
         assert config.src_root == "src"
         assert config.src_base_folders == {"features"}
-        assert config.scripts_root == "scripts"
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.general_folder == "general"
-        assert config.free_form_bases == set()
+        assert config.free_form_roots == set()
         assert config.allowed_files == {"README.md"}

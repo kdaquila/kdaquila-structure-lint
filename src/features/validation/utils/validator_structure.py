@@ -1,8 +1,6 @@
-"""Validates project folder structure conventions with support for multiple trees.
+"""Validates project folder structure conventions.
 
-Trees:
-- src tree: Has base_folders (apps, features) with structured rules
-- scripts tree: Free-form custom folders with limited nesting
+Validates the src tree which has base_folders (apps, features) with structured rules.
 
 See utils/structure/ modules for detailed validation logic.
 """
@@ -10,18 +8,22 @@ See utils/structure/ modules for detailed validation logic.
 import sys
 
 from features.config import Config
-from features.validation.utils.structure_scripts_tree import validate_scripts_tree
 from features.validation.utils.structure_src_tree import validate_src_tree
 
 
 def validate_structure(config: Config) -> int:
-    """Run validation on all trees and return exit code."""
+    """Run validation on src tree and return exit code."""
     project_root = config.project_root
     src_root = config.structure.src_root
-    scripts_root = config.structure.scripts_root
+    free_form_roots = config.structure.free_form_roots
     all_errors: list[str] = []
 
-    # Validate src tree
+    # Validate src tree (unless src_root itself is in free_form_roots)
+    if src_root in free_form_roots:
+        print(f"⏭️  Skipping {src_root}/ (in free_form_roots)")
+        print("✅ All folder structures are valid!")
+        return 0
+
     src_path = project_root / src_root
     if not src_path.exists():
         print(f"❌ Error: {src_root}/ not found")
@@ -35,18 +37,6 @@ def validate_structure(config: Config) -> int:
         for error in src_errors
     ]
     all_errors.extend(src_errors)
-
-    # Validate scripts tree
-    scripts_path = project_root / scripts_root
-    if scripts_path.exists():
-        print(f"🔍 Validating {scripts_root}/ tree...")
-        scripts_errors = validate_scripts_tree(scripts_path, config)
-        # Make paths relative to project root for cleaner error messages
-        scripts_errors = [
-            error.replace(str(project_root) + "\\", "").replace(str(project_root) + "/", "")
-            for error in scripts_errors
-        ]
-        all_errors.extend(scripts_errors)
 
     # Report results
     if all_errors:

@@ -92,47 +92,6 @@ class TestStructureValidatorBasic:
         assert "calculator.py" in captured.out
 
 
-class TestStructureValidatorScriptsTree:
-    """Tests for scripts tree validation."""
-
-    def test_missing_scripts_dir_is_ok(self, minimal_config):
-        """Should not fail when scripts directory doesn't exist."""
-        config = minimal_config
-
-        # Create valid src structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Don't create scripts directory
-        exit_code = validate_structure(config)
-        assert exit_code == 0
-
-    def test_valid_scripts_structure_passes(self, minimal_config):
-        """Should pass with valid scripts structure."""
-        config = minimal_config
-
-        # Create valid src structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Create valid scripts structure
-        scripts = config.project_root / "scripts"
-        scripts.mkdir()
-        (scripts / "build").mkdir()
-        (scripts / "build" / "script.py").touch()
-
-        exit_code = validate_structure(config)
-        assert exit_code == 0
-
-
 class TestStructureValidatorCustomConfig:
     """Tests for custom structure configuration."""
 
@@ -175,47 +134,22 @@ class TestStructureValidatorCustomConfig:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_custom_scripts_root(self, minimal_config):
-        """Should use custom scripts_root."""
+    def test_free_form_roots_allowed(self, minimal_config):
+        """Should allow free-form structure in free_form_roots at project root."""
         config = minimal_config
-        config.structure.scripts_root = "tools"
+        config.structure.free_form_roots = {"experimental"}
 
         # Create valid src structure
         src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Create structure with custom scripts_root
-        tools = config.project_root / "tools"
-        tools.mkdir()
-        (tools / "build").mkdir()
-        (tools / "build" / "script.py").touch()
-
-        exit_code = validate_structure(config)
-        assert exit_code == 0
-
-    def test_free_form_bases_allowed(self, minimal_config):
-        """Should allow free-form structure in free_form_bases."""
-        config = minimal_config
-        config.structure.src_base_folders = {"features", "experimental"}
-        config.structure.free_form_bases = {"experimental"}
-
-        # Create structure
-        src = config.project_root / "src"
         src.mkdir()
-
-        # Valid features structure
         features = src / "features"
         features.mkdir()
         (features / "my_feature").mkdir()
         (features / "my_feature" / "types").mkdir()
         (features / "my_feature" / "types" / "module.py").touch()
 
-        # Free-form experimental structure (anything goes)
-        experimental = src / "experimental"
+        # Free-form experimental directory at project root (anything goes, not validated)
+        experimental = config.project_root / "experimental"
         experimental.mkdir()
         (experimental / "random_folder").mkdir()
         (experimental / "random_folder" / "nested").mkdir()
@@ -389,46 +323,3 @@ class TestStructureValidatorIntegration:
         assert "Validating" in captured.out or "src" in captured.out
         assert "valid" in captured.out.lower() or "passed" in captured.out.lower()
         assert exit_code == 0
-
-    def test_both_src_and_scripts_validated(self, minimal_config):
-        """Should validate both src and scripts trees."""
-        config = minimal_config
-
-        # Create valid src structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Create valid scripts structure
-        scripts = config.project_root / "scripts"
-        scripts.mkdir()
-        (scripts / "build").mkdir()
-        (scripts / "build" / "script.py").touch()
-
-        exit_code = validate_structure(config)
-        assert exit_code == 0
-
-    def test_src_valid_scripts_invalid_fails(self, minimal_config):
-        """Should fail if scripts tree is invalid even if src is valid."""
-        config = minimal_config
-
-        # Create valid src structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Create scripts with files in root (might be invalid depending on rules)
-        scripts = config.project_root / "scripts"
-        scripts.mkdir()
-        # Just having scripts directory should be fine
-        # The actual scripts validation rules depend on implementation
-
-        exit_code = validate_structure(config)
-        # Should pass or fail based on actual implementation
-        assert exit_code in [0, 1]

@@ -76,12 +76,11 @@ def load_config(
     structure = StructureConfig(
         src_root=structure_data.get("src_root", "src"),
         src_base_folders=set(structure_data.get("src_base_folders", ["features"])),
-        scripts_root=structure_data.get("scripts_root", "scripts"),
         standard_folders=set(
             structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
         ),
         general_folder=structure_data.get("general_folder", "general"),
-        free_form_bases=set(structure_data.get("free_form_bases", [])),
+        free_form_roots=set(structure_data.get("free_form_roots", [])),
         allowed_files=set(structure_data.get("allowed_files", ["README.md"])),
     )
 

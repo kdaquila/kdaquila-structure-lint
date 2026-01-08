@@ -34,10 +34,9 @@ def custom_config(tmp_path: Path) -> Config:
         structure=StructureConfig(
             src_root="lib",
             src_base_folders={"apps", "features"},
-            scripts_root="tools",
             standard_folders={"types", "utils", "helpers"},
             general_folder="common",
-            free_form_bases={"experimental"},
+            free_form_roots={"experimental"},
             allowed_files={"README.md", "NOTES.md"},
         ),
     )

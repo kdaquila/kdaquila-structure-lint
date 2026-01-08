@@ -24,12 +24,9 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     if files:
         errors.append(f"{root}: Files not allowed in root: {files}")
 
-    free_form_bases = config.structure.free_form_bases
     for base in src_base_folders:
         base_path = root / base
         if base_path.exists():
-            if base in free_form_bases:
-                continue
             errors.extend(validate_base_folder(base_path, config))
 
     return errors
