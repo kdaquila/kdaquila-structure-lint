@@ -4,6 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from structure_lint import __version__
 from structure_lint.config import load_config
 from structure_lint.runner import run_validations
 
@@ -39,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s 0.1.0",
+        version=f"%(prog)s {__version__}",
     )
 
     args = parser.parse_args(argv)
