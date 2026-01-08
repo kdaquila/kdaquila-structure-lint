@@ -11,16 +11,17 @@ class TestStructureValidatorRelativePaths:
         """Should use relative paths in error messages."""
         config = minimal_config
 
-        # Create invalid structure
+        # Create invalid structure - files in src root
         src = config.project_root / "src"
         src.mkdir()
         (src / "features").mkdir()
-        (src / "invalid_folder").mkdir()
+        (src / "invalid_file.py").touch()
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
 
-        # Error message should use relative path
+        # Error message should use relative path and mention the issue
         assert "src" in captured.out
+        assert "Files not allowed" in captured.out
         # Should not show absolute path markers like drive letters on Windows
         assert exit_code == 1

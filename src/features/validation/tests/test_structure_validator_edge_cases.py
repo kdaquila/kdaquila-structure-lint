@@ -34,31 +34,30 @@ class TestStructureValidatorEdgeCases:
         # Create structure with multiple issues
         src = config.project_root / "src"
         src.mkdir()
-        # Wrong folders instead of features
-        (src / "wrong1").mkdir()
-        (src / "wrong2").mkdir()
-        # Files in root
+        # Base folders (automatically accepted)
+        (src / "base1").mkdir()
+        (src / "base2").mkdir()
+        # Files in root (not allowed)
         (src / "file1.py").touch()
         (src / "file2.py").touch()
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
 
-        # Should mention multiple issues
-        assert "Missing" in captured.out or "features" in captured.out
-        assert "Unexpected" in captured.out or "wrong1" in captured.out
+        # Should report files not allowed in root
         assert "Files not allowed" in captured.out or "file1.py" in captured.out
         assert exit_code == 1
 
-    def test_empty_src_directory_fails(self, minimal_config):
-        """Should fail when src directory is empty."""
+    def test_empty_src_directory_passes(self, minimal_config):
+        """Should pass when src directory is empty (no base folders yet)."""
         config = minimal_config
 
         # Create empty src directory
         (config.project_root / "src").mkdir()
 
         exit_code = validate_structure(config)
-        assert exit_code == 1
+        # Empty src is valid - allows gradual project setup
+        assert exit_code == 0
 
     def test_complex_valid_structure(self, minimal_config):
         """Should pass with complex but valid structure."""
