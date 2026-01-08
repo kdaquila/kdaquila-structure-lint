@@ -33,10 +33,6 @@ search_paths = ["src"]
 # Name of the source code root directory
 src_root = "src"
 
-# Base folders allowed directly under src_root
-# These represent top-level organizational categories (e.g., features, services)
-src_base_folders = ["features"]
-
 # Standard folders that can appear inside feature/module directories
 # These represent common code organization patterns
 standard_folders = ["types", "utils", "constants", "tests"]

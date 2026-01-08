@@ -28,11 +28,8 @@ search_paths = ["lib"]
 # Using "lib" instead of "src" to match Ruby/Rails convention
 src_root = "lib"
 
-# Base folders represent major application components
-# We have: api backend, web frontend, and shared services
-src_base_folders = ["api", "web", "services"]
-
 # Using MVC-style organization plus additional layers
+# Base folders (api, web, services) are automatically detected under lib/
 # - models: Data models and schemas
 # - views: View logic and templates
 # - controllers: Request handlers

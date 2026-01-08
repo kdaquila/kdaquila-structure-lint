@@ -159,7 +159,6 @@ search_paths = ["src"]
 
 [tool.structure-lint.structure]
 src_root = "src"
-src_base_folders = ["features"]
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
 free_form_roots = []

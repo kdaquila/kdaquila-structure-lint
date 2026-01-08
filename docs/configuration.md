@@ -143,30 +143,6 @@ Name of the source code root directory.
 src_root = "lib"  # Use lib/ instead of src/
 ```
 
-#### `structure.src_base_folders`
-
-**Type**: `list[str]` (converted to set internally)
-**Default**: `["features"]`
-
-List of base folder names allowed directly under `src_root`. These represent top-level organizational categories.
-
-```toml
-[tool.structure-lint.structure]
-src_base_folders = ["features", "modules", "components"]
-```
-
-**Example Structure**:
-```
-src/
-├── features/
-│   ├── authentication/
-│   └── reporting/
-├── modules/
-│   └── data_processing/
-└── components/
-    └── ui_elements/
-```
-
 #### `structure.standard_folders`
 
 **Type**: `list[str]` (converted to set internally)

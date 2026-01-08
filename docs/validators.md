@@ -430,8 +430,7 @@ src/
 
 **Rules**:
 - `src/` must only contain base folders (no files except `README.md`)
-- Base folders defined in `src_base_folders` config
-- No unexpected folders allowed
+- Base folders (any subdirectories under src/) are automatically validated
 - Files not allowed in `src/` root
 
 #### Feature/Module Organization
@@ -499,7 +498,6 @@ structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
 src_root = "src"
-src_base_folders = ["features"]
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
 free_form_roots = []
@@ -571,18 +569,15 @@ Error: `src/features/auth/: Unexpected folder 'models' (not in standard folders 
 
 #### Different Base Folders
 
-```toml
-[tool.structure-lint.structure]
-src_base_folders = ["features", "services", "components"]
-```
-
-Results in:
+Any subdirectories under `src/` are automatically accepted as base folders:
 ```
 src/
 ├── features/
 ├── services/
 └── components/
 ```
+
+All base folders are validated according to the same structure rules.
 
 #### Different Standard Folders
 
@@ -617,7 +612,6 @@ lib/features/auth/common/login.py
 
 ```toml
 [tool.structure-lint.structure]
-src_base_folders = ["features"]
 free_form_roots = ["legacy", "experiments"]
 ```
 
@@ -650,7 +644,6 @@ structure-lint --verbose
 
 ```toml
 [tool.structure-lint.structure]
-src_base_folders = ["features"]
 free_form_roots = ["legacy"]  # Completely skip legacy directory
 ```
 
@@ -678,9 +671,6 @@ Add comments to your config explaining choices:
 
 ```toml
 [tool.structure-lint.structure]
-# Using "modules" instead of "features" to match our domain language
-src_base_folders = ["modules"]
-
 # Added "services" as standard folder for our microservice architecture
 standard_folders = ["types", "services", "utils", "tests"]
 
