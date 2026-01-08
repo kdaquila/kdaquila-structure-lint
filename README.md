@@ -75,7 +75,7 @@ Enforces a maximum number of lines per Python file to encourage modular, maintai
 ```toml
 [tool.structure-lint.line_limits]
 max_lines = 150
-search_paths = ["src", "scripts"]
+search_paths = ["src"]
 ```
 
 **Example Output**:
@@ -84,7 +84,7 @@ search_paths = ["src", "scripts"]
 Running line limit validation...
 ============================================================
 ✗ src/features/data_processing/processor.py: 187 lines (exceeds 150 line limit)
-✗ scripts/analysis/report_generator.py: 203 lines (exceeds 150 line limit)
+✗ src/analysis/report_generator.py: 203 lines (exceeds 150 line limit)
 
 2 files exceed the line limit
 ```
@@ -96,7 +96,7 @@ Ensures each Python file contains at most one top-level function or class defini
 **Configuration**:
 ```toml
 [tool.structure-lint.one_per_file]
-search_paths = ["src", "scripts"]
+search_paths = ["src"]
 ```
 
 **Example Output**:
@@ -152,18 +152,17 @@ one_per_file = true      # Default: enabled
 
 [tool.structure-lint.line_limits]
 max_lines = 150
-search_paths = ["src", "scripts"]
+search_paths = ["src"]
 
 [tool.structure-lint.one_per_file]
-search_paths = ["src", "scripts"]
+search_paths = ["src"]
 
 [tool.structure-lint.structure]
 src_root = "src"
 src_base_folders = ["features"]
-scripts_root = "scripts"
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-free_form_bases = []
+free_form_roots = []
 allowed_files = ["README.md"]
 ```
 
@@ -274,13 +273,13 @@ pytest
 ### Type Checking
 
 ```bash
-mypy src/structure_lint
+mypy src/features
 ```
 
 ### Linting
 
 ```bash
-ruff check src/structure_lint tests
+ruff check src/features tests
 ```
 
 ## Documentation

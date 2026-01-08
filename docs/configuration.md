@@ -100,7 +100,7 @@ max_lines = 200  # Allow up to 200 lines
 #### `line_limits.search_paths`
 
 **Type**: `list[str]`
-**Default**: `["src", "scripts"]`
+**Default**: `["src"]`
 
 List of directories to search for Python files, relative to project root.
 
@@ -118,7 +118,7 @@ Settings for the one-per-file validator.
 #### `one_per_file.search_paths`
 
 **Type**: `list[str]`
-**Default**: `["src", "scripts"]`
+**Default**: `["src"]`
 
 List of directories to search for Python files, relative to project root.
 
@@ -167,18 +167,6 @@ src/
     └── ui_elements/
 ```
 
-#### `structure.scripts_root`
-
-**Type**: `str`
-**Default**: `"scripts"`
-
-Name of the scripts root directory.
-
-```toml
-[tool.structure-lint.structure]
-scripts_root = "tools"  # Use tools/ instead of scripts/
-```
-
 #### `structure.standard_folders`
 
 **Type**: `list[str]` (converted to set internally)
@@ -214,27 +202,29 @@ general_folder = "common"  # Use common/ instead of general/
 
 **Purpose**: Provides a place for miscellaneous code that doesn't fit into other categories.
 
-#### `structure.free_form_bases`
+#### `structure.free_form_roots`
 
 **Type**: `list[str]` (converted to set internally)
 **Default**: `[]` (empty)
 
-List of base folders that are allowed free-form organization (no structure enforcement).
+List of top-level directories at project root that are exempted from all structure validation.
 
 ```toml
 [tool.structure-lint.structure]
-free_form_bases = ["experiments", "prototypes"]
+free_form_roots = ["experiments", "legacy"]
 ```
 
-**Use Case**: Useful for areas like experiments or legacy code where you don't want to enforce the structure rules.
+**Use Case**: Useful for areas like experiments or legacy code where you don't want to enforce any structure rules.
 
 **Example Structure**:
 ```
-src/
-├── features/        # Structure enforced
-├── experiments/     # Free-form, any structure allowed
-└── prototypes/      # Free-form, any structure allowed
+project_root/
+├── src/             # Structure enforced
+├── experiments/     # Free-form, no validation
+└── legacy/          # Free-form, no validation
 ```
+
+**Note**: This operates at the project root level, not within src/. Directories listed here are completely skipped during validation.
 
 #### `structure.allowed_files`
 
@@ -306,6 +296,7 @@ structure = true  # Opt-in
 [tool.structure-lint.structure]
 src_base_folders = ["features", "services"]
 standard_folders = ["types", "utils", "tests"]
+free_form_roots = []
 ```
 
 ### Custom Project Layout
@@ -324,10 +315,9 @@ search_paths = ["lib", "tools"]
 [tool.structure-lint.structure]
 src_root = "lib"
 src_base_folders = ["modules"]
-scripts_root = "tools"
 standard_folders = ["models", "views", "controllers", "tests"]
 general_folder = "common"
-free_form_bases = ["legacy", "experimental"]
+free_form_roots = ["legacy", "experimental"]
 ```
 
 ### Relaxed Configuration
@@ -362,16 +352,16 @@ structure = true
 
 [tool.structure-lint.line_limits]
 max_lines = 100  # Very strict
-search_paths = ["src", "scripts", "tests"]
+search_paths = ["src", "tests"]
 
 [tool.structure-lint.one_per_file]
-search_paths = ["src", "scripts", "tests"]
+search_paths = ["src", "tests"]
 
 [tool.structure-lint.structure]
 src_base_folders = ["features"]
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-free_form_bases = []  # No exceptions
+free_form_roots = []  # No exceptions
 allowed_files = ["README.md"]
 ```
 

@@ -45,8 +45,8 @@ The default limit of 150 lines strikes a balance between being permissive enough
 line_limits = true  # Enable/disable
 
 [tool.structure-lint.line_limits]
-max_lines = 150                    # Default
-search_paths = ["src", "scripts"]  # Default
+max_lines = 150       # Default
+search_paths = ["src"]  # Default
 ```
 
 ### Examples
@@ -132,7 +132,7 @@ Or check additional directories:
 
 ```toml
 [tool.structure-lint.line_limits]
-search_paths = ["src", "scripts", "lib", "tests"]
+search_paths = ["src", "lib", "tests"]
 ```
 
 #### Disable Temporarily
@@ -203,7 +203,7 @@ Single-definition files provide:
 one_per_file = true  # Enable/disable
 
 [tool.structure-lint.one_per_file]
-search_paths = ["src", "scripts"]  # Default
+search_paths = ["src"]  # Default
 ```
 
 ### Examples
@@ -413,10 +413,7 @@ Consistent structure provides:
 
 ### Architecture Principles
 
-The structure validator enforces a two-tree architecture:
-
-1. **Source Tree (`src/`)**: Feature/module-based organization
-2. **Scripts Tree (`scripts/`)**: Utility scripts and tools
+The structure validator enforces feature/module-based organization within your source tree (`src/`).
 
 ### Source Tree Rules
 
@@ -475,39 +472,24 @@ src/features/authentication/
       └── general/
   ```
 
-#### Free-Form Bases
+#### Free-Form Roots
 
-Mark certain base folders as free-form (no structure enforcement):
+Exempt entire top-level directories at project root from all structure validation:
 
 ```toml
 [tool.structure-lint.structure]
-free_form_bases = ["experiments", "prototypes", "legacy"]
+free_form_roots = ["experiments", "legacy"]
 ```
 
-These folders can have any structure:
+These directories are completely skipped during validation:
 ```
-src/
-├── features/        # Structure enforced
-└── experiments/     # Free-form, any organization
-```
-
-### Scripts Tree Rules
-
-```
-scripts/
-├── script_folder1/
-│   ├── script.py
-│   └── nested/      # Max 2 levels of nesting
-│       └── helper.py
-└── script_folder2/
-    └── tool.py
+project_root/
+├── src/            # Structure enforced
+├── experiments/    # Completely skipped
+└── legacy/         # Completely skipped
 ```
 
-**Rules**:
-- Each top-level folder represents a script category
-- Python files allowed at any level
-- Maximum 2 levels of nesting for organization
-- Simpler than src tree (more flexibility)
+**Note**: Unlike the old `free_form_bases` which only exempted folders within `src/`, `free_form_roots` operates at the project root level and completely exempts those directories from all validation.
 
 ### Configuration
 
@@ -518,10 +500,9 @@ structure = true  # Must opt-in explicitly
 [tool.structure-lint.structure]
 src_root = "src"
 src_base_folders = ["features"]
-scripts_root = "scripts"
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-free_form_bases = []
+free_form_roots = []
 allowed_files = ["README.md"]
 ```
 
@@ -548,11 +529,6 @@ project/
 │           ├── types/
 │           ├── utils/
 │           └── general/
-└── scripts/
-    ├── migration/
-    │   └── migrate_db.py
-    └── analysis/
-        └── generate_report.py
 ```
 
 #### Invalid Examples
@@ -629,29 +605,28 @@ src/features/authentication/
 ```toml
 [tool.structure-lint.structure]
 src_root = "lib"
-scripts_root = "tools"
 general_folder = "common"
 ```
 
 Results in:
 ```
 lib/features/auth/common/login.py
-tools/migration/migrate_db.py
 ```
 
 #### Free-Form Zones
 
 ```toml
 [tool.structure-lint.structure]
-src_base_folders = ["features", "legacy", "experiments"]
-free_form_bases = ["legacy", "experiments"]
+src_base_folders = ["features"]
+free_form_roots = ["legacy", "experiments"]
 ```
 
 ```
-src/
-├── features/        # Strict structure
-├── legacy/          # Any structure allowed
-└── experiments/     # Any structure allowed
+project_root/
+├── src/
+│   └── features/    # Strict structure enforced
+├── legacy/          # Completely skipped from validation
+└── experiments/     # Completely skipped from validation
 ```
 
 ### Migration Strategy
@@ -669,14 +644,14 @@ structure-lint --verbose
 #### 2. Choose Approach
 
 **Option A: Gradual Migration**
-- Use `free_form_bases` to exclude legacy code
+- Use `free_form_roots` to exclude legacy code
 - Apply structure to new features only
 - Gradually migrate old code
 
 ```toml
 [tool.structure-lint.structure]
-src_base_folders = ["features", "legacy"]
-free_form_bases = ["legacy"]  # Exclude from validation
+src_base_folders = ["features"]
+free_form_roots = ["legacy"]  # Completely skip legacy directory
 ```
 
 **Option B: Full Reorganization**
@@ -710,7 +685,7 @@ src_base_folders = ["modules"]
 standard_folders = ["types", "services", "utils", "tests"]
 
 # Legacy code exempted until Q3 2026 refactor
-free_form_bases = ["legacy"]
+free_form_roots = ["legacy"]
 ```
 
 ### When to Use Structure Validation

@@ -19,21 +19,18 @@ one_per_file = true     # Single responsibility
 [tool.structure-lint.line_limits]
 # Slightly more lenient line limit for service classes
 max_lines = 200
-search_paths = ["lib", "scripts"]  # Custom source directory name
+search_paths = ["lib"]  # Custom source directory name
 
 [tool.structure-lint.one_per_file]
-search_paths = ["lib", "scripts"]
+search_paths = ["lib"]
 
 [tool.structure-lint.structure]
 # Using "lib" instead of "src" to match Ruby/Rails convention
 src_root = "lib"
 
 # Base folders represent major application components
-# We have: api backend, web frontend, shared services, and legacy code
-src_base_folders = ["api", "web", "services", "legacy"]
-
-# Scripts are called "tools" in our project
-scripts_root = "tools"
+# We have: api backend, web frontend, and shared services
+src_base_folders = ["api", "web", "services"]
 
 # Using MVC-style organization plus additional layers
 # - models: Data models and schemas
@@ -60,7 +57,8 @@ general_folder = "core"
 
 # Legacy code doesn't follow the new structure yet
 # Also exempting experimental features during prototyping
-free_form_bases = ["legacy", "experimental"]
+# These are top-level directories at project root
+free_form_roots = ["legacy", "experimental"]
 
 # Allow additional documentation files
 allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
@@ -96,35 +94,26 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 # │   │   └── profile/
 # │   │       └── ...
 # │   │
-# │   ├── services/               (base folder - shared services)
-# │   │   ├── email/
-# │   │   │   ├── services/
-# │   │   │   ├── types/
-# │   │   │   └── tests/
-# │   │   └── notifications/
-# │   │       └── ...
-# │   │
-# │   ├── legacy/                 (free-form - no validation)
-# │   │   └── old_code/
-# │   │       └── anything_goes.py
-# │   │
-# │   └── experimental/           (free-form - for prototypes)
-# │       └── new_feature_poc/
+# │   └── services/               (base folder - shared services)
+# │       ├── email/
+# │       │   ├── services/
+# │       │   ├── types/
+# │       │   └── tests/
+# │       └── notifications/
+# │           └── ...
 # │
-# └── tools/                      (scripts_root)
-#     ├── database/
-#     │   ├── migrate.py
-#     │   └── seed.py
-#     ├── deployment/
-#     │   └── deploy.py
-#     └── testing/
-#         └── load_test.py
+# ├── legacy/                     (free-form root - completely skipped)
+# │   └── old_code/
+# │       └── anything_goes.py
+# │
+# └── experimental/               (free-form root - completely skipped)
+#     └── new_feature_poc/
 #
 # ============================================================================
 # Why This Structure?
 # ============================================================================
 #
-# 1. **Domain Language**: Uses "lib" and "tools" to match team conventions
+# 1. **Domain Language**: Uses "lib" to match team conventions
 #
 # 2. **Component Separation**: Clear boundaries between api, web, and services
 #
@@ -135,7 +124,7 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 #    - controllers: Request handling
 #    - views: Presentation
 #
-# 4. **Migration Path**: Legacy code exempt via free_form_bases
+# 4. **Migration Path**: Legacy code exempt via free_form_roots at project root
 #
 # 5. **Innovation Space**: Experimental folder for prototyping without constraints
 #
@@ -144,15 +133,15 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 # ============================================================================
 #
 # Phase 1 (Current):
-#   - New code follows structure in api/, web/, services/
-#   - Legacy code in legacy/ (free-form, no validation)
+#   - New code follows structure in lib/api/, lib/web/, lib/services/
+#   - Legacy code in legacy/ at project root (free-form, no validation)
 #
 # Phase 2 (Next Quarter):
 #   - Refactor legacy code incrementally
-#   - Move refactored code to appropriate base folders
+#   - Move refactored code to appropriate base folders in lib/
 #
 # Phase 3 (Future):
-#   - Remove "legacy" from free_form_bases
+#   - Remove "legacy" from free_form_roots
 #   - All code follows structure
 #
 # ============================================================================
@@ -160,7 +149,7 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 # ============================================================================
 #
 # 1. New Features:
-#    - Choose appropriate base folder (api/web/services)
+#    - Choose appropriate base folder (lib/api/, lib/web/, lib/services/)
 #    - Create feature directory
 #    - Add standard folders as needed
 #    - Main logic goes in core/
