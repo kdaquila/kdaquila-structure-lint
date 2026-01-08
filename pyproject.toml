@@ -46,3 +46,11 @@ structure-lint = "structure_lint.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/structure_lint"]
+
+[tool.structure-lint]
+enabled = true
+
+[tool.structure-lint.validators]
+line_limits = true
+one_per_file = true
+structure = false  # Package may not follow opinionated structure

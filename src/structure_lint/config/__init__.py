@@ -1,7 +1,4 @@
-"""Configuration loading and management for structure-lint.
-
-This module re-exports everything from the config package for backward compatibility.
-"""
+"""Configuration loading and management for structure-lint."""
 
 from structure_lint.config.types import (
     Config,

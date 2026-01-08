@@ -1,7 +1,4 @@
-"""Counts and validates top-level definitions in files.
-
-This module re-exports everything from the definition_counter package for backward compatibility.
-"""
+"""Counts and validates top-level definitions in files."""
 
 from structure_lint.utils.definition_counter.counter import count_top_level_definitions
 from structure_lint.utils.definition_counter.validator import validate_file_definitions
