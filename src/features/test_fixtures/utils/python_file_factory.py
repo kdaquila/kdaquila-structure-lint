@@ -1,13 +1,15 @@
 """Factory fixture for creating Python test files dynamically."""
 
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 
 
 @pytest.fixture
-def python_file_factory(tmp_path: Path):
+def python_file_factory(tmp_path: Path) -> Callable[[str, str, Path | None], Path]:
     """Factory fixture to create Python files with specified content."""
+
     def _create_python_file(
         relative_path: str,
         content: str,

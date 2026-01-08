@@ -95,3 +95,21 @@ ignore = [
     "ARG001",  # Unused function argument (fixtures)
     "PLR2004", # Magic values OK in tests
 ]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_configs = true
+warn_unreachable = true
+pretty = true
+# Exclude test files from type checking
+exclude = [
+    "tests/",
+    ".*_test\\.py$",
+    ".*/tests/.*",
+]
+
+# Allow gradual typing for external dependencies
+[[tool.mypy.overrides]]
+module = "tomli.*"
+ignore_missing_imports = true
