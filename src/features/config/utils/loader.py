@@ -62,13 +62,13 @@ def load_config(
     line_limits_data = user_config.get("line_limits", {})
     line_limits = LineLimitsConfig(
         max_lines=line_limits_data.get("max_lines", 150),
-        search_paths=line_limits_data.get("search_paths", ["src", "scripts"]),
+        search_paths=line_limits_data.get("search_paths", ["src"]),
     )
 
     # One-per-file section
     one_per_file_data = user_config.get("one_per_file", {})
     one_per_file = OnePerFileConfig(
-        search_paths=one_per_file_data.get("search_paths", ["src", "scripts"]),
+        search_paths=one_per_file_data.get("search_paths", ["src"]),
     )
 
     # Structure section
