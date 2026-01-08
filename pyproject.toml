@@ -54,4 +54,4 @@ one_per_file = true
 structure = true
 
 [tool.structure-lint.structure]
-allowed_files = ["README.md", "__init__.py"]
+allowed_files = ["README.md"]

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.constants import INTERNALLY_ALLOWED_FILES
 from features.validation.utils.structure.general_folder import validate_general_folder
 
 
@@ -10,7 +11,8 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     """Validate custom folder in structured base."""
     errors: list[str] = []
 
-    allowed_files = config.structure.allowed_files
+    # Merge internally allowed files with config allowed files
+    allowed_files = INTERNALLY_ALLOWED_FILES + config.structure.allowed_files
     general_folder = config.structure.general_folder
     standard_folders = config.structure.standard_folders
 

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.constants import INTERNALLY_ALLOWED_FILES
 from features.validation.utils.structure.custom_folder import validate_custom_folder
 
 
@@ -10,10 +11,11 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
     """Validate features base folder structure."""
     errors: list[str] = []
 
-    # Check for files in base folder (not allowed)
+    # Check for files in base folder (only internally allowed files like __init__.py)
     files = [c.name for c in base_path.iterdir() if c.is_file()]
-    if files:
-        errors.append(f"{base_path}: Files not allowed in root: {files}")
+    disallowed = [f for f in files if f not in INTERNALLY_ALLOWED_FILES]
+    if disallowed:
+        errors.append(f"{base_path}: Files not allowed in root: {disallowed}")
 
     # Validate subdirectories
     for custom in base_path.iterdir():

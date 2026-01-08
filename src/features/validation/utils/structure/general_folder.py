@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.constants import INTERNALLY_ALLOWED_FILES
 
 
 def validate_general_folder(path: Path, config: Config) -> list[str]:
@@ -11,7 +12,8 @@ def validate_general_folder(path: Path, config: Config) -> list[str]:
     if not path.exists():
         return errors
 
-    allowed_files = config.structure.allowed_files
+    # Merge internally allowed files with config allowed files
+    allowed_files = INTERNALLY_ALLOWED_FILES + config.structure.allowed_files
     standard_folders = config.structure.standard_folders
 
     # Check for disallowed files
