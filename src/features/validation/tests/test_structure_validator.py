@@ -2,6 +2,7 @@
 
 
 
+from features.test_fixtures import custom_config, minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 

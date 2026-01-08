@@ -2,6 +2,7 @@
 
 
 
+from features.test_fixtures import minimal_config, python_file_factory
 from features.validation.utils.validator_line_limits import validate_line_limits
 
 

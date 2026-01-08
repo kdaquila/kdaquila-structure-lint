@@ -1,4 +1,5 @@
 """Internal constants for structure validation."""
 
-# Files that are always allowed internally, regardless of user configuration
-INTERNALLY_ALLOWED_FILES = ["__init__.py"]
+from features.validation.constants.internally_allowed import INTERNALLY_ALLOWED_FILES
+
+__all__ = ["INTERNALLY_ALLOWED_FILES"]

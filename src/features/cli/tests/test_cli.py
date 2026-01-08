@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from features.cli import main
+from features.test_fixtures import python_file_factory
 
 
 class TestCLIArgumentParsing:
