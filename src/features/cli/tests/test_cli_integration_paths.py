@@ -1,0 +1,66 @@
+"""Integration tests for CLI path handling."""
+
+from pathlib import Path
+
+from features.cli import main
+
+
+class TestCLIIntegrationPaths:
+    """Integration tests for CLI path handling."""
+
+    def test_cli_no_arguments_autodetect(self, tmp_path: Path, monkeypatch):
+        """Should auto-detect project root when no arguments provided."""
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text("""
+[tool.structure-lint]
+enabled = true
+
+[tool.structure-lint.validators]
+line_limits = false
+one_per_file = false
+structure = false
+""")
+
+        monkeypatch.chdir(tmp_path)
+        exit_code = main([])
+        assert exit_code == 0
+
+    def test_cli_with_relative_paths(self, tmp_path: Path, monkeypatch, python_file_factory):
+        """Should handle relative paths correctly."""
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text("""
+[tool.structure-lint]
+enabled = true
+
+[tool.structure-lint.validators]
+line_limits = true
+one_per_file = true
+structure = false
+""")
+
+        (tmp_path / "src").mkdir()
+        python_file_factory("src/module.py", "def hello():\n    pass\n", tmp_path)
+
+        monkeypatch.chdir(tmp_path)
+        exit_code = main(["--project-root", "."])
+        assert exit_code == 0
+
+    def test_cli_empty_project_with_validators_enabled(self, tmp_path: Path):
+        """Should handle empty project (no Python files) gracefully."""
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text("""
+[tool.structure-lint]
+enabled = true
+
+[tool.structure-lint.validators]
+line_limits = true
+one_per_file = true
+structure = false
+""")
+
+        # Create empty src directory
+        (tmp_path / "src").mkdir()
+
+        exit_code = main(["--project-root", str(tmp_path)])
+        # Should succeed (no violations in empty project)
+        assert exit_code == 0
