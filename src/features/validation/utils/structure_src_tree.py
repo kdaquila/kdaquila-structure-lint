@@ -11,22 +11,16 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     errors: list[str] = []
     children = {c.name for c in root.iterdir() if c.is_dir() and c.name != "__pycache__"}
 
-    src_base_folders = config.structure.src_base_folders
-    if children != src_base_folders:
-        missing = src_base_folders - children
-        extra = children - src_base_folders
-        if missing:
-            errors.append(f"{root}: Missing base folders: {missing}")
-        if extra:
-            errors.append(f"{root}: Unexpected folders: {extra}")
+    # Validate all subdirectories in src/ as base folders
+    # No exact match required - accept any folders
 
     files = [c.name for c in root.iterdir() if c.is_file()]
     if files:
         errors.append(f"{root}: Files not allowed in root: {files}")
 
-    for base in src_base_folders:
-        base_path = root / base
-        if base_path.exists():
-            errors.extend(validate_base_folder(base_path, config))
+    # Validate all actual subdirectories found in src/
+    for child in children:
+        base_path = root / child
+        errors.extend(validate_base_folder(base_path, config))
 
     return errors

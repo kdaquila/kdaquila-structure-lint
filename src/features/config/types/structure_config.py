@@ -8,7 +8,6 @@ class StructureConfig:
     """Configuration for structure validator."""
 
     src_root: str = "src"
-    src_base_folders: set[str] = field(default_factory=lambda: {"features"})
     standard_folders: set[str] = field(
         default_factory=lambda: {"types", "utils", "constants", "tests"}
     )

@@ -75,7 +75,6 @@ def load_config(
     structure_data = user_config.get("structure", {})
     structure = StructureConfig(
         src_root=structure_data.get("src_root", "src"),
-        src_base_folders=set(structure_data.get("src_base_folders", ["features"])),
         standard_folders=set(
             structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
         ),
