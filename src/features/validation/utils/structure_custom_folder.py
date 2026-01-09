@@ -11,10 +11,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     """Validate custom folder in structured base."""
     errors: list[str] = []
 
-    # Merge internally allowed files with config allowed files
-    allowed_files = list(config.structure.internally_allowed_files) + list(
-        config.structure.allowed_files
-    )
+    allowed_files = config.structure.allowed_files
     general_folder = config.structure.general_folder
     standard_folders = config.structure.standard_folders
 

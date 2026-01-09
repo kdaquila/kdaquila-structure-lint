@@ -20,7 +20,7 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     # No exact match required - accept any folders
 
     files = [c.name for c in root.iterdir() if c.is_file()]
-    disallowed = [f for f in files if f not in config.structure.internally_allowed_files]
+    disallowed = [f for f in files if f not in config.structure.allowed_files]
     if disallowed:
         errors.append(f"{root}: Files not allowed in root: {disallowed}")
 

@@ -36,4 +36,4 @@ class TestConfigDataclasses:
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.general_folder == "general"
         assert config.free_form_roots == set()
-        assert config.allowed_files == {"README.md"}
+        assert config.allowed_files == {"__init__.py", "README.md"}
