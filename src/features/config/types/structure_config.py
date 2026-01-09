@@ -13,7 +13,7 @@ class StructureConfig:
         default_factory=lambda: {"types", "utils", "constants", "tests"}
     )
     general_folder: str = "general"
-    allowed_files: set[str] = field(default_factory=lambda: {"__init__.py", "README.md"})
+    files_allowed_anywhere: set[str] = field(default_factory=lambda: {"__init__.py"})
     ignored_folders: set[str] = field(
         default_factory=lambda: {
             "__pycache__",
