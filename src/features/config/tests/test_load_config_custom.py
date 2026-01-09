@@ -112,3 +112,29 @@ allowed_files = ["README.md"]
         assert config.structure.general_folder == "shared"
         assert config.structure.free_form_roots == {"sandbox"}
         assert config.structure.allowed_files == {"README.md"}
+
+    def test_load_structure_internally_allowed_and_ignored(
+        self, tmp_path: Path
+    ) -> None:
+        """Should load internally_allowed_files and ignored_directories from TOML."""
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text("""
+[tool.structure-lint.structure]
+internally_allowed_files = ["__init__.py", "py.typed", "VERSION"]
+ignored_directories = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
+""")
+
+        config = load_config(project_root=tmp_path, config_path=pyproject)
+
+        assert config.structure.internally_allowed_files == {
+            "__init__.py",
+            "py.typed",
+            "VERSION",
+        }
+        assert config.structure.ignored_directories == {
+            "__pycache__",
+            ".venv",
+            "build",
+            "dist",
+            ".egg-info",
+        }

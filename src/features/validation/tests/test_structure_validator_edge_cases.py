@@ -94,3 +94,48 @@ class TestStructureValidatorEdgeCases:
 
         exit_code = validate_structure(config)
         assert exit_code == 0
+
+    def test_base_folder_cannot_use_standard_names(
+        self, minimal_config: Config, capsys: CaptureFixture[str]
+    ) -> None:
+        """Should fail when a base folder uses a standard folder name like 'types'."""
+        config = minimal_config
+
+        # Create structure
+        src = config.project_root / "src"
+        src.mkdir()
+
+        # Try to create a base folder named "types" directly under src/ - should fail
+        # Base folders (like "features", "apps") cannot use standard folder names
+        types_base = src / "types"
+        types_base.mkdir()
+        (types_base / "module.py").touch()
+
+        exit_code = validate_structure(config)
+        captured = capsys.readouterr()
+
+        # Should fail with error about reserved name
+        assert exit_code == 1
+        assert "conflicts with standard folder names" in captured.out
+        assert "types" in captured.out
+
+    def test_egg_info_ignored(self, minimal_config: Config) -> None:
+        """Should ignore .egg-info directories without causing validation errors."""
+        config = minimal_config
+
+        # Create valid structure
+        src = config.project_root / "src"
+        features = src / "features"
+        features.mkdir(parents=True)
+        (features / "my_feature").mkdir()
+        (features / "my_feature" / "types").mkdir()
+        (features / "my_feature" / "types" / "module.py").touch()
+
+        # Add .egg-info directory - should be ignored
+        # Using exact name since ignored_directories uses exact matching
+        (src / ".egg-info").mkdir()
+        (src / ".egg-info" / "PKG-INFO").touch()
+        (src / ".egg-info" / "SOURCES.txt").touch()
+
+        exit_code = validate_structure(config)
+        assert exit_code == 0

@@ -47,3 +47,49 @@ class TestStructureValidatorCustomConfig:
 
         exit_code = validate_structure(config)
         assert exit_code == 0
+
+    def test_custom_internally_allowed_files(self, minimal_config: Config) -> None:
+        """Should allow custom files like py.typed via internally_allowed_files config."""
+        config = minimal_config
+        config.structure.internally_allowed_files = {"__init__.py", "py.typed"}
+
+        # Create valid structure
+        src = config.project_root / "src"
+        features = src / "features"
+        features.mkdir(parents=True)
+        (features / "my_feature").mkdir()
+        (features / "my_feature" / "types").mkdir()
+        (features / "my_feature" / "types" / "module.py").touch()
+
+        # Add custom allowed file - should be allowed
+        (features / "my_feature" / "py.typed").touch()
+
+        exit_code = validate_structure(config)
+        assert exit_code == 0
+
+    def test_custom_ignored_directories(self, minimal_config: Config) -> None:
+        """Should ignore custom directories like .venv, build via ignored_directories config."""
+        config = minimal_config
+        config.structure.ignored_directories = {
+            "__pycache__",
+            ".venv",
+            "build",
+            ".egg-info",
+        }
+
+        # Create valid structure
+        src = config.project_root / "src"
+        features = src / "features"
+        features.mkdir(parents=True)
+        (features / "my_feature").mkdir()
+        (features / "my_feature" / "types").mkdir()
+        (features / "my_feature" / "types" / "module.py").touch()
+
+        # Add ignored directories - should be ignored
+        (features / "my_feature" / ".venv").mkdir()
+        (features / "my_feature" / ".venv" / "lib").mkdir()
+        (features / "my_feature" / "build").mkdir()
+        (features / "my_feature" / "build" / "output.txt").touch()
+
+        exit_code = validate_structure(config)
+        assert exit_code == 0
