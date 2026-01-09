@@ -158,10 +158,10 @@ search_paths = ["src"]
 search_paths = ["src"]
 
 [tool.structure-lint.structure]
-src_root = "src"
+strict_format_roots = ["src"]
+folder_depth = 2
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-free_form_roots = []
 allowed_files = ["__init__.py", "README.md"]
 ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```
