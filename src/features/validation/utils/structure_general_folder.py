@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.utils.pattern_match import matches_any_pattern
 
 
 def validate_general_folder(path: Path, config: Config) -> list[str]:
@@ -11,10 +12,7 @@ def validate_general_folder(path: Path, config: Config) -> list[str]:
     if not path.exists():
         return errors
 
-    # Merge internally allowed files with config allowed files
-    allowed_files = list(config.structure.internally_allowed_files) + list(
-        config.structure.allowed_files
-    )
+    allowed_files = config.structure.allowed_files
     standard_folders = config.structure.standard_folders
 
     # Check for disallowed files
@@ -25,7 +23,10 @@ def validate_general_folder(path: Path, config: Config) -> list[str]:
             f"{path}: Disallowed files (only {allowed_files} allowed): {disallowed}"
         )
 
-    children = {c.name for c in path.iterdir() if c.is_dir()}
+    children = {
+        c.name for c in path.iterdir()
+        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
+    }
     invalid = children - standard_folders
     if invalid:
         errors.append(

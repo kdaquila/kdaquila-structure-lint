@@ -162,9 +162,8 @@ src_root = "src"
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
 free_form_roots = []
-allowed_files = ["README.md"]
-internally_allowed_files = ["__init__.py"]
-ignored_directories = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", ".egg-info"]
+allowed_files = ["__init__.py", "README.md"]
+ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```
 
 For detailed configuration options, see [docs/configuration.md](docs/configuration.md).

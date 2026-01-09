@@ -24,7 +24,7 @@ class TestLoadConfigDefaults:
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.structure.general_folder == "general"
         assert config.structure.free_form_roots == set()
-        assert config.structure.allowed_files == {"README.md"}
+        assert config.structure.allowed_files == {"__init__.py", "README.md"}
 
     def test_load_config_with_minimal_toml(self, tmp_path: Path) -> None:
         """Should merge minimal config with defaults."""

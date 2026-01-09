@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.utils.pattern_match import matches_any_pattern
 from features.validation.utils.structure_custom_folder import validate_custom_folder
 
 
@@ -19,14 +20,16 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
         )
         return errors
 
-    # Check for files in base folder (only internally allowed files like __init__.py)
+    # Check for files in base folder (only allowed files like __init__.py)
     files = [c.name for c in base_path.iterdir() if c.is_file()]
-    disallowed = [f for f in files if f not in config.structure.internally_allowed_files]
+    disallowed = [f for f in files if f not in config.structure.allowed_files]
     if disallowed:
         errors.append(f"{base_path}: Files not allowed in root: {disallowed}")
 
     # Validate subdirectories
     for custom in base_path.iterdir():
-        if custom.is_dir() and custom.name not in config.structure.ignored_directories:
+        if custom.is_dir() and not matches_any_pattern(
+            custom.name, config.structure.ignored_folders
+        ):
             errors.extend(validate_custom_folder(custom, config, depth=1))
     return errors

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.utils.pattern_match import matches_any_pattern
 from features.validation.utils.structure_general_folder import validate_general_folder
 
 
@@ -10,10 +11,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     """Validate custom folder in structured base."""
     errors: list[str] = []
 
-    # Merge internally allowed files with config allowed files
-    allowed_files = list(config.structure.internally_allowed_files) + list(
-        config.structure.allowed_files
-    )
+    allowed_files = config.structure.allowed_files
     general_folder = config.structure.general_folder
     standard_folders = config.structure.standard_folders
 
@@ -32,7 +30,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     children = [
         c
         for c in path.iterdir()
-        if c.is_dir() and c.name not in config.structure.ignored_directories
+        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
     ]
     child_names = {c.name for c in children}
 
@@ -63,7 +61,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
         subdirs = [
             c
             for c in std_path.iterdir()
-            if c.is_dir() and c.name not in config.structure.ignored_directories
+            if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
         ]
         if subdirs:
             errors.append(f"{std_path}: Standard folder cannot have subdirectories.")
