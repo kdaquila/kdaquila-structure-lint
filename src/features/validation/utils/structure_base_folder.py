@@ -28,6 +28,8 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
 
     # Validate subdirectories
     for custom in base_path.iterdir():
-        if custom.is_dir() and not matches_any_pattern(custom.name, config.structure.ignored_folders):
+        if custom.is_dir() and not matches_any_pattern(
+            custom.name, config.structure.ignored_folders
+        ):
             errors.extend(validate_custom_folder(custom, config, depth=1))
     return errors
