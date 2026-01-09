@@ -32,16 +32,14 @@ from features.test_fixtures.utils import (
 )
 
 __all__ = [
-    # Helper functions (create_ prefix)
-    "create_custom_config",
-    "create_minimal_config",
-    "create_python_file",
-    "create_temp_project",
-    "create_temp_project_with_pyproject",
-    # Constants (UPPERCASE)
     "SAMPLE_EMPTY_FILE_CONTENT",
     "SAMPLE_MULTIPLE_DEFINITIONS_CONTENT",
     "SAMPLE_SYNTAX_ERROR_CONTENT",
     "SAMPLE_TOO_LONG_FILE_CONTENT",
     "SAMPLE_VALID_FILE_CONTENT",
+    "create_custom_config",
+    "create_minimal_config",
+    "create_python_file",
+    "create_temp_project",
+    "create_temp_project_with_pyproject",
 ]
