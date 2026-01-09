@@ -7,12 +7,12 @@ from dataclasses import dataclass, field
 class StructureConfig:
     """Configuration for structure validator."""
 
-    src_root: str = "src"
+    strict_format_roots: set[str] = field(default_factory=lambda: {"src"})
+    folder_depth: int = 2
     standard_folders: set[str] = field(
         default_factory=lambda: {"types", "utils", "constants", "tests"}
     )
     general_folder: str = "general"
-    free_form_roots: set[str] = field(default_factory=set)
     allowed_files: set[str] = field(default_factory=lambda: {"__init__.py", "README.md"})
     ignored_folders: set[str] = field(
         default_factory=lambda: {
