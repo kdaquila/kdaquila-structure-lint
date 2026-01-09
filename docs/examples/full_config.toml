@@ -30,21 +30,22 @@ search_paths = ["src"]
 search_paths = ["src"]
 
 [tool.structure-lint.structure]
-# Name of the source code root directory
-src_root = "src"
+# Root directories to validate with strict folder structure (opt-in model)
+# Only directories listed here are validated - others are ignored
+strict_format_roots = ["src"]
+
+# Maximum depth of custom/arbitrary-named folder nesting
+# Depth counts custom folders only, not standard folders
+# Example: src/features/auth/services/ = depth 2 (auth=1, services=2)
+folder_depth = 2
 
 # Standard folders that can appear inside feature/module directories
 # These represent common code organization patterns
 standard_folders = ["types", "utils", "constants", "tests"]
 
-# Name of the special "general" folder that can contain Python files directly
-# Used for miscellaneous code that doesn't fit into standard folders
+# Name of the special "general" folder for catch-all code
+# Can coexist with arbitrary-named folders, must contain standard folders
 general_folder = "general"
-
-# Top-level directories at project root that are exempt from all structure validation
-# Useful for legacy code, experiments, or special-case directories
-# Note: These are at project root level, not within src/
-free_form_roots = []
 
 # Non-Python files allowed in directories that normally shouldn't contain files
 # Useful for documentation files in organizational directories
@@ -78,6 +79,7 @@ allowed_files = ["README.md"]
 # 2. Use comments to document why you chose specific values
 # 3. Adjust line_limits.max_lines based on your team's preferences
 # 4. Customize standard_folders to match your architecture (e.g., MVC)
-# 5. Use free_form_roots for legacy or experimental code at project root
-# 6. Disable validators you don't want with false
+# 5. Only include directories you want validated in strict_format_roots
+# 6. Adjust folder_depth for deeper or shallower nesting limits
+# 7. Disable validators you don't want with false
 #
