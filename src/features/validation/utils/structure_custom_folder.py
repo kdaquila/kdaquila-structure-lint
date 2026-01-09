@@ -40,17 +40,22 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
 
     if has_general and has_standard:
         errors.append(f"{path}: Cannot mix general and standard folders.")
+    elif has_standard and has_custom:
+        errors.append(f"{path}: Cannot mix standard and custom folders at the same level.")
     elif has_general and not has_custom:
         errors.append(f"{path}: general requires at least one custom subfolder.")
     elif has_custom or has_general:
-        # Validate general folder if it exists
+        # General folder also counts toward depth limit
         if has_general:
-            errors.extend(validate_general_folder(path / general_folder, config))
+            if depth >= config.structure.folder_depth:
+                errors.append(f"{path / general_folder}: Exceeds max depth of {config.structure.folder_depth} custom layers.")
+            else:
+                errors.extend(validate_general_folder(path / general_folder, config))
         # Validate all custom subfolders
         for child in children:
             if child.name not in (general_folder, *standard_folders):
-                if depth >= 2:
-                    errors.append(f"{child}: Exceeds max depth of 2 custom layers.")
+                if depth >= config.structure.folder_depth:
+                    errors.append(f"{child}: Exceeds max depth of {config.structure.folder_depth} custom layers.")
                 else:
                     errors.extend(validate_custom_folder(child, config, depth + 1))
     elif not has_standard:
