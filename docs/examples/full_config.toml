@@ -23,22 +23,15 @@ max_lines = 150
 
 # Directories to search for Python files (relative to project root)
 # The tool automatically excludes: .venv/, __pycache__/, .git/, node_modules/
-search_paths = ["src", "scripts"]
+search_paths = ["src"]
 
 [tool.structure-lint.one_per_file]
 # Directories to search for Python files (relative to project root)
-search_paths = ["src", "scripts"]
+search_paths = ["src"]
 
 [tool.structure-lint.structure]
 # Name of the source code root directory
 src_root = "src"
-
-# Base folders allowed directly under src_root
-# These represent top-level organizational categories (e.g., features, services)
-src_base_folders = ["features"]
-
-# Name of the scripts/tools root directory
-scripts_root = "scripts"
 
 # Standard folders that can appear inside feature/module directories
 # These represent common code organization patterns
@@ -48,9 +41,10 @@ standard_folders = ["types", "utils", "constants", "tests"]
 # Used for miscellaneous code that doesn't fit into standard folders
 general_folder = "general"
 
-# Base folders that are exempt from structure rules (free-form organization)
+# Top-level directories at project root that are exempt from all structure validation
 # Useful for legacy code, experiments, or special-case directories
-free_form_bases = []
+# Note: These are at project root level, not within src/
+free_form_roots = []
 
 # Non-Python files allowed in directories that normally shouldn't contain files
 # Useful for documentation files in organizational directories
@@ -75,11 +69,6 @@ allowed_files = ["README.md"]
 # │       │       └── login.py
 # │       └── reporting/      (another feature)
 # │           └── ...
-# └── scripts/
-#     ├── migration/          (script folder)
-#     │   └── migrate_db.py
-#     └── analysis/           (script folder)
-#         └── report.py
 #
 # ============================================================================
 # Customization Tips:
@@ -89,6 +78,6 @@ allowed_files = ["README.md"]
 # 2. Use comments to document why you chose specific values
 # 3. Adjust line_limits.max_lines based on your team's preferences
 # 4. Customize standard_folders to match your architecture (e.g., MVC)
-# 5. Use free_form_bases for legacy or experimental code
+# 5. Use free_form_roots for legacy or experimental code at project root
 # 6. Disable validators you don't want with false
 #

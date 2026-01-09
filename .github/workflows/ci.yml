@@ -28,22 +28,15 @@ jobs:
 
     - name: Run mypy type checking
       run: |
-        mypy src/structure_lint --strict
+        mypy src/features --strict
 
     - name: Run ruff linting
       run: |
-        ruff check src/structure_lint tests
+        ruff check src/features
 
-    - name: Run pytest with coverage
+    - name: Run pytest
       run: |
-        pytest --cov=structure_lint --cov-report=term-missing --cov-report=xml
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      if: matrix.python-version == '3.13'
-      with:
-        file: ./coverage.xml
-        fail_ci_if_error: false
+        pytest src/
 
     - name: Self-lint (run structure-lint on itself)
       run: |
