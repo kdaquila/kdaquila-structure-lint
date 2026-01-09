@@ -15,7 +15,7 @@ class StructureConfig:
     free_form_roots: set[str] = field(default_factory=set)
     allowed_files: set[str] = field(default_factory=lambda: {"README.md"})
     internally_allowed_files: set[str] = field(
-        default_factory=lambda: {"__init__.py", "conftest.py"}
+        default_factory=lambda: {"__init__.py"}
     )
     ignored_directories: set[str] = field(
         default_factory=lambda: {

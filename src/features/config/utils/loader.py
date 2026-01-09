@@ -82,7 +82,7 @@ def load_config(
         free_form_roots=set(structure_data.get("free_form_roots", [])),
         allowed_files=set(structure_data.get("allowed_files", ["README.md"])),
         internally_allowed_files=set(
-            structure_data.get("internally_allowed_files", ["__init__.py", "conftest.py"])
+            structure_data.get("internally_allowed_files", ["__init__.py"])
         ),
         ignored_directories=set(
             structure_data.get(
