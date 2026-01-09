@@ -1,8 +1,6 @@
-"""Fixture for creating a minimal Config object with defaults."""
+"""Helper function for creating a minimal Config object with defaults."""
 
 from pathlib import Path
-
-import pytest
 
 from features.config import (
     Config,
@@ -13,9 +11,15 @@ from features.config import (
 )
 
 
-@pytest.fixture
-def minimal_config(tmp_path: Path) -> Config:
-    """Create a minimal Config object with all defaults."""
+def create_minimal_config(tmp_path: Path) -> Config:
+    """Create a minimal Config object with all defaults.
+
+    Args:
+        tmp_path: The temporary path to use as project root.
+
+    Returns:
+        A Config object with default settings.
+    """
     return Config(
         enabled=True,
         project_root=tmp_path,

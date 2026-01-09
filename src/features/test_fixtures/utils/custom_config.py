@@ -1,8 +1,6 @@
-"""Fixture for creating a Config object with custom settings."""
+"""Helper function for creating a Config object with custom settings."""
 
 from pathlib import Path
-
-import pytest
 
 from features.config import (
     Config,
@@ -13,9 +11,15 @@ from features.config import (
 )
 
 
-@pytest.fixture
-def custom_config(tmp_path: Path) -> Config:
-    """Create a Config object with custom settings."""
+def create_custom_config(tmp_path: Path) -> Config:
+    """Create a Config object with custom settings.
+
+    Args:
+        tmp_path: The temporary path to use as project root.
+
+    Returns:
+        A Config object with custom validator and path settings.
+    """
     return Config(
         enabled=True,
         project_root=tmp_path,

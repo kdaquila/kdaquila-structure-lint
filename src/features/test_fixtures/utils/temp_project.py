@@ -1,11 +1,15 @@
-"""Fixture for creating temporary project directories."""
+"""Helper function for creating temporary project directories."""
 
 from pathlib import Path
 
-import pytest
 
+def create_temp_project(tmp_path: Path) -> Path:
+    """Create a temporary project directory.
 
-@pytest.fixture
-def temp_project(tmp_path: Path) -> Path:
-    """Create a temporary project directory."""
+    Args:
+        tmp_path: The temporary path to use as the project directory.
+
+    Returns:
+        The tmp_path as the project directory.
+    """
     return tmp_path
