@@ -11,17 +11,21 @@ from features.validation.utils.validator_structure import validate_structure
 class TestStructureValidatorBasic:
     """Basic tests for validate_structure function."""
 
-    def test_missing_src_root_fails(
+    def test_missing_strict_format_root_warns_and_skips(
         self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
-        """Should fail when src root doesn't exist."""
+        """Should warn and skip when a strict_format_root doesn't exist."""
         config = create_minimal_config(tmp_path)
+        # Default strict_format_roots is {"src"}, but src/ doesn't exist
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
 
-        assert "not found" in captured.out or "Error" in captured.out
-        assert exit_code == 1
+        # Should warn about missing root
+        assert "Warning" in captured.out
+        assert "not found" in captured.out
+        # Still passes since no directories were actually validated
+        assert exit_code == 0
 
     def test_valid_minimal_structure_passes(self, tmp_path: Path) -> None:
         """Should pass with valid minimal structure."""

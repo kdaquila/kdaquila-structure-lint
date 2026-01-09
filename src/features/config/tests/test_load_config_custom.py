@@ -55,19 +55,19 @@ search_paths = ["modules"]
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
 [tool.structure-lint.structure]
-src_root = "lib"
+strict_format_roots = ["lib", "app"]
+folder_depth = 3
 standard_folders = ["types", "helpers"]
 general_folder = "common"
-free_form_roots = ["experimental"]
 allowed_files = ["README.md", "NOTES.md"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
-        assert config.structure.src_root == "lib"
+        assert config.structure.strict_format_roots == {"lib", "app"}
+        assert config.structure.folder_depth == 3
         assert config.structure.standard_folders == {"types", "helpers"}
         assert config.structure.general_folder == "common"
-        assert config.structure.free_form_roots == {"experimental"}
         assert config.structure.allowed_files == {"README.md", "NOTES.md"}
 
     def test_load_config_with_full_custom_config(self, tmp_path: Path) -> None:
@@ -90,10 +90,10 @@ search_paths = ["src"]
 search_paths = ["src"]
 
 [tool.structure-lint.structure]
-src_root = "source"
+strict_format_roots = ["source"]
+folder_depth = 1
 standard_folders = ["utils"]
 general_folder = "shared"
-free_form_roots = ["sandbox"]
 allowed_files = ["README.md"]
 """)
 
@@ -107,10 +107,10 @@ allowed_files = ["README.md"]
         assert config.line_limits.max_lines == 200
         assert config.line_limits.search_paths == ["src"]
         assert config.one_per_file.search_paths == ["src"]
-        assert config.structure.src_root == "source"
+        assert config.structure.strict_format_roots == {"source"}
+        assert config.structure.folder_depth == 1
         assert config.structure.standard_folders == {"utils"}
         assert config.structure.general_folder == "shared"
-        assert config.structure.free_form_roots == {"sandbox"}
         assert config.structure.allowed_files == {"README.md"}
 
     def test_load_structure_allowed_files_and_ignored(

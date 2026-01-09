@@ -20,11 +20,21 @@ class TestLoadConfigDefaults:
         assert config.line_limits.max_lines == 150
         assert config.line_limits.search_paths == ["src"]
         assert config.one_per_file.search_paths == ["src"]
-        assert config.structure.src_root == "src"
+        assert config.structure.strict_format_roots == {"src"}
+        assert config.structure.folder_depth == 2
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.structure.general_folder == "general"
-        assert config.structure.free_form_roots == set()
         assert config.structure.allowed_files == {"__init__.py", "README.md"}
+        assert config.structure.ignored_folders == {
+            "__pycache__",
+            ".mypy_cache",
+            ".pytest_cache",
+            ".ruff_cache",
+            ".hypothesis",
+            ".tox",
+            ".coverage",
+            "*.egg-info",
+        }
 
     def test_load_config_with_minimal_toml(self, tmp_path: Path) -> None:
         """Should merge minimal config with defaults."""
