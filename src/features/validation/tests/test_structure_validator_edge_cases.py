@@ -1,13 +1,16 @@
 """Tests for edge cases and special scenarios in structure validation."""
 
 
+from _pytest.capture import CaptureFixture
+
+from features.config import Config
 from features.validation.utils.validator_structure import validate_structure
 
 
 class TestStructureValidatorEdgeCases:
     """Tests for edge cases and special scenarios."""
 
-    def test_pycache_ignored_in_src_root(self, minimal_config):
+    def test_pycache_ignored_in_src_root(self, minimal_config: Config) -> None:
         """Should ignore __pycache__ directories."""
         config = minimal_config
 
@@ -27,7 +30,9 @@ class TestStructureValidatorEdgeCases:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_multiple_structure_violations_all_reported(self, minimal_config, capsys):
+    def test_multiple_structure_violations_all_reported(
+        self, minimal_config: Config, capsys: CaptureFixture[str]
+    ) -> None:
         """Should report all violations, not just first one."""
         config = minimal_config
 
@@ -48,7 +53,7 @@ class TestStructureValidatorEdgeCases:
         assert "Files not allowed" in captured.out or "file1.py" in captured.out
         assert exit_code == 1
 
-    def test_empty_src_directory_passes(self, minimal_config):
+    def test_empty_src_directory_passes(self, minimal_config: Config) -> None:
         """Should pass when src directory is empty (no base folders yet)."""
         config = minimal_config
 
@@ -59,7 +64,7 @@ class TestStructureValidatorEdgeCases:
         # Empty src is valid - allows gradual project setup
         assert exit_code == 0
 
-    def test_complex_valid_structure(self, minimal_config):
+    def test_complex_valid_structure(self, minimal_config: Config) -> None:
         """Should pass with complex but valid structure."""
         config = minimal_config
 

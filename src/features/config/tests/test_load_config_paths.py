@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 
 from features.config import load_config
 
@@ -10,7 +11,9 @@ from features.config import load_config
 class TestLoadConfigPaths:
     """Tests for path resolution and error handling."""
 
-    def test_load_config_autodetect_project_root(self, tmp_path: Path, monkeypatch):
+    def test_load_config_autodetect_project_root(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
         """Should auto-detect project root when not specified."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("[tool.structure-lint]\nenabled = true")
@@ -23,7 +26,7 @@ class TestLoadConfigPaths:
 
         assert config.project_root == tmp_path
 
-    def test_load_config_with_config_path_sets_project_root(self, tmp_path: Path):
+    def test_load_config_with_config_path_sets_project_root(self, tmp_path: Path) -> None:
         """Should set project_root to config_path parent if not specified."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("[tool.structure-lint]\nenabled = true")
@@ -32,7 +35,7 @@ class TestLoadConfigPaths:
 
         assert config.project_root == tmp_path
 
-    def test_load_config_invalid_toml(self, tmp_path: Path):
+    def test_load_config_invalid_toml(self, tmp_path: Path) -> None:
         """Should raise error for invalid TOML."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""

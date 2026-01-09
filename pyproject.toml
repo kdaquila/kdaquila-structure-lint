@@ -102,12 +102,6 @@ strict = true
 warn_unused_configs = true
 warn_unreachable = true
 pretty = true
-# Exclude test files from type checking
-exclude = [
-    "tests/",
-    ".*_test\\.py$",
-    ".*/tests/.*",
-]
 
 # Allow gradual typing for external dependencies
 [[tool.mypy.overrides]]

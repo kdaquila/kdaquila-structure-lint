@@ -4,6 +4,7 @@ from pathlib import Path
 
 from features.config import Config
 from features.validation.constants import INTERNALLY_ALLOWED_FILES
+from features.validation.constants.internally_allowed import IGNORED_DIRECTORIES
 from features.validation.utils.structure_general_folder import validate_general_folder
 
 
@@ -28,7 +29,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
             f"{path}: Disallowed files (only {allowed_files} allowed): {disallowed}"
         )
 
-    children = [c for c in path.iterdir() if c.is_dir() and c.name != "__pycache__"]
+    children = [c for c in path.iterdir() if c.is_dir() and c.name not in IGNORED_DIRECTORIES]
     child_names = {c.name for c in children}
 
     has_general = general_folder in child_names
@@ -55,7 +56,11 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
 
     for std in child_names & standard_folders:
         std_path = path / std
-        subdirs = [c for c in std_path.iterdir() if c.is_dir() and c.name != "__pycache__"]
+        subdirs = [
+            c
+            for c in std_path.iterdir()
+            if c.is_dir() and c.name not in IGNORED_DIRECTORIES
+        ]
         if subdirs:
             errors.append(f"{std_path}: Standard folder cannot have subdirectories.")
 

@@ -1,13 +1,14 @@
 """Tests for custom structure configuration."""
 
 
+from features.config import Config
 from features.validation.utils.validator_structure import validate_structure
 
 
 class TestStructureValidatorCustomConfig:
     """Tests for custom structure configuration."""
 
-    def test_custom_src_root(self, minimal_config):
+    def test_custom_src_root(self, minimal_config: Config) -> None:
         """Should use custom src_root."""
         config = minimal_config
         config.structure.src_root = "lib"
@@ -23,7 +24,7 @@ class TestStructureValidatorCustomConfig:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_free_form_roots_allowed(self, minimal_config):
+    def test_free_form_roots_allowed(self, minimal_config: Config) -> None:
         """Should allow free-form structure in free_form_roots at project root."""
         config = minimal_config
         config.structure.free_form_roots = {"experimental"}

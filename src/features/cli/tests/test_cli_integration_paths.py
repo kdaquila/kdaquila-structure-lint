@@ -1,6 +1,9 @@
 """Integration tests for CLI path handling."""
 
+from collections.abc import Callable
 from pathlib import Path
+
+from _pytest.monkeypatch import MonkeyPatch
 
 from features.cli import main
 
@@ -8,7 +11,7 @@ from features.cli import main
 class TestCLIIntegrationPaths:
     """Integration tests for CLI path handling."""
 
-    def test_cli_no_arguments_autodetect(self, tmp_path: Path, monkeypatch):
+    def test_cli_no_arguments_autodetect(self, tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
         """Should auto-detect project root when no arguments provided."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -25,7 +28,12 @@ structure = false
         exit_code = main([])
         assert exit_code == 0
 
-    def test_cli_with_relative_paths(self, tmp_path: Path, monkeypatch, python_file_factory):
+    def test_cli_with_relative_paths(
+        self,
+        tmp_path: Path,
+        monkeypatch: MonkeyPatch,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should handle relative paths correctly."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -45,7 +53,7 @@ structure = false
         exit_code = main(["--project-root", "."])
         assert exit_code == 0
 
-    def test_cli_empty_project_with_validators_enabled(self, tmp_path: Path):
+    def test_cli_empty_project_with_validators_enabled(self, tmp_path: Path) -> None:
         """Should handle empty project (no Python files) gracefully."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""

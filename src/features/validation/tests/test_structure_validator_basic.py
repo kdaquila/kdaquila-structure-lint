@@ -1,13 +1,18 @@
 """Tests for basic structure validation functionality."""
 
 
+from _pytest.capture import CaptureFixture
+
+from features.config import Config
 from features.validation.utils.validator_structure import validate_structure
 
 
 class TestStructureValidatorBasic:
     """Basic tests for validate_structure function."""
 
-    def test_missing_src_root_fails(self, minimal_config, capsys):
+    def test_missing_src_root_fails(
+        self, minimal_config: Config, capsys: CaptureFixture[str]
+    ) -> None:
         """Should fail when src root doesn't exist."""
         config = minimal_config
 
@@ -17,7 +22,7 @@ class TestStructureValidatorBasic:
         assert "not found" in captured.out or "Error" in captured.out
         assert exit_code == 1
 
-    def test_valid_minimal_structure_passes(self, minimal_config):
+    def test_valid_minimal_structure_passes(self, minimal_config: Config) -> None:
         """Should pass with valid minimal structure."""
         config = minimal_config
 
@@ -34,7 +39,7 @@ class TestStructureValidatorBasic:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_files_in_src_root_fails(self, minimal_config):
+    def test_files_in_src_root_fails(self, minimal_config: Config) -> None:
         """Should fail when files exist in src root."""
         config = minimal_config
 
@@ -48,7 +53,9 @@ class TestStructureValidatorBasic:
         exit_code = validate_structure(config)
         assert exit_code == 1
 
-    def test_files_in_base_folder_fails(self, minimal_config, capsys):
+    def test_files_in_base_folder_fails(
+        self, minimal_config: Config, capsys: CaptureFixture[str]
+    ) -> None:
         """Should fail when files exist directly in base folders like features/."""
         config = minimal_config
 
@@ -68,7 +75,7 @@ class TestStructureValidatorBasic:
         assert "Files not allowed in root" in captured.out
         assert "calculator.py" in captured.out
 
-    def test_multiple_base_folders_accepted(self, minimal_config):
+    def test_multiple_base_folders_accepted(self, minimal_config: Config) -> None:
         """Any base folders in src/ should be accepted automatically."""
         config = minimal_config
 

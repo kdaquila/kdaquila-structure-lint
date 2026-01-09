@@ -8,7 +8,7 @@ from features.config import load_config
 class TestLoadConfigCustom:
     """Tests for custom configuration loading."""
 
-    def test_load_config_with_custom_validators(self, tmp_path: Path):
+    def test_load_config_with_custom_validators(self, tmp_path: Path) -> None:
         """Should load custom validator toggles."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -24,7 +24,7 @@ one_per_file = false
         assert config.validators.line_limits is False
         assert config.validators.one_per_file is False
 
-    def test_load_config_with_custom_line_limits(self, tmp_path: Path):
+    def test_load_config_with_custom_line_limits(self, tmp_path: Path) -> None:
         """Should load custom line limits configuration."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -38,7 +38,7 @@ search_paths = ["src", "lib", "app"]
         assert config.line_limits.max_lines == 100
         assert config.line_limits.search_paths == ["src", "lib", "app"]
 
-    def test_load_config_with_custom_one_per_file(self, tmp_path: Path):
+    def test_load_config_with_custom_one_per_file(self, tmp_path: Path) -> None:
         """Should load custom one-per-file configuration."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -50,7 +50,7 @@ search_paths = ["modules"]
 
         assert config.one_per_file.search_paths == ["modules"]
 
-    def test_load_config_with_custom_structure(self, tmp_path: Path):
+    def test_load_config_with_custom_structure(self, tmp_path: Path) -> None:
         """Should load custom structure configuration."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -70,7 +70,7 @@ allowed_files = ["README.md", "NOTES.md"]
         assert config.structure.free_form_roots == {"experimental"}
         assert config.structure.allowed_files == {"README.md", "NOTES.md"}
 
-    def test_load_config_with_full_custom_config(self, tmp_path: Path):
+    def test_load_config_with_full_custom_config(self, tmp_path: Path) -> None:
         """Should load comprehensive custom configuration."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""

@@ -1,13 +1,24 @@
 """Tests for error handling and reporting in one-per-file validation."""
 
 
+from collections.abc import Callable
+from pathlib import Path
+
+from _pytest.capture import CaptureFixture
+
+from features.config import Config
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
 class TestOnePerFileValidatorErrors:
     """Tests for error handling and reporting."""
 
-    def test_syntax_error_reported_as_failure(self, minimal_config, python_file_factory, capsys):
+    def test_syntax_error_reported_as_failure(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should report files with syntax errors."""
         config = minimal_config
         (config.project_root / "src").mkdir()
@@ -23,7 +34,12 @@ class TestOnePerFileValidatorErrors:
         assert "Error parsing file" in captured.out or "broken.py" in captured.out
         assert exit_code == 1
 
-    def test_error_messages_use_relative_paths(self, minimal_config, python_file_factory, capsys):
+    def test_error_messages_use_relative_paths(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should use relative paths in error messages."""
         config = minimal_config
         (config.project_root / "src").mkdir()
@@ -43,7 +59,12 @@ class TestOnePerFileValidatorErrors:
         )
         assert exit_code == 1
 
-    def test_multiple_violations_all_reported(self, minimal_config, python_file_factory, capsys):
+    def test_multiple_violations_all_reported(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should report all violations, not just first one."""
         config = minimal_config
         (config.project_root / "src").mkdir()
@@ -64,8 +85,11 @@ class TestOnePerFileValidatorErrors:
         assert exit_code == 1
 
     def test_error_message_shows_definition_names(
-        self, minimal_config, python_file_factory, capsys
-    ):
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should show names of definitions in error message."""
         config = minimal_config
         (config.project_root / "src").mkdir()
@@ -90,7 +114,11 @@ class Greeting:
         assert "Greeting" in captured.out
         assert exit_code == 1
 
-    def test_unicode_in_definition_names(self, minimal_config, python_file_factory):
+    def test_unicode_in_definition_names(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should handle Unicode in definition names."""
         config = minimal_config
         (config.project_root / "src").mkdir()

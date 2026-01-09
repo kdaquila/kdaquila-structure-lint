@@ -1,6 +1,9 @@
 """Integration tests for CLI with multiple validators."""
 
+from collections.abc import Callable
 from pathlib import Path
+
+from _pytest.capture import CaptureFixture
 
 from features.cli import main
 
@@ -8,7 +11,11 @@ from features.cli import main
 class TestCLIIntegrationValidators:
     """Integration tests for CLI with multiple validators."""
 
-    def test_cli_with_multiple_validators_all_pass(self, tmp_path: Path, python_file_factory):
+    def test_cli_with_multiple_validators_all_pass(
+        self,
+        tmp_path: Path,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should pass when multiple validators all succeed."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -27,7 +34,11 @@ structure = false
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 0
 
-    def test_cli_with_multiple_validators_one_fails(self, tmp_path: Path, python_file_factory):
+    def test_cli_with_multiple_validators_one_fails(
+        self,
+        tmp_path: Path,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should fail when any validator fails."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -51,7 +62,9 @@ structure = false
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 1
 
-    def test_cli_with_missing_search_paths(self, tmp_path: Path, capsys):
+    def test_cli_with_missing_search_paths(
+        self, tmp_path: Path, capsys: CaptureFixture[str]
+    ) -> None:
         """Should handle missing search paths gracefully."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -75,7 +88,12 @@ search_paths = ["nonexistent"]
         # Should still succeed (no violations found)
         assert exit_code == 0
 
-    def test_cli_output_messages(self, tmp_path: Path, python_file_factory, capsys):
+    def test_cli_output_messages(
+        self,
+        tmp_path: Path,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should produce helpful output messages."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""

@@ -8,7 +8,7 @@ from features.config import load_config
 class TestLoadConfigDefaults:
     """Tests for default configuration loading."""
 
-    def test_load_config_with_all_defaults(self, tmp_path: Path):
+    def test_load_config_with_all_defaults(self, tmp_path: Path) -> None:
         """Should use all default values when no config file exists."""
         config = load_config(project_root=tmp_path)
 
@@ -26,7 +26,7 @@ class TestLoadConfigDefaults:
         assert config.structure.free_form_roots == set()
         assert config.structure.allowed_files == {"README.md"}
 
-    def test_load_config_with_minimal_toml(self, tmp_path: Path):
+    def test_load_config_with_minimal_toml(self, tmp_path: Path) -> None:
         """Should merge minimal config with defaults."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -41,7 +41,7 @@ enabled = false
         assert config.validators.line_limits is True
         assert config.line_limits.max_lines == 150
 
-    def test_load_config_partial_overrides(self, tmp_path: Path):
+    def test_load_config_partial_overrides(self, tmp_path: Path) -> None:
         """Should merge partial config with defaults."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -55,7 +55,7 @@ max_lines = 80
         assert config.line_limits.max_lines == 80
         assert config.line_limits.search_paths == ["src"]  # default
 
-    def test_load_config_missing_tool_section(self, tmp_path: Path):
+    def test_load_config_missing_tool_section(self, tmp_path: Path) -> None:
         """Should use defaults when [tool.structure-lint] section missing."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -70,7 +70,7 @@ name = "test-project"
         assert config.validators.line_limits is True
         assert config.line_limits.max_lines == 150
 
-    def test_load_config_nonexistent_file_uses_defaults(self, tmp_path: Path):
+    def test_load_config_nonexistent_file_uses_defaults(self, tmp_path: Path) -> None:
         """Should use defaults when config file doesn't exist."""
         config = load_config(project_root=tmp_path)
 

@@ -1,13 +1,23 @@
 """Tests for configuration and path handling in one-per-file validation."""
 
 
+from collections.abc import Callable
+from pathlib import Path
+
+from _pytest.capture import CaptureFixture
+
+from features.config import Config
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
 class TestOnePerFileValidatorConfig:
     """Tests for configuration and path handling."""
 
-    def test_custom_search_paths(self, minimal_config, python_file_factory):
+    def test_custom_search_paths(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should check custom search paths."""
         config = minimal_config
         config.one_per_file.search_paths = ["lib", "app"]
@@ -22,7 +32,7 @@ class TestOnePerFileValidatorConfig:
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_missing_search_path(self, minimal_config, capsys):
+    def test_missing_search_path(self, minimal_config: Config, capsys: CaptureFixture[str]) -> None:
         """Should warn about missing search paths and continue."""
         config = minimal_config
         config.one_per_file.search_paths = ["nonexistent", "src"]
@@ -39,7 +49,9 @@ class TestOnePerFileValidatorConfig:
         # Should still succeed
         assert exit_code == 0
 
-    def test_all_search_paths_missing(self, minimal_config, capsys):
+    def test_all_search_paths_missing(
+        self, minimal_config: Config, capsys: CaptureFixture[str]
+    ) -> None:
         """Should handle all search paths missing gracefully."""
         config = minimal_config
         config.one_per_file.search_paths = ["nonexistent1", "nonexistent2"]
@@ -52,7 +64,11 @@ class TestOnePerFileValidatorConfig:
         # Should succeed (no files to check)
         assert exit_code == 0
 
-    def test_nested_directories(self, minimal_config, python_file_factory):
+    def test_nested_directories(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should check files in nested directories."""
         config = minimal_config
         (config.project_root / "src" / "sub" / "deep").mkdir(parents=True)
@@ -64,7 +80,11 @@ class TestOnePerFileValidatorConfig:
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_excludes_venv_directory(self, minimal_config, python_file_factory):
+    def test_excludes_venv_directory(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should exclude .venv and venv directories."""
         config = minimal_config
 
@@ -81,7 +101,11 @@ class TestOnePerFileValidatorConfig:
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_excludes_pycache_directory(self, minimal_config, python_file_factory):
+    def test_excludes_pycache_directory(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should exclude __pycache__ directories."""
         config = minimal_config
 
@@ -95,7 +119,11 @@ class TestOnePerFileValidatorConfig:
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_excludes_git_directory(self, minimal_config, python_file_factory):
+    def test_excludes_git_directory(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should exclude .git directories."""
         config = minimal_config
 

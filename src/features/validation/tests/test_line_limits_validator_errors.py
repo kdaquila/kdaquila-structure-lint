@@ -1,13 +1,24 @@
 """Tests for error handling and reporting in line limits validation."""
 
 
+from collections.abc import Callable
+from pathlib import Path
+
+from _pytest.capture import CaptureFixture
+
+from features.config import Config
 from features.validation.utils.validator_line_limits import validate_line_limits
 
 
 class TestLineLimitsValidatorErrors:
     """Tests for error handling and reporting."""
 
-    def test_error_messages_use_relative_paths(self, minimal_config, python_file_factory, capsys):
+    def test_error_messages_use_relative_paths(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should use relative paths in error messages."""
         config = minimal_config
         config.line_limits.max_lines = 5
@@ -29,7 +40,12 @@ class TestLineLimitsValidatorErrors:
         # Should not contain absolute path markers
         assert exit_code == 1
 
-    def test_multiple_violations_all_reported(self, minimal_config, python_file_factory, capsys):
+    def test_multiple_violations_all_reported(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+        capsys: CaptureFixture[str],
+    ) -> None:
         """Should report all violations, not just first one."""
         config = minimal_config
         config.line_limits.max_lines = 5
@@ -50,7 +66,11 @@ class TestLineLimitsValidatorErrors:
         assert "file3.py" in captured.out
         assert exit_code == 1
 
-    def test_unicode_file_content(self, minimal_config, python_file_factory):
+    def test_unicode_file_content(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should handle Unicode content correctly."""
         config = minimal_config
         config.line_limits.max_lines = 5
@@ -63,7 +83,11 @@ class TestLineLimitsValidatorErrors:
         exit_code = validate_line_limits(config)
         assert exit_code == 0
 
-    def test_file_with_very_long_lines(self, minimal_config, python_file_factory):
+    def test_file_with_very_long_lines(
+        self,
+        minimal_config: Config,
+        python_file_factory: Callable[[str, str, Path | None], Path],
+    ) -> None:
         """Should count lines correctly even with very long lines."""
         config = minimal_config
         config.line_limits.max_lines = 5
@@ -78,7 +102,9 @@ class TestLineLimitsValidatorErrors:
         exit_code = validate_line_limits(config)
         assert exit_code == 0
 
-    def test_output_shows_max_lines_limit(self, minimal_config, capsys):
+    def test_output_shows_max_lines_limit(
+        self, minimal_config: Config, capsys: CaptureFixture[str]
+    ) -> None:
         """Should show the max_lines limit in output."""
         config = minimal_config
         config.line_limits.max_lines = 100

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from features.config import Config
 from features.validation.constants import INTERNALLY_ALLOWED_FILES
+from features.validation.constants.internally_allowed import IGNORED_DIRECTORIES
 from features.validation.utils.structure_custom_folder import validate_custom_folder
 
 
@@ -19,6 +20,6 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
 
     # Validate subdirectories
     for custom in base_path.iterdir():
-        if custom.is_dir() and custom.name != "__pycache__":
+        if custom.is_dir() and custom.name not in IGNORED_DIRECTORIES:
             errors.extend(validate_custom_folder(custom, config, depth=1))
     return errors
