@@ -6,6 +6,7 @@ from pathlib import Path
 from _pytest.monkeypatch import MonkeyPatch
 
 from features.cli import main
+from features.test_fixtures import python_file_factory
 
 
 class TestCLIIntegrationPaths:

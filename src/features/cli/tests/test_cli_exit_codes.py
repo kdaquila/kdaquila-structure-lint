@@ -4,6 +4,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from features.cli import main
+from features.test_fixtures import python_file_factory
 
 
 class TestCLIExitCodes:
