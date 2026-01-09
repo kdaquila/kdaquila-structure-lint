@@ -23,14 +23,26 @@ def validate_general_folder(path: Path, config: Config) -> list[str]:
             f"{path}: Disallowed files (only {allowed_files} allowed): {disallowed}"
         )
 
-    children = {
-        c.name for c in path.iterdir()
+    children = [
+        c for c in path.iterdir()
         if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
-    }
-    invalid = children - standard_folders
+    ]
+    child_names = {c.name for c in children}
+    invalid = child_names - standard_folders
     if invalid:
         errors.append(
             f"{path}: general can only contain standard folders, found: {invalid}"
         )
+
+    # Validate that standard folders inside general don't have subdirectories
+    for std in child_names & standard_folders:
+        std_path = path / std
+        subdirs = [
+            c
+            for c in std_path.iterdir()
+            if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
+        ]
+        if subdirs:
+            errors.append(f"{std_path}: Standard folder cannot have subdirectories.")
 
     return errors
