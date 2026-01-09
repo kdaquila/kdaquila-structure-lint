@@ -12,7 +12,9 @@ def validate_general_folder(path: Path, config: Config) -> list[str]:
         return errors
 
     # Merge internally allowed files with config allowed files
-    allowed_files = list(config.structure.internally_allowed_files) + list(config.structure.allowed_files)
+    allowed_files = list(config.structure.internally_allowed_files) + list(
+        config.structure.allowed_files
+    )
     standard_folders = config.structure.standard_folders
 
     # Check for disallowed files

@@ -13,8 +13,9 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
     # Prevent base folders from using standard folder names
     if base_path.name in config.structure.standard_folders:
         errors.append(
-            f"{base_path}: Base folder '{base_path.name}' conflicts with standard folder names "
-            f"{config.structure.standard_folders}. Base folders (features) cannot use these reserved names."
+            f"{base_path}: Base folder '{base_path.name}' conflicts with standard "
+            f"folder names {config.structure.standard_folders}. "
+            f"Base folders (features) cannot use these reserved names."
         )
         return errors
 
