@@ -74,12 +74,12 @@ def load_config(
     # Structure section
     structure_data = user_config.get("structure", {})
     structure = StructureConfig(
-        src_root=structure_data.get("src_root", "src"),
+        strict_format_roots=set(structure_data.get("strict_format_roots", ["src"])),
+        folder_depth=structure_data.get("folder_depth", 2),
         standard_folders=set(
             structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
         ),
         general_folder=structure_data.get("general_folder", "general"),
-        free_form_roots=set(structure_data.get("free_form_roots", [])),
         allowed_files=set(structure_data.get("allowed_files", ["__init__.py", "README.md"])),
         ignored_folders=set(
             structure_data.get(
