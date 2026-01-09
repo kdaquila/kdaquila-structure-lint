@@ -80,7 +80,7 @@ def load_config(
             structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
         ),
         general_folder=structure_data.get("general_folder", "general"),
-        allowed_files=set(structure_data.get("allowed_files", ["__init__.py", "README.md"])),
+        files_allowed_anywhere=set(structure_data.get("files_allowed_anywhere", ["__init__.py"])),
         ignored_folders=set(
             structure_data.get(
                 "ignored_folders",
