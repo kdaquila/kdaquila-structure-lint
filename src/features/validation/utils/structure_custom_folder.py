@@ -47,15 +47,18 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     elif has_custom or has_general:
         # General folder also counts toward depth limit
         if has_general:
-            if depth >= config.structure.folder_depth:
-                errors.append(f"{path / general_folder}: Exceeds max depth of {config.structure.folder_depth} custom layers.")
+            max_depth = config.structure.folder_depth
+            general_path = path / general_folder
+            if depth >= max_depth:
+                errors.append(f"{general_path}: Exceeds max depth of {max_depth} custom layers.")
             else:
-                errors.extend(validate_general_folder(path / general_folder, config))
+                errors.extend(validate_general_folder(general_path, config))
         # Validate all custom subfolders
+        max_depth = config.structure.folder_depth
         for child in children:
             if child.name not in (general_folder, *standard_folders):
-                if depth >= config.structure.folder_depth:
-                    errors.append(f"{child}: Exceeds max depth of {config.structure.folder_depth} custom layers.")
+                if depth >= max_depth:
+                    errors.append(f"{child}: Exceeds max depth of {max_depth} custom layers.")
                 else:
                     errors.extend(validate_custom_folder(child, config, depth + 1))
     elif not has_standard:
