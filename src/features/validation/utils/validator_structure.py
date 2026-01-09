@@ -1,6 +1,6 @@
 """Validates project folder structure conventions.
 
-Validates the src tree which has base_folders (apps, features) with structured rules.
+Validates strict_format_roots which have base_folders (apps, features) with structured rules.
 
 See utils/structure/ modules for detailed validation logic.
 """
@@ -12,40 +12,46 @@ from features.validation.utils.structure_src_tree import validate_src_tree
 
 
 def validate_structure(config: Config) -> int:
-    """Run validation on src tree and return exit code."""
+    """Run validation on all strict_format_roots and return exit code."""
     project_root = config.project_root
-    src_root = config.structure.src_root
-    free_form_roots = config.structure.free_form_roots
+    strict_format_roots = config.structure.strict_format_roots
     all_errors: list[str] = []
 
-    # Validate src tree (unless src_root itself is in free_form_roots)
-    if src_root in free_form_roots:
-        print(f"⏭️  Skipping {src_root}/ (in free_form_roots)")
-        print("✅ All folder structures are valid!")
-        return 0
-
-    src_path = project_root / src_root
-    if not src_path.exists():
-        print(f"❌ Error: {src_root}/ not found")
+    # Require at least one strict_format_root
+    if not strict_format_roots:
+        print("Error: strict_format_roots is empty. At least one root is required.")
         return 1
 
-    print(f"🔍 Validating {src_root}/ tree...")
-    src_errors = validate_src_tree(src_path, config)
-    # Make paths relative to project root for cleaner error messages
-    src_errors = [
-        error.replace(str(project_root) + "\\", "").replace(str(project_root) + "/", "")
-        for error in src_errors
-    ]
-    all_errors.extend(src_errors)
+    validated_count = 0
+
+    # Validate each strict_format_root
+    for root_name in sorted(strict_format_roots):
+        root_path = project_root / root_name
+        if not root_path.exists():
+            print(f"Warning: {root_name}/ not found, skipping")
+            continue
+
+        print(f"Validating {root_name}/ tree...")
+        root_errors = validate_src_tree(root_path, config)
+        # Make paths relative to project root for cleaner error messages
+        root_errors = [
+            error.replace(str(project_root) + "\\", "").replace(str(project_root) + "/", "")
+            for error in root_errors
+        ]
+        all_errors.extend(root_errors)
+        validated_count += 1
 
     # Report results
     if all_errors:
-        print(f"\n❌ Found {len(all_errors)} validation error(s):\n")
+        print(f"\nFound {len(all_errors)} validation error(s):\n")
         for error in all_errors:
-            print(f"  • {error}")
+            print(f"  - {error}")
         return 1
 
-    print("✅ All folder structures are valid!")
+    if validated_count == 0:
+        print("Warning: No strict_format_roots directories found to validate")
+
+    print("All folder structures are valid!")
     return 0
 
 

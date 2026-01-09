@@ -55,20 +55,20 @@ search_paths = ["modules"]
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
 [tool.structure-lint.structure]
-src_root = "lib"
+strict_format_roots = ["lib", "app"]
+folder_depth = 3
 standard_folders = ["types", "helpers"]
 general_folder = "common"
-free_form_roots = ["experimental"]
-allowed_files = ["README.md", "NOTES.md"]
+files_allowed_anywhere = ["README.md", "NOTES.md"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
-        assert config.structure.src_root == "lib"
+        assert config.structure.strict_format_roots == {"lib", "app"}
+        assert config.structure.folder_depth == 3
         assert config.structure.standard_folders == {"types", "helpers"}
         assert config.structure.general_folder == "common"
-        assert config.structure.free_form_roots == {"experimental"}
-        assert config.structure.allowed_files == {"README.md", "NOTES.md"}
+        assert config.structure.files_allowed_anywhere == {"README.md", "NOTES.md"}
 
     def test_load_config_with_full_custom_config(self, tmp_path: Path) -> None:
         """Should load comprehensive custom configuration."""
@@ -90,11 +90,11 @@ search_paths = ["src"]
 search_paths = ["src"]
 
 [tool.structure-lint.structure]
-src_root = "source"
+strict_format_roots = ["source"]
+folder_depth = 1
 standard_folders = ["utils"]
 general_folder = "shared"
-free_form_roots = ["sandbox"]
-allowed_files = ["README.md"]
+files_allowed_anywhere = ["README.md"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
@@ -107,26 +107,26 @@ allowed_files = ["README.md"]
         assert config.line_limits.max_lines == 200
         assert config.line_limits.search_paths == ["src"]
         assert config.one_per_file.search_paths == ["src"]
-        assert config.structure.src_root == "source"
+        assert config.structure.strict_format_roots == {"source"}
+        assert config.structure.folder_depth == 1
         assert config.structure.standard_folders == {"utils"}
         assert config.structure.general_folder == "shared"
-        assert config.structure.free_form_roots == {"sandbox"}
-        assert config.structure.allowed_files == {"README.md"}
+        assert config.structure.files_allowed_anywhere == {"README.md"}
 
-    def test_load_structure_allowed_files_and_ignored(
+    def test_load_structure_files_allowed_anywhere_and_ignored(
         self, tmp_path: Path
     ) -> None:
-        """Should load allowed_files and ignored_folders from TOML."""
+        """Should load files_allowed_anywhere and ignored_folders from TOML."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
 [tool.structure-lint.structure]
-allowed_files = ["__init__.py", "py.typed", "VERSION", "README.md"]
+files_allowed_anywhere = ["__init__.py", "py.typed", "VERSION", "README.md"]
 ignored_folders = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
-        assert config.structure.allowed_files == {
+        assert config.structure.files_allowed_anywhere == {
             "__init__.py",
             "py.typed",
             "VERSION",

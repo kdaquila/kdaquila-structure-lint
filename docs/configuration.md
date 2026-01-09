@@ -131,17 +131,53 @@ search_paths = ["src"]  # Only check src/ directory
 
 Settings for the opinionated structure validator.
 
-#### `structure.src_root`
+#### `structure.strict_format_roots`
 
-**Type**: `str`
-**Default**: `"src"`
+**Type**: `list[str]` (converted to set internally)
+**Default**: `["src"]`
 
-Name of the source code root directory.
+List of root directories to validate with the structure validator. Only directories listed here are validated - this is an opt-in model.
 
 ```toml
 [tool.structure-lint.structure]
-src_root = "lib"  # Use lib/ instead of src/
+strict_format_roots = ["src", "lib"]  # Validate both src/ and lib/
 ```
+
+**Behavior**:
+- At least one root must be specified (empty list is an error)
+- Missing roots are warned and skipped (don't cause validation failure)
+- Each root is validated independently using the same rules
+
+**Example**:
+```
+project/
+├── src/              # Validated (in strict_format_roots)
+├── lib/              # Validated (in strict_format_roots)
+├── scripts/          # Not validated (not in strict_format_roots)
+└── experiments/      # Not validated (not in strict_format_roots)
+```
+
+#### `structure.folder_depth`
+
+**Type**: `int`
+**Default**: `2`
+
+Maximum nesting depth for arbitrary-named (custom) folders within a base folder. The `general` folder is also subject to this depth limit.
+
+```toml
+[tool.structure-lint.structure]
+folder_depth = 3  # Allow deeper nesting
+```
+
+**Example with depth=2**:
+```
+src/features/authentication/     # depth 0 (base folder)
+├── services/                    # depth 1 (custom folder)
+│   └── oauth/                   # depth 2 (at limit)
+│       └── providers/           # depth 3 - ERROR: exceeds limit
+```
+
+**Rationale**: Limits folder nesting to prevent overly deep hierarchies that become hard to navigate.
 
 #### `structure.standard_folders`
 
@@ -178,43 +214,21 @@ general_folder = "common"  # Use common/ instead of general/
 
 **Purpose**: Provides a place for miscellaneous code that doesn't fit into other categories.
 
-#### `structure.free_form_roots`
+#### `structure.files_allowed_anywhere`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `[]` (empty)
+**Default**: `["__init__.py"]`
 
-List of top-level directories at project root that are exempted from all structure validation.
+List of Python files that are allowed in any directory, even those that normally shouldn't contain files directly.
+
+**Important**: The structure validator only validates `.py` files. Non-Python files (like `README.md`, `.gitkeep`, `py.typed`, etc.) are automatically ignored and do not need to be listed here.
 
 ```toml
 [tool.structure-lint.structure]
-free_form_roots = ["experiments", "legacy"]
+files_allowed_anywhere = ["__init__.py", "conftest.py"]
 ```
 
-**Use Case**: Useful for areas like experiments or legacy code where you don't want to enforce any structure rules.
-
-**Example Structure**:
-```
-project_root/
-├── src/             # Structure enforced
-├── experiments/     # Free-form, no validation
-└── legacy/          # Free-form, no validation
-```
-
-**Note**: This operates at the project root level, not within src/. Directories listed here are completely skipped during validation.
-
-#### `structure.allowed_files`
-
-**Type**: `list[str]` (converted to set internally)
-**Default**: `["__init__.py", "README.md"]`
-
-List of files allowed in directories that normally shouldn't contain files directly. This includes Python package files like `__init__.py` and documentation files.
-
-```toml
-[tool.structure-lint.structure]
-allowed_files = ["__init__.py", "README.md", "py.typed", ".gitkeep"]
-```
-
-**Note**: In v2.0.0, `internally_allowed_files` was merged into `allowed_files`. If you were using `internally_allowed_files`, move those entries to `allowed_files`.
+**Note**: In v2.0.0, `internally_allowed_files` was merged into this setting (previously called `allowed_files`). The setting was renamed to `files_allowed_anywhere` to better reflect its purpose now that non-.py files are automatically ignored.
 
 #### `structure.ignored_folders`
 
@@ -286,9 +300,9 @@ enabled = true
 structure = true  # Opt-in
 
 [tool.structure-lint.structure]
-src_base_folders = ["features", "services"]
+strict_format_roots = ["src"]
 standard_folders = ["types", "utils", "tests"]
-free_form_roots = []
+folder_depth = 2
 ```
 
 ### Custom Project Layout
@@ -305,11 +319,10 @@ max_lines = 200
 search_paths = ["lib", "tools"]
 
 [tool.structure-lint.structure]
-src_root = "lib"
-src_base_folders = ["modules"]
+strict_format_roots = ["lib"]  # Only validate lib/
 standard_folders = ["models", "views", "controllers", "tests"]
 general_folder = "common"
-free_form_roots = ["legacy", "experimental"]
+folder_depth = 3
 ```
 
 ### Relaxed Configuration
@@ -350,11 +363,11 @@ search_paths = ["src", "tests"]
 search_paths = ["src", "tests"]
 
 [tool.structure-lint.structure]
-src_base_folders = ["features"]
+strict_format_roots = ["src"]  # Validate src/ only
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-free_form_roots = []  # No exceptions
-allowed_files = ["README.md"]
+folder_depth = 2
+files_allowed_anywhere = ["__init__.py"]
 ```
 
 ## Configuration Validation
@@ -428,8 +441,58 @@ enabled = true  # Enabled locally
 1. **Start Small**: Begin with just line limits and one-per-file, add structure validation later
 2. **Incremental Adoption**: Use high line limits initially, gradually decrease as you refactor
 3. **Team Alignment**: Discuss and agree on limits before enforcing in CI/CD
-4. **Free-Form Zones**: Use `free_form_bases` for legacy code or experiments
+4. **Opt-In Validation**: Only directories in `strict_format_roots` are validated - leave out directories you don't want to enforce structure on
 5. **Document Choices**: Add comments in `pyproject.toml` explaining your configuration choices
+
+## Migration from v1.x
+
+Version 2.0.0 introduces breaking changes to the structure validation configuration. Here's how to migrate:
+
+### Configuration Changes
+
+| v1.x Field | v2.0.0 Field | Notes |
+|------------|--------------|-------|
+| `src_root = "src"` | `strict_format_roots = ["src"]` | Now a list, supports multiple roots |
+| `free_form_roots = ["experiments"]` | (removed) | Just don't include in `strict_format_roots` |
+| (new) | `folder_depth = 2` | Configurable max nesting depth |
+
+### Migration Examples
+
+**Before (v1.x)**:
+```toml
+[tool.structure-lint.structure]
+src_root = "src"
+free_form_roots = ["experiments", "legacy"]
+standard_folders = ["types", "utils", "tests"]
+```
+
+**After (v2.0.0)**:
+```toml
+[tool.structure-lint.structure]
+strict_format_roots = ["src"]  # Only validate src/
+# experiments/ and legacy/ are NOT validated (opt-in model)
+standard_folders = ["types", "utils", "tests"]
+folder_depth = 2
+```
+
+### Behavioral Changes
+
+1. **Opt-in Model**: In v1.x, `src_root` was validated and `free_form_roots` were exempted. In v2.0.0, only roots listed in `strict_format_roots` are validated. Everything else is ignored.
+
+2. **Multiple Roots**: You can now validate multiple source directories:
+   ```toml
+   strict_format_roots = ["src", "lib", "packages"]
+   ```
+
+3. **Missing Roots**: If a root in `strict_format_roots` doesn't exist, v2.0.0 warns and continues (v1.x would fail).
+
+4. **Empty Roots Error**: `strict_format_roots` cannot be empty - at least one root is required.
+
+5. **Depth Limits**: The new `folder_depth` setting applies to both custom folders and the `general` folder.
+
+6. **Mutual Exclusivity**: At any folder level, you cannot mix:
+   - Standard folders with custom (arbitrary-named) folders
+   - General folder with standard folders
 
 ## See Also
 

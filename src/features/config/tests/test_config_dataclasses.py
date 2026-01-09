@@ -32,8 +32,18 @@ class TestConfigDataclasses:
     def test_structure_config_defaults(self) -> None:
         """Should have correct default values."""
         config = StructureConfig()
-        assert config.src_root == "src"
+        assert config.strict_format_roots == {"src"}
+        assert config.folder_depth == 2
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.general_folder == "general"
-        assert config.free_form_roots == set()
-        assert config.allowed_files == {"__init__.py", "README.md"}
+        assert config.files_allowed_anywhere == {"__init__.py"}
+        assert config.ignored_folders == {
+            "__pycache__",
+            ".mypy_cache",
+            ".pytest_cache",
+            ".ruff_cache",
+            ".hypothesis",
+            ".tox",
+            ".coverage",
+            "*.egg-info",
+        }

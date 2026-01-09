@@ -36,10 +36,10 @@ def create_custom_config(tmp_path: Path) -> Config:
             search_paths=["src", "lib"],
         ),
         structure=StructureConfig(
-            src_root="lib",
+            strict_format_roots={"lib", "app"},
+            folder_depth=3,
             standard_folders={"types", "utils", "helpers"},
             general_folder="common",
-            free_form_roots={"experimental"},
-            allowed_files={"README.md", "NOTES.md"},
+            files_allowed_anywhere={"README.md", "NOTES.md"},
         ),
     )
