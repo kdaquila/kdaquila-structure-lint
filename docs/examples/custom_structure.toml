@@ -56,8 +56,8 @@ standard_folders = [
 # Using "core" instead of "general" for main business logic
 general_folder = "core"
 
-# Allow additional documentation files
-allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
+# Python files allowed in any directory (non-.py files like README.md are automatically ignored)
+files_allowed_anywhere = ["__init__.py", "conftest.py"]
 
 # ============================================================================
 # Resulting Project Structure:

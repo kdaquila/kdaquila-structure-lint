@@ -47,9 +47,9 @@ standard_folders = ["types", "utils", "constants", "tests"]
 # Can coexist with arbitrary-named folders, must contain standard folders
 general_folder = "general"
 
-# Non-Python files allowed in directories that normally shouldn't contain files
-# Useful for documentation files in organizational directories
-allowed_files = ["README.md"]
+# Python files allowed in any directory, even those that normally shouldn't contain files
+# Note: Non-.py files (like README.md, .gitkeep) are automatically ignored and don't need listing
+files_allowed_anywhere = ["__init__.py"]
 
 # ============================================================================
 # Usage Examples:

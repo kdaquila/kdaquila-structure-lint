@@ -162,7 +162,7 @@ strict_format_roots = ["src"]
 folder_depth = 2
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-allowed_files = ["__init__.py", "README.md"]
+files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```
 

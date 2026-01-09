@@ -528,7 +528,7 @@ strict_format_roots = ["src"]  # Roots to validate (opt-in)
 folder_depth = 2               # Max nesting depth for custom folders
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-allowed_files = ["__init__.py", "README.md"]
+files_allowed_anywhere = ["__init__.py"]
 ```
 
 ### Examples

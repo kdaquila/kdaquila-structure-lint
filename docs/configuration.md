@@ -214,19 +214,21 @@ general_folder = "common"  # Use common/ instead of general/
 
 **Purpose**: Provides a place for miscellaneous code that doesn't fit into other categories.
 
-#### `structure.allowed_files`
+#### `structure.files_allowed_anywhere`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["__init__.py", "README.md"]`
+**Default**: `["__init__.py"]`
 
-List of files allowed in directories that normally shouldn't contain files directly. This includes Python package files like `__init__.py` and documentation files.
+List of Python files that are allowed in any directory, even those that normally shouldn't contain files directly.
+
+**Important**: The structure validator only validates `.py` files. Non-Python files (like `README.md`, `.gitkeep`, `py.typed`, etc.) are automatically ignored and do not need to be listed here.
 
 ```toml
 [tool.structure-lint.structure]
-allowed_files = ["__init__.py", "README.md", "py.typed", ".gitkeep"]
+files_allowed_anywhere = ["__init__.py", "conftest.py"]
 ```
 
-**Note**: In v2.0.0, `internally_allowed_files` was merged into `allowed_files`. If you were using `internally_allowed_files`, move those entries to `allowed_files`.
+**Note**: In v2.0.0, `internally_allowed_files` was merged into this setting (previously called `allowed_files`). The setting was renamed to `files_allowed_anywhere` to better reflect its purpose now that non-.py files are automatically ignored.
 
 #### `structure.ignored_folders`
 
@@ -365,7 +367,7 @@ strict_format_roots = ["src"]  # Validate src/ only
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
 folder_depth = 2
-allowed_files = ["__init__.py", "README.md"]
+files_allowed_anywhere = ["__init__.py"]
 ```
 
 ## Configuration Validation
