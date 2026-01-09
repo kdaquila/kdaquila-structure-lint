@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.utils.pattern_match import matches_any_pattern
 from features.validation.utils.structure_custom_folder import validate_custom_folder
 
 
@@ -27,6 +28,6 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
 
     # Validate subdirectories
     for custom in base_path.iterdir():
-        if custom.is_dir() and custom.name not in config.structure.ignored_directories:
+        if custom.is_dir() and not matches_any_pattern(custom.name, config.structure.ignored_directories):
             errors.extend(validate_custom_folder(custom, config, depth=1))
     return errors

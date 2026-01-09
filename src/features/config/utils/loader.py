@@ -88,7 +88,7 @@ def load_config(
             structure_data.get(
                 "ignored_directories",
                 ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache",
-                 ".hypothesis", ".tox", ".coverage", ".egg-info"]
+                 ".hypothesis", ".tox", ".coverage", "*.egg-info"]
             )
         ),
     )

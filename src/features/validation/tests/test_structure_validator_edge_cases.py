@@ -132,11 +132,10 @@ class TestStructureValidatorEdgeCases:
         (features / "my_feature" / "types").mkdir()
         (features / "my_feature" / "types" / "module.py").touch()
 
-        # Add .egg-info directory - should be ignored
-        # Using exact name since ignored_directories uses exact matching
-        (src / ".egg-info").mkdir()
-        (src / ".egg-info" / "PKG-INFO").touch()
-        (src / ".egg-info" / "SOURCES.txt").touch()
+        # Add .egg-info directory - should be ignored via wildcard pattern *.egg-info
+        (src / "my_package.egg-info").mkdir()
+        (src / "my_package.egg-info" / "PKG-INFO").touch()
+        (src / "my_package.egg-info" / "SOURCES.txt").touch()
 
         exit_code = validate_structure(config)
         assert exit_code == 0

@@ -26,6 +26,6 @@ class StructureConfig:
             ".hypothesis",
             ".tox",
             ".coverage",
-            ".egg-info",  # .egg-info added
+            "*.egg-info",  # matches any .egg-info directory
         }
     )

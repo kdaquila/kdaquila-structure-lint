@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from features.config import Config
+from features.validation.utils.pattern_match import matches_any_pattern
 from features.validation.utils.structure_base_folder import validate_base_folder
 
 
@@ -12,7 +13,7 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     children = {
         c.name
         for c in root.iterdir()
-        if c.is_dir() and c.name not in config.structure.ignored_directories
+        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_directories)
     }
 
     # Validate all subdirectories in src/ as base folders
