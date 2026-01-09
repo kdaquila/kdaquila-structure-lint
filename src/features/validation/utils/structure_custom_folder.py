@@ -11,7 +11,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     """Validate custom folder in structured base."""
     errors: list[str] = []
 
-    allowed_files = config.structure.allowed_files
+    files_allowed_anywhere = config.structure.files_allowed_anywhere
     general_folder = config.structure.general_folder
     standard_folders = config.structure.standard_folders
 
@@ -20,11 +20,11 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
         return errors
 
     # Check for disallowed files
-    files = [c.name for c in path.iterdir() if c.is_file()]
-    disallowed = [f for f in files if f not in allowed_files]
+    py_files = [c.name for c in path.iterdir() if c.is_file() and c.suffix == ".py"]
+    disallowed = [f for f in py_files if f not in files_allowed_anywhere]
     if disallowed:
         errors.append(
-            f"{path}: Disallowed files (only {allowed_files} allowed): {disallowed}"
+            f"{path}: Disallowed files (only {files_allowed_anywhere} allowed): {disallowed}"
         )
 
     children = [

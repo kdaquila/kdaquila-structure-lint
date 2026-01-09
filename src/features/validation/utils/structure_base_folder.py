@@ -21,8 +21,8 @@ def validate_base_folder(base_path: Path, config: Config) -> list[str]:
         return errors
 
     # Check for files in base folder (only allowed files like __init__.py)
-    files = [c.name for c in base_path.iterdir() if c.is_file()]
-    disallowed = [f for f in files if f not in config.structure.allowed_files]
+    py_files = [c.name for c in base_path.iterdir() if c.is_file() and c.suffix == ".py"]
+    disallowed = [f for f in py_files if f not in config.structure.files_allowed_anywhere]
     if disallowed:
         errors.append(f"{base_path}: Files not allowed in root: {disallowed}")
 

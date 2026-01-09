@@ -19,8 +19,8 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     # Validate all subdirectories in src/ as base folders
     # No exact match required - accept any folders
 
-    files = [c.name for c in root.iterdir() if c.is_file()]
-    disallowed = [f for f in files if f not in config.structure.allowed_files]
+    py_files = [c.name for c in root.iterdir() if c.is_file() and c.suffix == ".py"]
+    disallowed = [f for f in py_files if f not in config.structure.files_allowed_anywhere]
     if disallowed:
         errors.append(f"{root}: Files not allowed in root: {disallowed}")
 
