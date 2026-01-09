@@ -1,41 +1,47 @@
-"""Test fixtures feature - provides reusable pytest fixtures.
+"""Test fixtures feature - provides reusable helper functions and constants.
 
-This feature organizes all test fixtures into individual files following
+This feature organizes all test helpers into individual files following
 the one-per-file rule:
-- temp_project: Temporary project directory fixture
-- temp_project_with_pyproject: Temporary project with pyproject.toml
-- minimal_config: Config object with defaults
-- custom_config: Config object with custom settings
-- python_file_factory: Factory for creating test files
-- sample_valid_file_content: Valid Python file content
-- sample_too_long_file_content: Content exceeding line limits
-- sample_multiple_definitions_content: Content with multiple definitions
-- sample_empty_file_content: Empty file content
-- sample_syntax_error_content: Content with syntax errors
+
+Helper Functions (create_ prefix):
+- create_temp_project: Creates a temporary project directory
+- create_temp_project_with_pyproject: Creates a temporary project with pyproject.toml
+- create_minimal_config: Creates a Config object with defaults
+- create_custom_config: Creates a Config object with custom settings
+- create_python_file: Factory for creating test files
+
+Constants (UPPERCASE):
+- SAMPLE_VALID_FILE_CONTENT: Valid Python file content
+- SAMPLE_TOO_LONG_FILE_CONTENT: Content exceeding line limits
+- SAMPLE_MULTIPLE_DEFINITIONS_CONTENT: Content with multiple definitions
+- SAMPLE_EMPTY_FILE_CONTENT: Empty file content
+- SAMPLE_SYNTAX_ERROR_CONTENT: Content with syntax errors
 """
 
 from features.test_fixtures.utils import (
-    custom_config,
-    minimal_config,
-    python_file_factory,
-    sample_empty_file_content,
-    sample_multiple_definitions_content,
-    sample_syntax_error_content,
-    sample_too_long_file_content,
-    sample_valid_file_content,
-    temp_project,
-    temp_project_with_pyproject,
+    SAMPLE_EMPTY_FILE_CONTENT,
+    SAMPLE_MULTIPLE_DEFINITIONS_CONTENT,
+    SAMPLE_SYNTAX_ERROR_CONTENT,
+    SAMPLE_TOO_LONG_FILE_CONTENT,
+    SAMPLE_VALID_FILE_CONTENT,
+    create_custom_config,
+    create_minimal_config,
+    create_python_file,
+    create_temp_project,
+    create_temp_project_with_pyproject,
 )
 
 __all__ = [
-    "custom_config",
-    "minimal_config",
-    "python_file_factory",
-    "sample_empty_file_content",
-    "sample_multiple_definitions_content",
-    "sample_syntax_error_content",
-    "sample_too_long_file_content",
-    "sample_valid_file_content",
-    "temp_project",
-    "temp_project_with_pyproject",
+    # Helper functions (create_ prefix)
+    "create_custom_config",
+    "create_minimal_config",
+    "create_python_file",
+    "create_temp_project",
+    "create_temp_project_with_pyproject",
+    # Constants (UPPERCASE)
+    "SAMPLE_EMPTY_FILE_CONTENT",
+    "SAMPLE_MULTIPLE_DEFINITIONS_CONTENT",
+    "SAMPLE_SYNTAX_ERROR_CONTENT",
+    "SAMPLE_TOO_LONG_FILE_CONTENT",
+    "SAMPLE_VALID_FILE_CONTENT",
 ]
