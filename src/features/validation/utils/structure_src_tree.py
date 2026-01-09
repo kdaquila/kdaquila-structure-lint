@@ -13,7 +13,7 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     children = {
         c.name
         for c in root.iterdir()
-        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_directories)
+        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
     }
 
     # Validate all subdirectories in src/ as base folders

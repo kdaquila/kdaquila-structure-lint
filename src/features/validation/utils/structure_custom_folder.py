@@ -30,7 +30,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     children = [
         c
         for c in path.iterdir()
-        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_directories)
+        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
     ]
     child_names = {c.name for c in children}
 
@@ -61,7 +61,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
         subdirs = [
             c
             for c in std_path.iterdir()
-            if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_directories)
+            if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
         ]
         if subdirs:
             errors.append(f"{std_path}: Standard folder cannot have subdirectories.")

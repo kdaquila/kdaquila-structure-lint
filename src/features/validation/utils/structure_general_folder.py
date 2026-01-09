@@ -25,7 +25,7 @@ def validate_general_folder(path: Path, config: Config) -> list[str]:
 
     children = {
         c.name for c in path.iterdir()
-        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_directories)
+        if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
     }
     invalid = children - standard_folders
     if invalid:

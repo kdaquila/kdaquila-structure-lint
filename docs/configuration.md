@@ -205,39 +205,27 @@ project_root/
 #### `structure.allowed_files`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["README.md"]`
+**Default**: `["__init__.py", "README.md"]`
 
-List of non-Python files allowed in directories that normally shouldn't contain files directly.
+List of files allowed in directories that normally shouldn't contain files directly. This includes Python package files like `__init__.py` and documentation files.
 
 ```toml
 [tool.structure-lint.structure]
-allowed_files = ["README.md", ".gitkeep", "NOTES.txt"]
+allowed_files = ["__init__.py", "README.md", "py.typed", ".gitkeep"]
 ```
 
-#### `structure.internally_allowed_files`
+**Note**: In v2.0.0, `internally_allowed_files` was merged into `allowed_files`. If you were using `internally_allowed_files`, move those entries to `allowed_files`.
+
+#### `structure.ignored_folders`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["__init__.py"]`
+**Default**: `["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]`
 
-List of Python files that are allowed in any directory, even those that normally shouldn't contain files. These are files required for Python package structure.
+List of folder name patterns to ignore during structure validation. Supports wildcards (e.g., `*.egg-info` matches `my_package.egg-info`). These are typically cache, build, or tool-generated directories.
 
 ```toml
 [tool.structure-lint.structure]
-internally_allowed_files = ["__init__.py", "py.typed"]
-```
-
-**Note**: In earlier versions, `conftest.py` was included by default. As of version 1.1.0, conftest.py files should be placed in test directories specifically, not at the package level.
-
-#### `structure.ignored_directories`
-
-**Type**: `list[str]` (converted to set internally)
-**Default**: `["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", ".egg-info"]`
-
-List of directory names to ignore during structure validation. These are typically cache, build, or tool-generated directories.
-
-```toml
-[tool.structure-lint.structure]
-ignored_directories = ["__pycache__", ".mypy_cache", ".venv", "build", "dist"]
+ignored_folders = ["__pycache__", ".mypy_cache", ".venv", "build", "dist", "*.egg-info"]
 ```
 
 **Use Case**: Add project-specific build or cache directories that should not be validated.

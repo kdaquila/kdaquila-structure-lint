@@ -116,12 +116,12 @@ allowed_files = ["README.md"]
     def test_load_structure_allowed_files_and_ignored(
         self, tmp_path: Path
     ) -> None:
-        """Should load allowed_files and ignored_directories from TOML."""
+        """Should load allowed_files and ignored_folders from TOML."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
 [tool.structure-lint.structure]
 allowed_files = ["__init__.py", "py.typed", "VERSION", "README.md"]
-ignored_directories = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
+ignored_folders = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
@@ -132,7 +132,7 @@ ignored_directories = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
             "VERSION",
             "README.md",
         }
-        assert config.structure.ignored_directories == {
+        assert config.structure.ignored_folders == {
             "__pycache__",
             ".venv",
             "build",

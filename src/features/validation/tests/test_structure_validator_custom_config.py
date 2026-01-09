@@ -68,10 +68,10 @@ class TestStructureValidatorCustomConfig:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_custom_ignored_directories(self, tmp_path: Path) -> None:
-        """Should ignore custom directories like .venv, build via ignored_directories config."""
+    def test_custom_ignored_folders(self, tmp_path: Path) -> None:
+        """Should ignore custom folders like .venv, build via ignored_folders config."""
         config = create_minimal_config(tmp_path)
-        config.structure.ignored_directories = {
+        config.structure.ignored_folders = {
             "__pycache__",
             ".venv",
             "build",

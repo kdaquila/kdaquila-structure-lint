@@ -14,7 +14,7 @@ class StructureConfig:
     general_folder: str = "general"
     free_form_roots: set[str] = field(default_factory=set)
     allowed_files: set[str] = field(default_factory=lambda: {"__init__.py", "README.md"})
-    ignored_directories: set[str] = field(
+    ignored_folders: set[str] = field(
         default_factory=lambda: {
             "__pycache__",
             ".mypy_cache",
