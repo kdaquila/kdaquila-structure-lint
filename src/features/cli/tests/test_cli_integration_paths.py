@@ -1,12 +1,13 @@
 """Integration tests for CLI path handling."""
 
+pytest_plugins = ["features.test_fixtures.utils"]
+
 from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.monkeypatch import MonkeyPatch
 
 from features.cli import main
-from features.test_fixtures import python_file_factory
 
 
 class TestCLIIntegrationPaths:

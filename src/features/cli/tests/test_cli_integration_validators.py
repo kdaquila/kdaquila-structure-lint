@@ -1,12 +1,13 @@
 """Integration tests for CLI with multiple validators."""
 
+pytest_plugins = ["features.test_fixtures.utils"]
+
 from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
 from features.cli import main
-from features.test_fixtures import python_file_factory
 
 
 class TestCLIIntegrationValidators:

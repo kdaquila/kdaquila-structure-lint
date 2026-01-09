@@ -1,8 +1,8 @@
 """Tests for custom structure configuration."""
 
+pytest_plugins = ["features.test_fixtures.utils"]
 
 from features.config import Config
-from features.test_fixtures import minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 

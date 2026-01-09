@@ -1,5 +1,6 @@
 """Tests for configuration and path handling in one-per-file validation."""
 
+pytest_plugins = ["features.test_fixtures.utils"]
 
 from collections.abc import Callable
 from pathlib import Path
@@ -7,7 +8,6 @@ from pathlib import Path
 from _pytest.capture import CaptureFixture
 
 from features.config import Config
-from features.test_fixtures import minimal_config, python_file_factory
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
