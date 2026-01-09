@@ -4,7 +4,7 @@ from pathlib import Path
 
 from features.config import Config
 from features.validation.utils.pattern_match import matches_any_pattern
-from features.validation.utils.structure_base_folder import validate_base_folder
+from features.validation.utils.structure_custom_folder import validate_custom_folder
 
 
 def validate_src_tree(root: Path, config: Config) -> list[str]:
@@ -27,6 +27,6 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     # Validate all actual subdirectories found in src/
     for child in children:
         base_path = root / child
-        errors.extend(validate_base_folder(base_path, config))
+        errors.extend(validate_custom_folder(base_path, config, depth=0))
 
     return errors
