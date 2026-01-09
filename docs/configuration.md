@@ -214,6 +214,34 @@ List of non-Python files allowed in directories that normally shouldn't contain 
 allowed_files = ["README.md", ".gitkeep", "NOTES.txt"]
 ```
 
+#### `structure.internally_allowed_files`
+
+**Type**: `list[str]` (converted to set internally)
+**Default**: `["__init__.py"]`
+
+List of Python files that are allowed in any directory, even those that normally shouldn't contain files. These are files required for Python package structure.
+
+```toml
+[tool.structure-lint.structure]
+internally_allowed_files = ["__init__.py", "py.typed"]
+```
+
+**Note**: In earlier versions, `conftest.py` was included by default. As of version 1.1.0, conftest.py files should be placed in test directories specifically, not at the package level.
+
+#### `structure.ignored_directories`
+
+**Type**: `list[str]` (converted to set internally)
+**Default**: `["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", ".egg-info"]`
+
+List of directory names to ignore during structure validation. These are typically cache, build, or tool-generated directories.
+
+```toml
+[tool.structure-lint.structure]
+ignored_directories = ["__pycache__", ".mypy_cache", ".venv", "build", "dist"]
+```
+
+**Use Case**: Add project-specific build or cache directories that should not be validated.
+
 ## Common Use Cases
 
 ### Minimal Configuration
