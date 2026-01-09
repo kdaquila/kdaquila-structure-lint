@@ -24,7 +24,7 @@ class TestLoadConfigDefaults:
         assert config.structure.folder_depth == 2
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.structure.general_folder == "general"
-        assert config.structure.allowed_files == {"__init__.py", "README.md"}
+        assert config.structure.files_allowed_anywhere == {"__init__.py"}
         assert config.structure.ignored_folders == {
             "__pycache__",
             ".mypy_cache",

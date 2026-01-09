@@ -40,6 +40,6 @@ def create_custom_config(tmp_path: Path) -> Config:
             folder_depth=3,
             standard_folders={"types", "utils", "helpers"},
             general_folder="common",
-            allowed_files={"README.md", "NOTES.md"},
+            files_allowed_anywhere={"README.md", "NOTES.md"},
         ),
     )

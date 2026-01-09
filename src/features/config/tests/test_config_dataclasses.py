@@ -36,7 +36,7 @@ class TestConfigDataclasses:
         assert config.folder_depth == 2
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.general_folder == "general"
-        assert config.allowed_files == {"__init__.py", "README.md"}
+        assert config.files_allowed_anywhere == {"__init__.py"}
         assert config.ignored_folders == {
             "__pycache__",
             ".mypy_cache",
