@@ -5,7 +5,7 @@
 # validator to match your team's conventions and domain language.
 #
 # Scenario: A web application using a services-based architecture with separate
-# API and web components, plus a legacy module that doesn't follow the new structure.
+# API and web components. Legacy code is simply not included in strict_format_roots.
 
 [tool.structure-lint]
 enabled = true
@@ -25,8 +25,12 @@ search_paths = ["lib"]  # Custom source directory name
 search_paths = ["lib"]
 
 [tool.structure-lint.structure]
-# Using "lib" instead of "src" to match Ruby/Rails convention
-src_root = "lib"
+# Only validate "lib" - legacy and experimental dirs are simply not listed
+# This is the opt-in model: only listed roots are validated
+strict_format_roots = ["lib"]
+
+# Allow 3 levels of custom folder nesting for complex features
+folder_depth = 3
 
 # Using MVC-style organization plus additional layers
 # Base folders (api, web, services) are automatically detected under lib/
@@ -52,11 +56,6 @@ standard_folders = [
 # Using "core" instead of "general" for main business logic
 general_folder = "core"
 
-# Legacy code doesn't follow the new structure yet
-# Also exempting experimental features during prototyping
-# These are top-level directories at project root
-free_form_roots = ["legacy", "experimental"]
-
 # Allow additional documentation files
 allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 
@@ -66,7 +65,7 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 #
 # project/
 # ├── pyproject.toml
-# ├── lib/                        (src_root)
+# ├── lib/                        (strict_format_root - validated)
 # │   ├── api/                    (base folder - API backend)
 # │   │   ├── authentication/     (feature)
 # │   │   │   ├── models/         (User model, Token model, etc.)
@@ -99,11 +98,11 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 # │       └── notifications/
 # │           └── ...
 # │
-# ├── legacy/                     (free-form root - completely skipped)
+# ├── legacy/                     (NOT in strict_format_roots - ignored)
 # │   └── old_code/
 # │       └── anything_goes.py
 # │
-# └── experimental/               (free-form root - completely skipped)
+# └── experimental/               (NOT in strict_format_roots - ignored)
 #     └── new_feature_poc/
 #
 # ============================================================================
@@ -121,7 +120,7 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 #    - controllers: Request handling
 #    - views: Presentation
 #
-# 4. **Migration Path**: Legacy code exempt via free_form_roots at project root
+# 4. **Migration Path**: Legacy code not in strict_format_roots (ignored)
 #
 # 5. **Innovation Space**: Experimental folder for prototyping without constraints
 #
@@ -131,14 +130,14 @@ allowed_files = ["README.md", ".gitkeep", "ARCHITECTURE.md"]
 #
 # Phase 1 (Current):
 #   - New code follows structure in lib/api/, lib/web/, lib/services/
-#   - Legacy code in legacy/ at project root (free-form, no validation)
+#   - Legacy code in legacy/ at project root (not validated - not in strict_format_roots)
 #
 # Phase 2 (Next Quarter):
 #   - Refactor legacy code incrementally
 #   - Move refactored code to appropriate base folders in lib/
 #
 # Phase 3 (Future):
-#   - Remove "legacy" from free_form_roots
+#   - Add "legacy" to strict_format_roots once fully refactored
 #   - All code follows structure
 #
 # ============================================================================
