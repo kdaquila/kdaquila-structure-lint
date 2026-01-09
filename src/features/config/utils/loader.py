@@ -81,6 +81,16 @@ def load_config(
         general_folder=structure_data.get("general_folder", "general"),
         free_form_roots=set(structure_data.get("free_form_roots", [])),
         allowed_files=set(structure_data.get("allowed_files", ["README.md"])),
+        internally_allowed_files=set(
+            structure_data.get("internally_allowed_files", ["__init__.py"])
+        ),
+        ignored_directories=set(
+            structure_data.get(
+                "ignored_directories",
+                ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache",
+                 ".hypothesis", ".tox", ".coverage", ".egg-info"]
+            )
+        ),
     )
 
     return Config(
