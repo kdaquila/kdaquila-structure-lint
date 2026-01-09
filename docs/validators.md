@@ -471,24 +471,51 @@ src/features/authentication/
       └── general/
   ```
 
-#### Free-Form Roots
+#### Opt-In Root Validation
 
-Exempt entire top-level directories at project root from all structure validation:
+Only directories listed in `strict_format_roots` are validated. This is an opt-in model:
 
 ```toml
 [tool.structure-lint.structure]
-free_form_roots = ["experiments", "legacy"]
+strict_format_roots = ["src", "lib"]  # Only these are validated
 ```
 
-These directories are completely skipped during validation:
 ```
 project_root/
-├── src/            # Structure enforced
-├── experiments/    # Completely skipped
-└── legacy/         # Completely skipped
+├── src/            # Validated (in strict_format_roots)
+├── lib/            # Validated (in strict_format_roots)
+├── experiments/    # Not validated (not in strict_format_roots)
+└── legacy/         # Not validated (not in strict_format_roots)
 ```
 
-**Note**: Unlike the old `free_form_bases` which only exempted folders within `src/`, `free_form_roots` operates at the project root level and completely exempts those directories from all validation.
+**Behavior**:
+- At least one root must be specified (empty list causes an error)
+- Missing roots warn and skip (don't cause validation failure)
+- Each root is validated independently
+
+#### Folder Depth Limits
+
+The `folder_depth` setting limits how deep custom (arbitrary-named) folders can nest:
+
+```toml
+[tool.structure-lint.structure]
+folder_depth = 2  # Default
+```
+
+```
+src/features/authentication/     # depth 0 (base folder)
+├── services/                    # depth 1 (custom folder)
+│   └── oauth/                   # depth 2 (at limit)
+│       └── providers/           # ERROR: exceeds depth limit
+```
+
+The `general` folder is also subject to this depth limit.
+
+#### Mutual Exclusivity Rules
+
+At any folder level, you cannot mix:
+- **Standard folders with custom folders**: Choose one organization style
+- **General folder with standard folders**: `general` implies custom folder organization
 
 ### Configuration
 
@@ -497,11 +524,11 @@ project_root/
 structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
-src_root = "src"
+strict_format_roots = ["src"]  # Roots to validate (opt-in)
+folder_depth = 2               # Max nesting depth for custom folders
 standard_folders = ["types", "utils", "constants", "tests"]
 general_folder = "general"
-free_form_roots = []
-allowed_files = ["README.md"]
+allowed_files = ["__init__.py", "README.md"]
 ```
 
 ### Examples
@@ -595,11 +622,11 @@ src/features/authentication/
 └── tests/
 ```
 
-#### Custom Root Names
+#### Custom Root Names and General Folder
 
 ```toml
 [tool.structure-lint.structure]
-src_root = "lib"
+strict_format_roots = ["lib"]
 general_folder = "common"
 ```
 
@@ -608,19 +635,26 @@ Results in:
 lib/features/auth/common/login.py
 ```
 
-#### Free-Form Zones
+#### Multiple Roots
 
 ```toml
 [tool.structure-lint.structure]
-free_form_roots = ["legacy", "experiments"]
+strict_format_roots = ["src", "lib", "packages"]
 ```
 
 ```
 project_root/
-├── src/
-│   └── features/    # Strict structure enforced
-├── legacy/          # Completely skipped from validation
-└── experiments/     # Completely skipped from validation
+├── src/          # Validated
+├── lib/          # Validated
+├── packages/     # Validated
+└── scripts/      # Not validated (not in strict_format_roots)
+```
+
+#### Adjusting Depth Limits
+
+```toml
+[tool.structure-lint.structure]
+folder_depth = 3  # Allow deeper nesting (default is 2)
 ```
 
 ### Migration Strategy
@@ -638,13 +672,13 @@ structure-lint --verbose
 #### 2. Choose Approach
 
 **Option A: Gradual Migration**
-- Use `free_form_roots` to exclude legacy code
+- Start with only new directories in `strict_format_roots`
 - Apply structure to new features only
-- Gradually migrate old code
+- Gradually add more directories as you refactor
 
 ```toml
 [tool.structure-lint.structure]
-free_form_roots = ["legacy"]  # Completely skip legacy directory
+strict_format_roots = ["src/new_features"]  # Only validate new code
 ```
 
 **Option B: Full Reorganization**
@@ -663,6 +697,7 @@ Don't fight the tool - customize it:
 # Match your team's conventions
 standard_folders = ["types", "models", "services", "utils", "tests"]
 general_folder = "core"
+folder_depth = 3  # Allow deeper nesting if needed
 ```
 
 #### 4. Document Decisions
@@ -671,11 +706,11 @@ Add comments to your config explaining choices:
 
 ```toml
 [tool.structure-lint.structure]
+# Only validate src/ - legacy/ and experiments/ are excluded
+strict_format_roots = ["src"]
+
 # Added "services" as standard folder for our microservice architecture
 standard_folders = ["types", "services", "utils", "tests"]
-
-# Legacy code exempted until Q3 2026 refactor
-free_form_roots = ["legacy"]
 ```
 
 ### When to Use Structure Validation
