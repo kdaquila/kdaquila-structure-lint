@@ -1,22 +1,17 @@
 """Tests for nested functions and classes in one-per-file validation."""
 
-from collections.abc import Callable
 from pathlib import Path
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config, create_python_file
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
 class TestOnePerFileValidatorNested:
     """Tests for nested functions and classes."""
 
-    def test_nested_functions_not_counted(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_nested_functions_not_counted(self, tmp_path: Path) -> None:
         """Should not count nested functions as separate definitions."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """def outer():
@@ -24,38 +19,30 @@ class TestOnePerFileValidatorNested:
         pass
     return inner
 """
-        python_file_factory("src/nested.py", content, config.project_root)
+        create_python_file(tmp_path, "src/nested.py", content)
 
         # Only one top-level definition (outer)
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_nested_classes_not_counted(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_nested_classes_not_counted(self, tmp_path: Path) -> None:
         """Should not count nested classes as separate definitions."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """class Outer:
     class Inner:
         pass
 """
-        python_file_factory("src/nested.py", content, config.project_root)
+        create_python_file(tmp_path, "src/nested.py", content)
 
         # Only one top-level definition (Outer)
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_class_methods_not_counted(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_class_methods_not_counted(self, tmp_path: Path) -> None:
         """Should not count class methods as separate definitions."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """class MyClass:
@@ -68,7 +55,7 @@ class TestOnePerFileValidatorNested:
     async def method3(self):
         pass
 """
-        python_file_factory("src/class.py", content, config.project_root)
+        create_python_file(tmp_path, "src/class.py", content)
 
         # Only one top-level definition (MyClass)
         exit_code = validate_one_per_file(config)

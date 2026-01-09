@@ -1,11 +1,10 @@
 """Tests for error handling and reporting in one-per-file validation."""
 
-from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config, create_python_file
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
@@ -13,18 +12,15 @@ class TestOnePerFileValidatorErrors:
     """Tests for error handling and reporting."""
 
     def test_syntax_error_reported_as_failure(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-        capsys: CaptureFixture[str],
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should report files with syntax errors."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         # Create file with syntax error
         content = "def broken(\n    # Missing closing paren\n"
-        python_file_factory("src/broken.py", content, config.project_root)
+        create_python_file(tmp_path, "src/broken.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -34,18 +30,15 @@ class TestOnePerFileValidatorErrors:
         assert exit_code == 1
 
     def test_error_messages_use_relative_paths(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-        capsys: CaptureFixture[str],
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should use relative paths in error messages."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         # Create violating file
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("src/multi.py", content, config.project_root)
+        create_python_file(tmp_path, "src/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -59,20 +52,17 @@ class TestOnePerFileValidatorErrors:
         assert exit_code == 1
 
     def test_multiple_violations_all_reported(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-        capsys: CaptureFixture[str],
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should report all violations, not just first one."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         # Create multiple violating files
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("src/file1.py", content, config.project_root)
-        python_file_factory("src/file2.py", content, config.project_root)
-        python_file_factory("src/file3.py", content, config.project_root)
+        create_python_file(tmp_path, "src/file1.py", content)
+        create_python_file(tmp_path, "src/file2.py", content)
+        create_python_file(tmp_path, "src/file3.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -84,13 +74,10 @@ class TestOnePerFileValidatorErrors:
         assert exit_code == 1
 
     def test_error_message_shows_definition_names(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-        capsys: CaptureFixture[str],
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should show names of definitions in error message."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """def hello():
@@ -102,7 +89,7 @@ def world():
 class Greeting:
     pass
 """
-        python_file_factory("src/multi.py", content, config.project_root)
+        create_python_file(tmp_path, "src/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -113,13 +100,9 @@ class Greeting:
         assert "Greeting" in captured.out
         assert exit_code == 1
 
-    def test_unicode_in_definition_names(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_unicode_in_definition_names(self, tmp_path: Path) -> None:
         """Should handle Unicode in definition names."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         # Python allows Unicode identifiers
@@ -129,7 +112,7 @@ class Greeting:
 def 函数():
     pass
 """
-        python_file_factory("src/unicode.py", content, config.project_root)
+        create_python_file(tmp_path, "src/unicode.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

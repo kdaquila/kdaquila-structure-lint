@@ -1,21 +1,17 @@
 """Integration tests for CLI with multiple validators."""
 
-from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
 from features.cli import main
+from features.test_fixtures import create_python_file
 
 
 class TestCLIIntegrationValidators:
     """Integration tests for CLI with multiple validators."""
 
-    def test_cli_with_multiple_validators_all_pass(
-        self,
-        tmp_path: Path,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_cli_with_multiple_validators_all_pass(self, tmp_path: Path) -> None:
         """Should pass when multiple validators all succeed."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -29,16 +25,12 @@ structure = false
 """)
 
         (tmp_path / "src").mkdir()
-        python_file_factory("src/module.py", "def hello():\n    pass\n", tmp_path)
+        create_python_file(tmp_path, "src/module.py", "def hello():\n    pass\n")
 
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 0
 
-    def test_cli_with_multiple_validators_one_fails(
-        self,
-        tmp_path: Path,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_cli_with_multiple_validators_one_fails(self, tmp_path: Path) -> None:
         """Should fail when any validator fails."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -53,10 +45,8 @@ structure = false
 
         (tmp_path / "src").mkdir()
         # Valid for line limits, invalid for one-per-file
-        python_file_factory(
-            "src/module.py",
-            "def func1():\n    pass\n\ndef func2():\n    pass\n",
-            tmp_path
+        create_python_file(
+            tmp_path, "src/module.py", "def func1():\n    pass\n\ndef func2():\n    pass\n"
         )
 
         exit_code = main(["--project-root", str(tmp_path)])
@@ -89,10 +79,7 @@ search_paths = ["nonexistent"]
         assert exit_code == 0
 
     def test_cli_output_messages(
-        self,
-        tmp_path: Path,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-        capsys: CaptureFixture[str],
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should produce helpful output messages."""
         pyproject = tmp_path / "pyproject.toml"
@@ -107,7 +94,7 @@ structure = false
 """)
 
         (tmp_path / "src").mkdir()
-        python_file_factory("src/good.py", "def hello():\n    pass\n", tmp_path)
+        create_python_file(tmp_path, "src/good.py", "def hello():\n    pass\n")
 
         exit_code = main(["--project-root", str(tmp_path)])
         captured = capsys.readouterr()

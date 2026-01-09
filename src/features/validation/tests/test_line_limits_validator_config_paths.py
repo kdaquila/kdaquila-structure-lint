@@ -1,24 +1,19 @@
 """Tests for configuration and path handling in line limits validation."""
 
-from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config, create_python_file
 from features.validation.utils.validator_line_limits import validate_line_limits
 
 
 class TestLineLimitsValidatorConfigPaths:
     """Tests for configuration and path handling."""
 
-    def test_custom_search_paths(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_custom_search_paths(self, tmp_path: Path) -> None:
         """Should check custom search paths."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.line_limits.search_paths = ["lib", "app"]
         config.line_limits.max_lines = 5
 
@@ -27,16 +22,16 @@ class TestLineLimitsValidatorConfigPaths:
 
         # Create file in lib
         long_content = "\n".join([f"# Line {i}" for i in range(1, 10)])
-        python_file_factory("lib/module.py", long_content, config.project_root)
+        create_python_file(tmp_path, "lib/module.py", long_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1
 
     def test_missing_search_path(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should warn about missing search paths and continue."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.line_limits.search_paths = ["nonexistent", "src"]
 
         # Create valid file in src
@@ -52,10 +47,10 @@ class TestLineLimitsValidatorConfigPaths:
         assert exit_code == 0
 
     def test_all_search_paths_missing(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should handle all search paths missing gracefully."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.line_limits.search_paths = ["nonexistent1", "nonexistent2"]
 
         exit_code = validate_line_limits(config)
@@ -66,18 +61,14 @@ class TestLineLimitsValidatorConfigPaths:
         # Should succeed (no files to check)
         assert exit_code == 0
 
-    def test_max_lines_configuration_respected(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_max_lines_configuration_respected(self, tmp_path: Path) -> None:
         """Should respect configured max_lines value."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.line_limits.max_lines = 3
         (config.project_root / "src").mkdir()
 
         # Create file with 4 lines
-        python_file_factory("src/module.py", "line1\nline2\nline3\nline4\n", config.project_root)
+        create_python_file(tmp_path, "src/module.py", "line1\nline2\nline3\nline4\n")
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1

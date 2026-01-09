@@ -1,11 +1,11 @@
 """Integration tests for CLI path handling."""
 
-from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.monkeypatch import MonkeyPatch
 
 from features.cli import main
+from features.test_fixtures import create_python_file
 
 
 class TestCLIIntegrationPaths:
@@ -29,10 +29,7 @@ structure = false
         assert exit_code == 0
 
     def test_cli_with_relative_paths(
-        self,
-        tmp_path: Path,
-        monkeypatch: MonkeyPatch,
-        python_file_factory: Callable[[str, str, Path | None], Path],
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
     ) -> None:
         """Should handle relative paths correctly."""
         pyproject = tmp_path / "pyproject.toml"
@@ -47,7 +44,7 @@ structure = false
 """)
 
         (tmp_path / "src").mkdir()
-        python_file_factory("src/module.py", "def hello():\n    pass\n", tmp_path)
+        create_python_file(tmp_path, "src/module.py", "def hello():\n    pass\n")
 
         monkeypatch.chdir(tmp_path)
         exit_code = main(["--project-root", "."])

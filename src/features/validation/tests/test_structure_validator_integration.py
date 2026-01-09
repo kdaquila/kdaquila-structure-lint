@@ -1,17 +1,19 @@
 """Integration tests for structure validation combining multiple aspects."""
 
+from pathlib import Path
+
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_custom_config, create_minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 
 class TestStructureValidatorIntegration:
     """Integration tests combining multiple aspects."""
 
-    def test_full_custom_config_valid_structure(self, custom_config: Config) -> None:
+    def test_full_custom_config_valid_structure(self, tmp_path: Path) -> None:
         """Should validate with fully custom configuration."""
-        config = custom_config
+        config = create_custom_config(tmp_path)
 
         # Create structure matching custom config
         lib = config.project_root / "lib"
@@ -42,10 +44,10 @@ class TestStructureValidatorIntegration:
         assert exit_code == 0
 
     def test_structure_validation_output_format(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should produce clear output format."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create valid structure
         src = config.project_root / "src"
