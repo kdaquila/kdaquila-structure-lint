@@ -37,7 +37,7 @@ class TestStructureValidatorEdgeCases:
         # Base folders (automatically accepted)
         (src / "base1").mkdir()
         (src / "base2").mkdir()
-        # Files in root (not allowed)
+        # Create files directly in root - these are not allowed
         (src / "file1.py").touch()
         (src / "file2.py").touch()
 
