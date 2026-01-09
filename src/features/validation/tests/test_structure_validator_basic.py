@@ -77,23 +77,26 @@ class TestStructureValidatorBasic:
         captured = capsys.readouterr()
 
         assert exit_code == 1
-        assert "Files not allowed in root" in captured.out
+        assert "Disallowed files" in captured.out
         assert "calculator.py" in captured.out
 
     def test_multiple_base_folders_accepted(self, tmp_path: Path) -> None:
-        """Any base folders in src/ should be accepted automatically."""
+        """Multiple base folders in src/ should be accepted with valid content."""
         config = create_minimal_config(tmp_path)
 
-        # Create multiple base folders
+        # Create multiple base folders with valid structure
         src = config.project_root / "src"
-        (src / "features").mkdir(parents=True)
-        (src / "features" / "__init__.py").touch()
-        (src / "apps").mkdir(parents=True)
-        (src / "apps" / "__init__.py").touch()
-        (src / "libs").mkdir(parents=True)
-        (src / "libs" / "__init__.py").touch()
+        for folder in ["features", "apps", "libs"]:
+            base = src / folder
+            base.mkdir(parents=True)
+            (base / "__init__.py").touch()
+            # Each base folder needs a custom folder with standard folders
+            custom = base / "my_module"
+            custom.mkdir()
+            (custom / "types").mkdir()
+            (custom / "types" / "module.py").touch()
 
         exit_code = validate_structure(config)
 
-        # Should pass - all base folders automatically accepted
+        # Should pass - all base folders have valid structure
         assert exit_code == 0
