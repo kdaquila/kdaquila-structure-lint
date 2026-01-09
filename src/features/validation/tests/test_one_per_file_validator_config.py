@@ -1,25 +1,19 @@
 """Tests for configuration and path handling in one-per-file validation."""
 
-
-from collections.abc import Callable
 from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config, create_python_file
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
 class TestOnePerFileValidatorConfig:
     """Tests for configuration and path handling."""
 
-    def test_custom_search_paths(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_custom_search_paths(self, tmp_path: Path) -> None:
         """Should check custom search paths."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.one_per_file.search_paths = ["lib", "app"]
 
         (config.project_root / "lib").mkdir()
@@ -27,14 +21,16 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating file in lib
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("lib/module.py", content, config.project_root)
+        create_python_file(tmp_path, "lib/module.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_missing_search_path(self, minimal_config: Config, capsys: CaptureFixture[str]) -> None:
+    def test_missing_search_path(
+        self, tmp_path: Path, capsys: CaptureFixture[str]
+    ) -> None:
         """Should warn about missing search paths and continue."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.one_per_file.search_paths = ["nonexistent", "src"]
 
         # Create valid file in src
@@ -50,10 +46,10 @@ class TestOnePerFileValidatorConfig:
         assert exit_code == 0
 
     def test_all_search_paths_missing(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should handle all search paths missing gracefully."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         config.one_per_file.search_paths = ["nonexistent1", "nonexistent2"]
 
         exit_code = validate_one_per_file(config)
@@ -64,29 +60,21 @@ class TestOnePerFileValidatorConfig:
         # Should succeed (no files to check)
         assert exit_code == 0
 
-    def test_nested_directories(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_nested_directories(self, tmp_path: Path) -> None:
         """Should check files in nested directories."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src" / "sub" / "deep").mkdir(parents=True)
 
         # Create violating file in nested directory
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("src/sub/deep/module.py", content, config.project_root)
+        create_python_file(tmp_path, "src/sub/deep/module.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_excludes_venv_directory(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_excludes_venv_directory(self, tmp_path: Path) -> None:
         """Should exclude .venv and venv directories."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         (config.project_root / "src").mkdir()
         (config.project_root / "src" / ".venv").mkdir()
@@ -94,44 +82,36 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating files in excluded directories
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("src/.venv/lib.py", content, config.project_root)
-        python_file_factory("src/venv/lib.py", content, config.project_root)
+        create_python_file(tmp_path, "src/.venv/lib.py", content)
+        create_python_file(tmp_path, "src/venv/lib.py", content)
 
         # Should pass because excluded directories are ignored
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_excludes_pycache_directory(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_excludes_pycache_directory(self, tmp_path: Path) -> None:
         """Should exclude __pycache__ directories."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         (config.project_root / "src" / "__pycache__").mkdir(parents=True)
 
         # Create violating file in __pycache__
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("src/__pycache__/module.py", content, config.project_root)
+        create_python_file(tmp_path, "src/__pycache__/module.py", content)
 
         # Should pass because __pycache__ is excluded
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_excludes_git_directory(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_excludes_git_directory(self, tmp_path: Path) -> None:
         """Should exclude .git directories."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         (config.project_root / "src" / ".git").mkdir(parents=True)
 
         # Create violating file in .git
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        python_file_factory("src/.git/hooks.py", content, config.project_root)
+        create_python_file(tmp_path, "src/.git/hooks.py", content)
 
         # Should pass because .git is excluded
         exit_code = validate_one_per_file(config)

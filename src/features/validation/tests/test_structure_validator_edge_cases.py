@@ -1,18 +1,19 @@
 """Tests for edge cases and special scenarios in structure validation."""
 
+from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 
 class TestStructureValidatorEdgeCases:
     """Tests for edge cases and special scenarios."""
 
-    def test_pycache_ignored_in_src_root(self, minimal_config: Config) -> None:
+    def test_pycache_ignored_in_src_root(self, tmp_path: Path) -> None:
         """Should ignore __pycache__ directories."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create valid structure
         src = config.project_root / "src"
@@ -31,10 +32,10 @@ class TestStructureValidatorEdgeCases:
         assert exit_code == 0
 
     def test_multiple_structure_violations_all_reported(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should report all violations, not just first one."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create structure with multiple issues
         src = config.project_root / "src"
@@ -53,9 +54,9 @@ class TestStructureValidatorEdgeCases:
         assert "Files not allowed" in captured.out or "file1.py" in captured.out
         assert exit_code == 1
 
-    def test_empty_src_directory_passes(self, minimal_config: Config) -> None:
+    def test_empty_src_directory_passes(self, tmp_path: Path) -> None:
         """Should pass when src directory is empty (no base folders yet)."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create empty src directory
         (config.project_root / "src").mkdir()
@@ -64,9 +65,9 @@ class TestStructureValidatorEdgeCases:
         # Empty src is valid - allows gradual project setup
         assert exit_code == 0
 
-    def test_complex_valid_structure(self, minimal_config: Config) -> None:
+    def test_complex_valid_structure(self, tmp_path: Path) -> None:
         """Should pass with complex but valid structure."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create complex valid structure
         src = config.project_root / "src"
@@ -91,6 +92,51 @@ class TestStructureValidatorEdgeCases:
             script_dir = scripts / script_folder
             script_dir.mkdir()
             (script_dir / "run.py").touch()
+
+        exit_code = validate_structure(config)
+        assert exit_code == 0
+
+    def test_base_folder_cannot_use_standard_names(
+        self, tmp_path: Path, capsys: CaptureFixture[str]
+    ) -> None:
+        """Should fail when a base folder uses a standard folder name like 'types'."""
+        config = create_minimal_config(tmp_path)
+
+        # Create structure
+        src = config.project_root / "src"
+        src.mkdir()
+
+        # Try to create a base folder named "types" directly under src/ - should fail
+        # Base folders (like "features", "apps") cannot use standard folder names
+        types_base = src / "types"
+        types_base.mkdir()
+        (types_base / "module.py").touch()
+
+        exit_code = validate_structure(config)
+        captured = capsys.readouterr()
+
+        # Should fail with error about reserved name
+        assert exit_code == 1
+        assert "conflicts with standard folder names" in captured.out
+        assert "types" in captured.out
+
+    def test_egg_info_ignored(self, tmp_path: Path) -> None:
+        """Should ignore .egg-info directories without causing validation errors."""
+        config = create_minimal_config(tmp_path)
+
+        # Create valid structure
+        src = config.project_root / "src"
+        features = src / "features"
+        features.mkdir(parents=True)
+        (features / "my_feature").mkdir()
+        (features / "my_feature" / "types").mkdir()
+        (features / "my_feature" / "types" / "module.py").touch()
+
+        # Add .egg-info directory - should be ignored
+        # Using exact name since ignored_directories uses exact matching
+        (src / ".egg-info").mkdir()
+        (src / ".egg-info" / "PKG-INFO").touch()
+        (src / ".egg-info" / "SOURCES.txt").touch()
 
         exit_code = validate_structure(config)
         assert exit_code == 0

@@ -1,19 +1,15 @@
 """Tests for CLI exit codes."""
 
-from collections.abc import Callable
 from pathlib import Path
 
 from features.cli import main
+from features.test_fixtures import create_python_file
 
 
 class TestCLIExitCodes:
     """Tests for CLI exit codes."""
 
-    def test_cli_success_exit_code(
-        self,
-        tmp_path: Path,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_cli_success_exit_code(self, tmp_path: Path) -> None:
         """Should return 0 when all validations pass."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -28,20 +24,12 @@ structure = false
 
         # Create valid Python files
         (tmp_path / "src").mkdir()
-        python_file_factory(
-            "src/module.py",
-            "def hello():\n    return 'world'\n",
-            tmp_path
-        )
+        create_python_file(tmp_path, "src/module.py", "def hello():\n    return 'world'\n")
 
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 0
 
-    def test_cli_validation_failure_exit_code(
-        self,
-        tmp_path: Path,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_cli_validation_failure_exit_code(self, tmp_path: Path) -> None:
         """Should return 1 when validation fails."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
@@ -60,7 +48,7 @@ max_lines = 5
         # Create file that violates line limit
         (tmp_path / "src").mkdir()
         long_content = "\n".join([f"# Line {i}" for i in range(1, 20)])
-        python_file_factory("src/module.py", long_content, tmp_path)
+        create_python_file(tmp_path, "src/module.py", long_content)
 
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 1

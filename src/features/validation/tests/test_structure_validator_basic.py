@@ -1,9 +1,10 @@
 """Tests for basic structure validation functionality."""
 
+from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 
@@ -11,10 +12,10 @@ class TestStructureValidatorBasic:
     """Basic tests for validate_structure function."""
 
     def test_missing_src_root_fails(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should fail when src root doesn't exist."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
@@ -22,9 +23,9 @@ class TestStructureValidatorBasic:
         assert "not found" in captured.out or "Error" in captured.out
         assert exit_code == 1
 
-    def test_valid_minimal_structure_passes(self, minimal_config: Config) -> None:
+    def test_valid_minimal_structure_passes(self, tmp_path: Path) -> None:
         """Should pass with valid minimal structure."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create minimal valid structure
         src = config.project_root / "src"
@@ -39,9 +40,9 @@ class TestStructureValidatorBasic:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_files_in_src_root_fails(self, minimal_config: Config) -> None:
+    def test_files_in_src_root_fails(self, tmp_path: Path) -> None:
         """Should fail when files exist in src root."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         src = config.project_root / "src"
         features = src / "features"
@@ -54,10 +55,10 @@ class TestStructureValidatorBasic:
         assert exit_code == 1
 
     def test_files_in_base_folder_fails(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should fail when files exist directly in base folders like features/."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         src = config.project_root / "src"
         features = src / "features"
@@ -75,9 +76,9 @@ class TestStructureValidatorBasic:
         assert "Files not allowed in root" in captured.out
         assert "calculator.py" in captured.out
 
-    def test_multiple_base_folders_accepted(self, minimal_config: Config) -> None:
+    def test_multiple_base_folders_accepted(self, tmp_path: Path) -> None:
         """Any base folders in src/ should be accepted automatically."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create multiple base folders
         src = config.project_root / "src"

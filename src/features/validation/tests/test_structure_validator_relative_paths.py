@@ -1,9 +1,10 @@
 """Tests for relative path handling in structure validation error messages."""
 
+from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config
 from features.validation.utils.validator_structure import validate_structure
 
 
@@ -11,10 +12,10 @@ class TestStructureValidatorRelativePaths:
     """Tests for relative path handling in error messages."""
 
     def test_error_messages_use_relative_paths(
-        self, minimal_config: Config, capsys: CaptureFixture[str]
+        self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
         """Should use relative paths in error messages."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
 
         # Create invalid structure - files in src root
         src = config.project_root / "src"

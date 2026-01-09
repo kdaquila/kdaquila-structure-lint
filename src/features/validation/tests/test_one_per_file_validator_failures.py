@@ -1,22 +1,17 @@
 """Tests for one-per-file validation failures."""
 
-from collections.abc import Callable
 from pathlib import Path
 
-from features.config import Config
+from features.test_fixtures import create_minimal_config, create_python_file
 from features.validation.utils.validator_one_per_file import validate_one_per_file
 
 
 class TestOnePerFileValidatorFailures:
     """Tests for failure cases in one-per-file validation."""
 
-    def test_file_with_multiple_functions_fails(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_file_with_multiple_functions_fails(self, tmp_path: Path) -> None:
         """Should fail when file has multiple functions."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """def func1():
@@ -25,18 +20,14 @@ class TestOnePerFileValidatorFailures:
 def func2():
     pass
 """
-        python_file_factory("src/multi.py", content, config.project_root)
+        create_python_file(tmp_path, "src/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_file_with_multiple_classes_fails(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_file_with_multiple_classes_fails(self, tmp_path: Path) -> None:
         """Should fail when file has multiple classes."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """class Class1:
@@ -45,18 +36,14 @@ def func2():
 class Class2:
     pass
 """
-        python_file_factory("src/multi.py", content, config.project_root)
+        create_python_file(tmp_path, "src/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_file_with_function_and_class_fails(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_file_with_function_and_class_fails(self, tmp_path: Path) -> None:
         """Should fail when file has both function and class."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """def my_func():
@@ -65,18 +52,14 @@ class Class2:
 class MyClass:
     pass
 """
-        python_file_factory("src/mixed.py", content, config.project_root)
+        create_python_file(tmp_path, "src/mixed.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_async_function_counted(
-        self,
-        minimal_config: Config,
-        python_file_factory: Callable[[str, str, Path | None], Path],
-    ) -> None:
+    def test_async_function_counted(self, tmp_path: Path) -> None:
         """Should count async functions as definitions."""
-        config = minimal_config
+        config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
         content = """async def async_func():
@@ -85,7 +68,7 @@ class MyClass:
 def sync_func():
     pass
 """
-        python_file_factory("src/async.py", content, config.project_root)
+        create_python_file(tmp_path, "src/async.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

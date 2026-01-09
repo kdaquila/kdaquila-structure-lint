@@ -95,6 +95,10 @@ ignore = [
     "ARG001",  # Unused function argument (fixtures)
     "PLR2004", # Magic values OK in tests
 ]
+"**/tests/**/*.py" = [
+    "ARG001",  # Unused function argument (fixtures)
+    "PLR2004", # Magic values OK in tests
+]
 
 [tool.mypy]
 python_version = "3.10"

@@ -3,8 +3,6 @@
 from pathlib import Path
 
 from features.config import Config
-from features.validation.constants import INTERNALLY_ALLOWED_FILES
-from features.validation.constants.internally_allowed import IGNORED_DIRECTORIES
 from features.validation.utils.structure_general_folder import validate_general_folder
 
 
@@ -13,7 +11,9 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     errors: list[str] = []
 
     # Merge internally allowed files with config allowed files
-    allowed_files = INTERNALLY_ALLOWED_FILES + list(config.structure.allowed_files)
+    allowed_files = list(config.structure.internally_allowed_files) + list(
+        config.structure.allowed_files
+    )
     general_folder = config.structure.general_folder
     standard_folders = config.structure.standard_folders
 
@@ -29,7 +29,11 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
             f"{path}: Disallowed files (only {allowed_files} allowed): {disallowed}"
         )
 
-    children = [c for c in path.iterdir() if c.is_dir() and c.name not in IGNORED_DIRECTORIES]
+    children = [
+        c
+        for c in path.iterdir()
+        if c.is_dir() and c.name not in config.structure.ignored_directories
+    ]
     child_names = {c.name for c in children}
 
     has_general = general_folder in child_names
@@ -59,7 +63,7 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
         subdirs = [
             c
             for c in std_path.iterdir()
-            if c.is_dir() and c.name not in IGNORED_DIRECTORIES
+            if c.is_dir() and c.name not in config.structure.ignored_directories
         ]
         if subdirs:
             errors.append(f"{std_path}: Standard folder cannot have subdirectories.")

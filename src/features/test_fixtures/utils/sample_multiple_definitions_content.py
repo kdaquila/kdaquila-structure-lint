@@ -1,12 +1,6 @@
-"""Fixture for Python file content with multiple top-level definitions."""
+"""Constant for Python file content with multiple top-level definitions."""
 
-import pytest
-
-
-@pytest.fixture
-def sample_multiple_definitions_content() -> str:
-    """Return content with multiple top-level definitions."""
-    return """def function_one():
+SAMPLE_MULTIPLE_DEFINITIONS_CONTENT: str = """def function_one():
     pass
 
 def function_two():

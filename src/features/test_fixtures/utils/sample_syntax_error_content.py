@@ -1,12 +1,6 @@
-"""Fixture for Python file content with syntax errors."""
+"""Constant for Python file content with syntax errors."""
 
-import pytest
-
-
-@pytest.fixture
-def sample_syntax_error_content() -> str:
-    """Return content with Python syntax errors."""
-    return """def broken_function(
+SAMPLE_SYNTAX_ERROR_CONTENT: str = """def broken_function(
     # Missing closing parenthesis
     return "incomplete"
 """
