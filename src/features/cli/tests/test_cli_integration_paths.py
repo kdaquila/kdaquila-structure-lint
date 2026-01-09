@@ -1,7 +1,5 @@
 """Integration tests for CLI path handling."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from collections.abc import Callable
 from pathlib import Path
 

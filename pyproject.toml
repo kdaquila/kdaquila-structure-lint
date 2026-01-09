@@ -54,7 +54,7 @@ one_per_file = true
 structure = true
 
 [tool.structure-lint.structure]
-allowed_files = ["README.md"]
+allowed_files = ["README.md", "conftest.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["src"]
@@ -94,12 +94,10 @@ ignore = [
 "tests/**/*.py" = [
     "ARG001",  # Unused function argument (fixtures)
     "PLR2004", # Magic values OK in tests
-    "E402",    # Module level import not at top (pytest_plugins must come first)
 ]
 "**/tests/**/*.py" = [
     "ARG001",  # Unused function argument (fixtures)
     "PLR2004", # Magic values OK in tests
-    "E402",    # Module level import not at top (pytest_plugins must come first)
 ]
 
 [tool.mypy]

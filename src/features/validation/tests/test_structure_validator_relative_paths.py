@@ -1,7 +1,5 @@
 """Tests for relative path handling in structure validation error messages."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from _pytest.capture import CaptureFixture
 
 from features.config import Config

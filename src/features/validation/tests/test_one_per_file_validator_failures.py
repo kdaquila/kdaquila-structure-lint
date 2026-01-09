@@ -1,7 +1,5 @@
 """Tests for one-per-file validation failures."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from collections.abc import Callable
 from pathlib import Path
 

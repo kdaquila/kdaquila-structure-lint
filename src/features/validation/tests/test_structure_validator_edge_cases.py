@@ -1,7 +1,5 @@
 """Tests for edge cases and special scenarios in structure validation."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from _pytest.capture import CaptureFixture
 
 from features.config import Config

@@ -1,7 +1,5 @@
 """Tests for CLI exit codes."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from collections.abc import Callable
 from pathlib import Path
 

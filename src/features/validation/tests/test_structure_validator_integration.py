@@ -1,7 +1,5 @@
 """Integration tests for structure validation combining multiple aspects."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from _pytest.capture import CaptureFixture
 
 from features.config import Config

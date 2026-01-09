@@ -1,7 +1,5 @@
 """Integration tests for CLI with multiple validators."""
 
-pytest_plugins = ["features.test_fixtures.utils"]
-
 from collections.abc import Callable
 from pathlib import Path
 
