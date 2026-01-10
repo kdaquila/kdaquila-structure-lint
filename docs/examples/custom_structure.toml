@@ -5,10 +5,15 @@
 # validator to match your team's conventions and domain language.
 #
 # Scenario: A web application using a services-based architecture with separate
-# API and web components. Legacy code is simply not included in strict_format_roots.
+# API and web components. Legacy code is simply not included in search_paths.
 
 [tool.structure-lint]
 enabled = true
+
+# Only validate "lib" - legacy and experimental dirs are simply not listed
+# This is the opt-in model: only listed search paths are validated
+# This applies to ALL validators (line_limits, one_per_file, structure)
+search_paths = ["lib"]
 
 [tool.structure-lint.validators]
 # Enable all validators including structure validation
@@ -19,15 +24,8 @@ one_per_file = true     # Single responsibility
 [tool.structure-lint.line_limits]
 # Slightly more lenient line limit for service classes
 max_lines = 200
-search_paths = ["lib"]  # Custom source directory name
-
-[tool.structure-lint.one_per_file]
-search_paths = ["lib"]
 
 [tool.structure-lint.structure]
-# Only validate "lib" - legacy and experimental dirs are simply not listed
-# This is the opt-in model: only listed roots are validated
-strict_format_roots = ["lib"]
 
 # Allow 3 levels of feature folder nesting for complex features
 folder_depth = 3
@@ -66,7 +64,7 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #
 # project/
 # ├── pyproject.toml
-# ├── lib/                        (strict_format_root - validated)
+# ├── lib/                        (in search_paths - validated)
 # │   ├── api/                    (base folder - API backend)
 # │   │   ├── authentication/     (feature at depth 0, no prefix required)
 # │   │   │   ├── models/         (User model, Token model, etc.)
@@ -102,11 +100,11 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # │       └── notifications/
 # │           └── ...
 # │
-# ├── legacy/                     (NOT in strict_format_roots - ignored)
+# ├── legacy/                     (NOT in search_paths - ignored)
 # │   └── old_code/
 # │       └── anything_goes.py
 # │
-# └── experimental/               (NOT in strict_format_roots - ignored)
+# └── experimental/               (NOT in search_paths - ignored)
 #     └── new_feature_poc/
 #
 # ============================================================================
@@ -139,7 +137,7 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #    - controllers: Request handling
 #    - views: Presentation
 #
-# 4. **Migration Path**: Legacy code not in strict_format_roots (ignored)
+# 4. **Migration Path**: Legacy code not in search_paths (ignored)
 #
 # 5. **Innovation Space**: Experimental folder for prototyping without constraints
 #
@@ -151,14 +149,14 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #
 # Phase 1 (Current):
 #   - New code follows structure in lib/api/, lib/web/, lib/services/
-#   - Legacy code in legacy/ at project root (not validated - not in strict_format_roots)
+#   - Legacy code in legacy/ at project root (not validated - not in search_paths)
 #
 # Phase 2 (Next Quarter):
 #   - Refactor legacy code incrementally
 #   - Move refactored code to appropriate base folders in lib/
 #
 # Phase 3 (Future):
-#   - Add "legacy" to strict_format_roots once fully refactored
+#   - Add "legacy" to search_paths once fully refactored
 #   - All code follows structure
 #
 # ============================================================================

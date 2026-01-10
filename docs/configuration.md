@@ -39,6 +39,35 @@ Master switch to enable/disable the entire linter. Useful for temporarily disabl
 enabled = false  # Disables all validation
 ```
 
+### Search Paths
+
+#### `search_paths`
+
+**Type**: `list[str]`
+**Default**: `["src"]`
+
+List of directories to search for Python files, relative to project root. This setting applies to **all validators** - it is the unified configuration for which directories the linter should examine.
+
+```toml
+[tool.structure-lint]
+search_paths = ["src", "lib", "tools"]  # Custom search paths for all validators
+```
+
+**Behavior**:
+- At least one search path should be specified (empty list means no files are validated)
+- Missing paths are warned and skipped (don't cause validation failure)
+- Each path is validated independently using the same rules
+- The tool automatically excludes common non-source directories like `.venv`, `__pycache__`, `.git`, etc.
+
+**Example**:
+```
+project/
+├── src/              # Validated (in search_paths)
+├── lib/              # Validated (in search_paths)
+├── scripts/          # Not validated (not in search_paths)
+└── experiments/      # Not validated (not in search_paths)
+```
+
 ### Validator Toggles
 
 Control which validators are enabled. Each can be toggled independently.
@@ -97,65 +126,9 @@ max_lines = 200  # Allow up to 200 lines
 
 **Rationale**: The default of 150 lines encourages modular code without being overly restrictive. Files beyond this size often indicate opportunities for refactoring.
 
-#### `line_limits.search_paths`
-
-**Type**: `list[str]`
-**Default**: `["src"]`
-
-List of directories to search for Python files, relative to project root.
-
-```toml
-[tool.structure-lint.line_limits]
-search_paths = ["src", "lib", "tools"]  # Custom search paths
-```
-
-**Note**: The tool automatically excludes common non-source directories like `.venv`, `__pycache__`, `.git`, etc.
-
-### One-Per-File Configuration
-
-Settings for the one-per-file validator.
-
-#### `one_per_file.search_paths`
-
-**Type**: `list[str]`
-**Default**: `["src"]`
-
-List of directories to search for Python files, relative to project root.
-
-```toml
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]  # Only check src/ directory
-```
-
 ### Structure Validation Configuration
 
-Settings for the opinionated structure validator.
-
-#### `structure.strict_format_roots`
-
-**Type**: `list[str]` (converted to set internally)
-**Default**: `["src"]`
-
-List of root directories to validate with the structure validator. Only directories listed here are validated - this is an opt-in model.
-
-```toml
-[tool.structure-lint.structure]
-strict_format_roots = ["src", "lib"]  # Validate both src/ and lib/
-```
-
-**Behavior**:
-- At least one root must be specified (empty list is an error)
-- Missing roots are warned and skipped (don't cause validation failure)
-- Each root is validated independently using the same rules
-
-**Example**:
-```
-project/
-├── src/              # Validated (in strict_format_roots)
-├── lib/              # Validated (in strict_format_roots)
-├── scripts/          # Not validated (not in strict_format_roots)
-└── experiments/      # Not validated (not in strict_format_roots)
-```
+Settings for the opinionated structure validator. Note that the structure validator uses the root-level `search_paths` setting to determine which directories to validate.
 
 #### `structure.folder_depth`
 
@@ -305,12 +278,7 @@ max_lines = 200
 ```toml
 [tool.structure-lint]
 enabled = true
-
-[tool.structure-lint.line_limits]
-search_paths = ["src"]  # Only check src/
-
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]  # Only check src/
+search_paths = ["src"]  # Only check src/ for all validators
 ```
 
 ### Enable Structure Validation
@@ -318,12 +286,12 @@ search_paths = ["src"]  # Only check src/
 ```toml
 [tool.structure-lint]
 enabled = true
+search_paths = ["src"]
 
 [tool.structure-lint.validators]
 structure = true  # Opt-in
 
 [tool.structure-lint.structure]
-strict_format_roots = ["src"]
 standard_folders = ["types", "utils", "tests"]
 folder_depth = 2
 prefix_separator = "_"
@@ -334,16 +302,15 @@ prefix_separator = "_"
 ```toml
 [tool.structure-lint]
 enabled = true
+search_paths = ["lib", "tools"]  # All validators use these paths
 
 [tool.structure-lint.validators]
 structure = true
 
 [tool.structure-lint.line_limits]
 max_lines = 200
-search_paths = ["lib", "tools"]
 
 [tool.structure-lint.structure]
-strict_format_roots = ["lib"]  # Only validate lib/
 standard_folders = ["models", "views", "controllers", "tests"]
 prefix_separator = "-"
 folder_depth = 3
@@ -356,6 +323,7 @@ For projects that want basic checks without strict enforcement:
 ```toml
 [tool.structure-lint]
 enabled = true
+search_paths = ["src"]
 
 [tool.structure-lint.validators]
 line_limits = true
@@ -373,6 +341,7 @@ For projects that want maximum enforcement:
 ```toml
 [tool.structure-lint]
 enabled = true
+search_paths = ["src", "tests"]  # Validate both src/ and tests/
 
 [tool.structure-lint.validators]
 line_limits = true
@@ -381,13 +350,8 @@ structure = true
 
 [tool.structure-lint.line_limits]
 max_lines = 100  # Very strict
-search_paths = ["src", "tests"]
-
-[tool.structure-lint.one_per_file]
-search_paths = ["src", "tests"]
 
 [tool.structure-lint.structure]
-strict_format_roots = ["src"]  # Validate src/ only
 standard_folders = ["types", "utils", "constants", "tests"]
 prefix_separator = "_"
 folder_depth = 2
@@ -465,19 +429,77 @@ enabled = true  # Enabled locally
 1. **Start Small**: Begin with just line limits and one-per-file, add structure validation later
 2. **Incremental Adoption**: Use high line limits initially, gradually decrease as you refactor
 3. **Team Alignment**: Discuss and agree on limits before enforcing in CI/CD
-4. **Opt-In Validation**: Only directories in `strict_format_roots` are validated - leave out directories you don't want to enforce structure on
+4. **Opt-In Validation**: Only directories in `search_paths` are validated - leave out directories you don't want to enforce structure on
 5. **Document Choices**: Add comments in `pyproject.toml` explaining your configuration choices
 
-## Migration from v1.x
+## Migration from v4.x
 
-Version 2.0.0 introduces breaking changes to the structure validation configuration. Here's how to migrate:
+Version 5.0.0 simplifies the configuration by unifying all search path settings into a single root-level `search_paths` option. Here's how to migrate:
 
 ### Configuration Changes
 
-| v1.x Field | v2.0.0 Field | Notes |
+| v4.x Field | v5.0.0 Field | Notes |
 |------------|--------------|-------|
-| `src_root = "src"` | `strict_format_roots = ["src"]` | Now a list, supports multiple roots |
-| `free_form_roots = ["experiments"]` | (removed) | Just don't include in `strict_format_roots` |
+| `line_limits.search_paths = ["src"]` | `search_paths = ["src"]` | Moved to root level |
+| `one_per_file.search_paths = ["src"]` | `search_paths = ["src"]` | Moved to root level |
+| `structure.strict_format_roots = ["src"]` | `search_paths = ["src"]` | Renamed and moved to root level |
+
+### Migration Examples
+
+**Before (v4.x)**:
+```toml
+[tool.structure-lint]
+enabled = true
+
+[tool.structure-lint.validators]
+structure = true
+
+[tool.structure-lint.line_limits]
+max_lines = 150
+search_paths = ["src", "lib"]
+
+[tool.structure-lint.one_per_file]
+search_paths = ["src", "lib"]
+
+[tool.structure-lint.structure]
+strict_format_roots = ["src", "lib"]
+standard_folders = ["types", "utils", "tests"]
+```
+
+**After (v5.0.0)**:
+```toml
+[tool.structure-lint]
+enabled = true
+search_paths = ["src", "lib"]  # Unified search paths for ALL validators
+
+[tool.structure-lint.validators]
+structure = true
+
+[tool.structure-lint.line_limits]
+max_lines = 150
+
+[tool.structure-lint.structure]
+standard_folders = ["types", "utils", "tests"]
+```
+
+### Behavioral Changes
+
+1. **Unified Search Paths**: In v4.x, each validator had its own `search_paths` (or `strict_format_roots` for structure). In v5.0.0, there is a single `search_paths` at the root level that applies to all validators.
+
+2. **Simplified Configuration**: You no longer need to specify the same paths multiple times for different validators.
+
+3. **Consistent Behavior**: All validators now search the same directories, ensuring consistent validation across your codebase.
+
+## Migration from v1.x
+
+Version 2.0.0 introduced breaking changes to the structure validation configuration. Here's how to migrate (note: if migrating from v1.x directly to v5.0.0, also see the v4.x migration section above):
+
+### Configuration Changes
+
+| v1.x Field | v2.0.0+ Field | Notes |
+|------------|---------------|-------|
+| `src_root = "src"` | `search_paths = ["src"]` | Moved to root level in v5.0.0 |
+| `free_form_roots = ["experiments"]` | (removed) | Just don't include in `search_paths` |
 | `general_folder = "general"` | (removed) | Use `prefix_separator` for naming conventions |
 | (new) | `folder_depth = 2` | Configurable max nesting depth |
 | (new) | `prefix_separator = "_"` | Feature folder naming convention |
@@ -493,11 +515,13 @@ standard_folders = ["types", "utils", "tests"]
 general_folder = "general"
 ```
 
-**After (v2.0.0)**:
+**After (v5.0.0)**:
 ```toml
+[tool.structure-lint]
+search_paths = ["src"]  # Only validate src/
+# experiments/ and legacy/ are NOT validated (not in search_paths)
+
 [tool.structure-lint.structure]
-strict_format_roots = ["src"]  # Only validate src/
-# experiments/ and legacy/ are NOT validated (opt-in model)
 standard_folders = ["types", "utils", "tests"]
 folder_depth = 2
 prefix_separator = "_"
@@ -505,22 +529,20 @@ prefix_separator = "_"
 
 ### Behavioral Changes
 
-1. **Opt-in Model**: In v1.x, `src_root` was validated and `free_form_roots` were exempted. In v2.0.0, only roots listed in `strict_format_roots` are validated. Everything else is ignored.
+1. **Opt-in Model**: In v1.x, `src_root` was validated and `free_form_roots` were exempted. In v5.0.0, only roots listed in `search_paths` are validated. Everything else is ignored.
 
 2. **Multiple Roots**: You can now validate multiple source directories:
    ```toml
-   strict_format_roots = ["src", "lib", "packages"]
+   search_paths = ["src", "lib", "packages"]
    ```
 
-3. **Missing Roots**: If a root in `strict_format_roots` doesn't exist, v2.0.0 warns and continues (v1.x would fail).
+3. **Missing Roots**: If a root in `search_paths` doesn't exist, the tool warns and continues (v1.x would fail).
 
-4. **Empty Roots Error**: `strict_format_roots` cannot be empty - at least one root is required.
+4. **Depth Limits**: The `folder_depth` setting limits how deep feature folders can nest.
 
-5. **Depth Limits**: The new `folder_depth` setting limits how deep feature folders can nest.
+5. **Prefix Naming**: Feature folders must now be prefixed with their parent's name + separator. The `general_folder` concept has been removed in favor of this naming convention.
 
-6. **Prefix Naming**: Feature folders must now be prefixed with their parent's name + separator. The `general_folder` concept has been removed in favor of this naming convention.
-
-7. **Standard + Feature Coexistence**: Standard folders and feature folders can now coexist at the same level (previously there were mutual exclusivity rules).
+6. **Standard + Feature Coexistence**: Standard folders and feature folders can now coexist at the same level (previously there were mutual exclusivity rules).
 
 ## See Also
 

@@ -73,9 +73,11 @@ Enforces a maximum number of lines per Python file to encourage modular, maintai
 
 **Configuration**:
 ```toml
+[tool.structure-lint]
+search_paths = ["src"]  # Applies to all validators
+
 [tool.structure-lint.line_limits]
 max_lines = 150
-search_paths = ["src"]
 ```
 
 **Example Output**:
@@ -95,8 +97,8 @@ Ensures each Python file contains at most one top-level function or class defini
 
 **Configuration**:
 ```toml
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]
+[tool.structure-lint]
+search_paths = ["src"]  # Applies to all validators
 ```
 
 **Example Output**:
@@ -144,6 +146,7 @@ See all available options:
 ```toml
 [tool.structure-lint]
 enabled = true
+search_paths = ["src"]  # Applies to all validators
 
 [tool.structure-lint.validators]
 structure = false        # Opt-in (default: disabled)
@@ -152,13 +155,8 @@ one_per_file = true      # Default: enabled
 
 [tool.structure-lint.line_limits]
 max_lines = 150
-search_paths = ["src"]
-
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]
 
 [tool.structure-lint.structure]
-strict_format_roots = ["src"]
 folder_depth = 2
 standard_folders = ["types", "utils", "constants", "tests"]
 prefix_separator = "_"

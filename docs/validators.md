@@ -41,12 +41,14 @@ The default limit of 150 lines strikes a balance between being permissive enough
 ### Configuration
 
 ```toml
+[tool.structure-lint]
+search_paths = ["src"]  # Default - applies to all validators
+
 [tool.structure-lint.validators]
 line_limits = true  # Enable/disable
 
 [tool.structure-lint.line_limits]
-max_lines = 150       # Default
-search_paths = ["src"]  # Default
+max_lines = 150  # Default
 ```
 
 ### Examples
@@ -124,14 +126,14 @@ max_lines = 100  # Forces very small modules
 Only check specific directories:
 
 ```toml
-[tool.structure-lint.line_limits]
+[tool.structure-lint]
 search_paths = ["src"]  # Only src/, ignore scripts/
 ```
 
 Or check additional directories:
 
 ```toml
-[tool.structure-lint.line_limits]
+[tool.structure-lint]
 search_paths = ["src", "lib", "tests"]
 ```
 
@@ -199,11 +201,11 @@ Single-definition files provide:
 ### Configuration
 
 ```toml
+[tool.structure-lint]
+search_paths = ["src"]  # Default - applies to all validators
+
 [tool.structure-lint.validators]
 one_per_file = true  # Enable/disable
-
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]  # Default
 ```
 
 ### Examples
@@ -354,8 +356,8 @@ class Authenticatable(Protocol):  # This counts as 1 definition
 #### Change Search Paths
 
 ```toml
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]  # Only check src/
+[tool.structure-lint]
+search_paths = ["src"]  # Only check src/ (applies to all validators)
 ```
 
 #### Disable Temporarily
@@ -487,11 +489,13 @@ auth/
 ### Configuration
 
 ```toml
+[tool.structure-lint]
+search_paths = ["src"]  # Roots to validate (applies to all validators)
+
 [tool.structure-lint.validators]
 structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
-strict_format_roots = ["src"]  # Roots to validate (opt-in)
 folder_depth = 2               # Max nesting depth for feature folders
 standard_folders = ["types", "utils", "constants", "tests"]
 prefix_separator = "_"         # Separator for feature folder prefixes
@@ -632,8 +636,8 @@ src/features/auth/
 #### Multiple Roots
 
 ```toml
-[tool.structure-lint.structure]
-strict_format_roots = ["src", "lib", "packages"]
+[tool.structure-lint]
+search_paths = ["src", "lib", "packages"]
 ```
 
 ```
@@ -641,7 +645,7 @@ project_root/
 ├── src/          # Validated
 ├── lib/          # Validated
 ├── packages/     # Validated
-└── scripts/      # Not validated (not in strict_format_roots)
+└── scripts/      # Not validated (not in search_paths)
 ```
 
 #### Adjusting Depth Limits
@@ -675,13 +679,13 @@ structure-lint --verbose
 #### 2. Choose Approach
 
 **Option A: Gradual Migration**
-- Start with only new directories in `strict_format_roots`
+- Start with only new directories in `search_paths`
 - Apply structure to new features only
 - Gradually add more directories as you refactor
 
 ```toml
-[tool.structure-lint.structure]
-strict_format_roots = ["src/new_features"]  # Only validate new code
+[tool.structure-lint]
+search_paths = ["src/new_features"]  # Only validate new code
 ```
 
 **Option B: Full Reorganization**
@@ -708,10 +712,11 @@ folder_depth = 3  # Allow deeper nesting if needed
 Add comments to your config explaining choices:
 
 ```toml
-[tool.structure-lint.structure]
+[tool.structure-lint]
 # Only validate src/ - legacy/ and experiments/ are excluded
-strict_format_roots = ["src"]
+search_paths = ["src"]
 
+[tool.structure-lint.structure]
 # Added "services" as standard folder for our microservice architecture
 standard_folders = ["types", "services", "utils", "tests"]
 
@@ -773,7 +778,7 @@ ignored_folders = ["__pycache__", ".mypy_cache", "build", "dist"]
 For more specific exclusions, adjust `search_paths`:
 
 ```toml
-[tool.structure-lint.line_limits]
+[tool.structure-lint]
 search_paths = ["src"]  # Doesn't check scripts/
 ```
 
