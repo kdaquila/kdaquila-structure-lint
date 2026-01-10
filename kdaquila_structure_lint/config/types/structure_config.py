@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 class StructureConfig:
     """Configuration for structure validator."""
 
-    strict_format_roots: set[str] = field(default_factory=lambda: {"src"})
     folder_depth: int = 2
     standard_folders: set[str] = field(
         default_factory=lambda: {"types", "utils", "constants", "tests"}

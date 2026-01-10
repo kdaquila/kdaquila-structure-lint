@@ -14,6 +14,7 @@ class Config:
     """Master configuration object."""
     enabled: bool
     project_root: Path
+    search_paths: list[str]
     validators: ValidatorToggles
     line_limits: LineLimitsConfig
     one_per_file: OnePerFileConfig
