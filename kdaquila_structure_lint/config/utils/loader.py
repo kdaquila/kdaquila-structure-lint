@@ -49,6 +49,7 @@ def load_config(
 
     # Step 4: Deep merge with defaults
     enabled = user_config.get("enabled", True)
+    search_paths = user_config.get("search_paths", ["src"])
 
     # Validators section
     validators_data = user_config.get("validators", {})
@@ -60,16 +61,29 @@ def load_config(
 
     # Line limits section
     line_limits_data = user_config.get("line_limits", {})
+
+    # Deprecation warning for line_limits.search_paths
+    if "search_paths" in line_limits_data:
+        print(
+            "Warning: 'line_limits.search_paths' is deprecated and will be ignored. "
+            "Use 'search_paths' at the root level of [tool.structure-lint] instead."
+        )
+
     line_limits = LineLimitsConfig(
         max_lines=line_limits_data.get("max_lines", 150),
-        search_paths=line_limits_data.get("search_paths", ["src"]),
     )
 
     # One-per-file section
     one_per_file_data = user_config.get("one_per_file", {})
-    one_per_file = OnePerFileConfig(
-        search_paths=one_per_file_data.get("search_paths", ["src"]),
-    )
+
+    # Deprecation warning for one_per_file.search_paths
+    if "search_paths" in one_per_file_data:
+        print(
+            "Warning: 'one_per_file.search_paths' is deprecated and will be ignored. "
+            "Use 'search_paths' at the root level of [tool.structure-lint] instead."
+        )
+
+    one_per_file = OnePerFileConfig()
 
     # Structure section
     structure_data = user_config.get("structure", {})
@@ -81,8 +95,14 @@ def load_config(
             "Use 'prefix_separator' for feature folder naming conventions."
         )
 
+    # Deprecation warning for structure.strict_format_roots
+    if "strict_format_roots" in structure_data:
+        print(
+            "Warning: 'structure.strict_format_roots' is deprecated and will be ignored. "
+            "Use 'search_paths' at the root level of [tool.structure-lint] instead."
+        )
+
     structure = StructureConfig(
-        strict_format_roots=set(structure_data.get("strict_format_roots", ["src"])),
         folder_depth=structure_data.get("folder_depth", 2),
         standard_folders=set(
             structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
@@ -101,6 +121,7 @@ def load_config(
     return Config(
         enabled=enabled,
         project_root=project_root,
+        search_paths=search_paths,
         validators=validators,
         line_limits=line_limits,
         one_per_file=one_per_file,
