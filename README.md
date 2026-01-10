@@ -161,7 +161,7 @@ search_paths = ["src"]
 strict_format_roots = ["src"]
 folder_depth = 2
 standard_folders = ["types", "utils", "constants", "tests"]
-general_folder = "general"
+prefix_separator = "_"
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```

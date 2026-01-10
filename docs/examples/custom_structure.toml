@@ -29,7 +29,7 @@ search_paths = ["lib"]
 # This is the opt-in model: only listed roots are validated
 strict_format_roots = ["lib"]
 
-# Allow 3 levels of custom folder nesting for complex features
+# Allow 3 levels of feature folder nesting for complex features
 folder_depth = 3
 
 # Using MVC-style organization plus additional layers
@@ -53,8 +53,9 @@ standard_folders = [
     "tests"
 ]
 
-# Using "core" instead of "general" for main business logic
-general_folder = "core"
+# Using dash separator for feature folder naming
+# Feature folders will be named like: auth-oauth, auth-login
+prefix_separator = "-"
 
 # Python files allowed in any directory (non-.py files like README.md are automatically ignored)
 files_allowed_anywhere = ["__init__.py", "conftest.py"]
@@ -67,7 +68,7 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # ├── pyproject.toml
 # ├── lib/                        (strict_format_root - validated)
 # │   ├── api/                    (base folder - API backend)
-# │   │   ├── authentication/     (feature)
+# │   │   ├── authentication/     (feature at depth 0, no prefix required)
 # │   │   │   ├── models/         (User model, Token model, etc.)
 # │   │   │   ├── controllers/    (Login handler, Logout handler)
 # │   │   │   ├── services/       (Authentication service)
@@ -75,9 +76,11 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # │   │   │   ├── types/          (API schemas)
 # │   │   │   ├── utils/          (Password hashing, JWT utils)
 # │   │   │   ├── tests/
-# │   │   │   └── core/           (Main authentication logic)
-# │   │   │       └── authenticate.py
-# │   │   └── users/              (feature)
+# │   │   │   └── authentication-oauth/   (feature folder, prefixed)
+# │   │   │       ├── types/
+# │   │   │       └── authentication-oauth-google/  (nested, fully prefixed)
+# │   │   │           └── types/
+# │   │   └── users/              (another feature at depth 0)
 # │   │       ├── models/
 # │   │       ├── controllers/
 # │   │       └── ...
@@ -86,7 +89,8 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # │   │   ├── dashboard/
 # │   │   │   ├── views/          (Dashboard templates)
 # │   │   │   ├── controllers/    (Dashboard controller)
-# │   │   │   └── core/
+# │   │   │   └── dashboard-widgets/  (feature folder with prefix)
+# │   │   │       └── types/
 # │   │   └── profile/
 # │   │       └── ...
 # │   │
@@ -106,6 +110,21 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #     └── new_feature_poc/
 #
 # ============================================================================
+# The Three Rules in Action:
+# ============================================================================
+#
+# Rule 1: Standard folders (models/, views/, etc.) cannot have subdirectories
+#         They contain Python files directly.
+#
+# Rule 2: Feature folders must be prefixed with parent's name + separator
+#         Example: Inside "authentication/", feature folders must start with
+#         "authentication-" (like "authentication-oauth")
+#         Exception: Children of base folders (api/, web/, services/) are exempt
+#
+# Rule 3: Python files only allowed in standard folders or files_allowed_anywhere
+#         No loose .py files in feature directories (except __init__.py, conftest.py)
+#
+# ============================================================================
 # Why This Structure?
 # ============================================================================
 #
@@ -123,6 +142,8 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # 4. **Migration Path**: Legacy code not in strict_format_roots (ignored)
 #
 # 5. **Innovation Space**: Experimental folder for prototyping without constraints
+#
+# 6. **Prefix Naming**: Clear hierarchy with dash separator (auth-oauth-google)
 #
 # ============================================================================
 # Migration Strategy:
@@ -146,9 +167,9 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #
 # 1. New Features:
 #    - Choose appropriate base folder (lib/api/, lib/web/, lib/services/)
-#    - Create feature directory
+#    - Create feature directory (no prefix needed at depth 0)
 #    - Add standard folders as needed
-#    - Main logic goes in core/
+#    - For sub-features, prefix with parent name + "-"
 #
 # 2. File Naming:
 #    - models/user.py (not models/user_model.py)
@@ -163,10 +184,9 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #    - views/: Templates and rendering
 #    - types/: Type hints, protocols
 #    - utils/: Pure functions, helpers
-#    - core/: Main feature logic
 #
-# 4. Legacy Code:
-#    - Don't add to legacy/
-#    - Only modify existing legacy code
-#    - Refactor when touching legacy code
+# 4. Feature Folder Naming:
+#    - Use prefix separator consistently (authentication-oauth, not authentication_oauth)
+#    - Keep names descriptive but concise
+#    - Nested features get full prefix chain (auth-oauth-google)
 #

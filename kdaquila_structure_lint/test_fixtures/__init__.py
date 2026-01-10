@@ -9,6 +9,7 @@ Helper Functions (create_ prefix):
 - create_minimal_config: Creates a Config object with defaults
 - create_custom_config: Creates a Config object with custom settings
 - create_python_file: Factory for creating test files
+- build_structure: Builds folder structures from nested dictionaries
 
 Constants (UPPERCASE):
 - SAMPLE_VALID_FILE_CONTENT: Valid Python file content
@@ -24,6 +25,7 @@ from kdaquila_structure_lint.test_fixtures.utils import (
     SAMPLE_SYNTAX_ERROR_CONTENT,
     SAMPLE_TOO_LONG_FILE_CONTENT,
     SAMPLE_VALID_FILE_CONTENT,
+    build_structure,
     create_custom_config,
     create_minimal_config,
     create_python_file,
@@ -37,6 +39,7 @@ __all__ = [
     "SAMPLE_SYNTAX_ERROR_CONTENT",
     "SAMPLE_TOO_LONG_FILE_CONTENT",
     "SAMPLE_VALID_FILE_CONTENT",
+    "build_structure",
     "create_custom_config",
     "create_minimal_config",
     "create_python_file",

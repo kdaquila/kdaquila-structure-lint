@@ -162,7 +162,7 @@ project/
 **Type**: `int`
 **Default**: `2`
 
-Maximum nesting depth for arbitrary-named (custom) folders within a base folder. The `general` folder is also subject to this depth limit.
+Maximum nesting depth for feature folders within a base folder.
 
 ```toml
 [tool.structure-lint.structure]
@@ -171,10 +171,10 @@ folder_depth = 3  # Allow deeper nesting
 
 **Example with depth=2**:
 ```
-src/features/authentication/     # depth 0 (base folder)
-├── services/                    # depth 1 (custom folder)
-│   └── oauth/                   # depth 2 (at limit)
-│       └── providers/           # depth 3 - ERROR: exceeds limit
+src/features/authentication/     # depth 0 (child of base folder)
+├── authentication_services/     # depth 1 (feature folder)
+│   └── authentication_services_oauth/   # depth 2 (at limit)
+│       └── authentication_services_oauth_providers/  # depth 3 - ERROR: exceeds limit
 ```
 
 **Rationale**: Limits folder nesting to prevent overly deep hierarchies that become hard to navigate.
@@ -184,7 +184,7 @@ src/features/authentication/     # depth 0 (base folder)
 **Type**: `list[str]` (converted to set internally)
 **Default**: `["types", "utils", "constants", "tests"]`
 
-List of standard folder names that can appear in feature/module directories. These represent common supporting code categories.
+List of standard folder names that can appear in feature/module directories. These represent common supporting code categories and cannot contain subdirectories.
 
 ```toml
 [tool.structure-lint.structure]
@@ -200,19 +200,42 @@ src/features/authentication/
 └── tests/
 ```
 
-#### `structure.general_folder`
+#### `structure.prefix_separator`
 
 **Type**: `str`
-**Default**: `"general"`
+**Default**: `"_"`
 
-Name of the special "general" folder that can contain Python files directly (without organizing into standard folders).
+Separator used for feature folder prefix naming. Feature folders (non-standard folders at depth > 0) must be named with their parent folder's name + this separator as a prefix.
 
 ```toml
 [tool.structure-lint.structure]
-general_folder = "common"  # Use common/ instead of general/
+prefix_separator = "-"  # Use dashes instead of underscores
 ```
 
-**Purpose**: Provides a place for miscellaneous code that doesn't fit into other categories.
+**Examples**:
+
+With `prefix_separator = "_"` (default):
+```
+src/features/auth/
+├── auth_oauth/        # Prefixed with "auth_"
+└── auth_login/        # Prefixed with "auth_"
+```
+
+With `prefix_separator = "-"`:
+```
+src/features/auth/
+├── auth-oauth/        # Prefixed with "auth-"
+└── auth-login/        # Prefixed with "auth-"
+```
+
+With `prefix_separator = ""` (empty):
+```
+src/features/auth/
+├── authoauth/         # Prefixed with "auth" (no separator)
+└── authlogin/         # Prefixed with "auth" (no separator)
+```
+
+**Note**: Children of base folders (depth 0) are exempt from the prefix rule.
 
 #### `structure.files_allowed_anywhere`
 
@@ -303,6 +326,7 @@ structure = true  # Opt-in
 strict_format_roots = ["src"]
 standard_folders = ["types", "utils", "tests"]
 folder_depth = 2
+prefix_separator = "_"
 ```
 
 ### Custom Project Layout
@@ -321,7 +345,7 @@ search_paths = ["lib", "tools"]
 [tool.structure-lint.structure]
 strict_format_roots = ["lib"]  # Only validate lib/
 standard_folders = ["models", "views", "controllers", "tests"]
-general_folder = "common"
+prefix_separator = "-"
 folder_depth = 3
 ```
 
@@ -365,7 +389,7 @@ search_paths = ["src", "tests"]
 [tool.structure-lint.structure]
 strict_format_roots = ["src"]  # Validate src/ only
 standard_folders = ["types", "utils", "constants", "tests"]
-general_folder = "general"
+prefix_separator = "_"
 folder_depth = 2
 files_allowed_anywhere = ["__init__.py"]
 ```
@@ -454,7 +478,9 @@ Version 2.0.0 introduces breaking changes to the structure validation configurat
 |------------|--------------|-------|
 | `src_root = "src"` | `strict_format_roots = ["src"]` | Now a list, supports multiple roots |
 | `free_form_roots = ["experiments"]` | (removed) | Just don't include in `strict_format_roots` |
+| `general_folder = "general"` | (removed) | Use `prefix_separator` for naming conventions |
 | (new) | `folder_depth = 2` | Configurable max nesting depth |
+| (new) | `prefix_separator = "_"` | Feature folder naming convention |
 
 ### Migration Examples
 
@@ -464,6 +490,7 @@ Version 2.0.0 introduces breaking changes to the structure validation configurat
 src_root = "src"
 free_form_roots = ["experiments", "legacy"]
 standard_folders = ["types", "utils", "tests"]
+general_folder = "general"
 ```
 
 **After (v2.0.0)**:
@@ -473,6 +500,7 @@ strict_format_roots = ["src"]  # Only validate src/
 # experiments/ and legacy/ are NOT validated (opt-in model)
 standard_folders = ["types", "utils", "tests"]
 folder_depth = 2
+prefix_separator = "_"
 ```
 
 ### Behavioral Changes
@@ -488,11 +516,11 @@ folder_depth = 2
 
 4. **Empty Roots Error**: `strict_format_roots` cannot be empty - at least one root is required.
 
-5. **Depth Limits**: The new `folder_depth` setting applies to both custom folders and the `general` folder.
+5. **Depth Limits**: The new `folder_depth` setting limits how deep feature folders can nest.
 
-6. **Mutual Exclusivity**: At any folder level, you cannot mix:
-   - Standard folders with custom (arbitrary-named) folders
-   - General folder with standard folders
+6. **Prefix Naming**: Feature folders must now be prefixed with their parent's name + separator. The `general_folder` concept has been removed in favor of this naming convention.
+
+7. **Standard + Feature Coexistence**: Standard folders and feature folders can now coexist at the same level (previously there were mutual exclusivity rules).
 
 ## See Also
 

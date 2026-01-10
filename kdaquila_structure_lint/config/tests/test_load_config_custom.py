@@ -58,7 +58,7 @@ search_paths = ["modules"]
 strict_format_roots = ["lib", "app"]
 folder_depth = 3
 standard_folders = ["types", "helpers"]
-general_folder = "common"
+prefix_separator = "-"
 files_allowed_anywhere = ["README.md", "NOTES.md"]
 """)
 
@@ -67,7 +67,7 @@ files_allowed_anywhere = ["README.md", "NOTES.md"]
         assert config.structure.strict_format_roots == {"lib", "app"}
         assert config.structure.folder_depth == 3
         assert config.structure.standard_folders == {"types", "helpers"}
-        assert config.structure.general_folder == "common"
+        assert config.structure.prefix_separator == "-"
         assert config.structure.files_allowed_anywhere == {"README.md", "NOTES.md"}
 
     def test_load_config_with_full_custom_config(self, tmp_path: Path) -> None:
@@ -93,7 +93,7 @@ search_paths = ["src"]
 strict_format_roots = ["source"]
 folder_depth = 1
 standard_folders = ["utils"]
-general_folder = "shared"
+prefix_separator = "-"
 files_allowed_anywhere = ["README.md"]
 """)
 
@@ -110,7 +110,7 @@ files_allowed_anywhere = ["README.md"]
         assert config.structure.strict_format_roots == {"source"}
         assert config.structure.folder_depth == 1
         assert config.structure.standard_folders == {"utils"}
-        assert config.structure.general_folder == "shared"
+        assert config.structure.prefix_separator == "-"
         assert config.structure.files_allowed_anywhere == {"README.md"}
 
     def test_load_structure_files_allowed_anywhere_and_ignored(

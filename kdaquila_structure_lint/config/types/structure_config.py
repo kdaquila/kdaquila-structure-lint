@@ -12,7 +12,7 @@ class StructureConfig:
     standard_folders: set[str] = field(
         default_factory=lambda: {"types", "utils", "constants", "tests"}
     )
-    general_folder: str = "general"
+    prefix_separator: str = "_"
     files_allowed_anywhere: set[str] = field(default_factory=lambda: {"__init__.py"})
     ignored_folders: set[str] = field(
         default_factory=lambda: {

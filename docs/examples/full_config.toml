@@ -34,22 +34,38 @@ search_paths = ["src"]
 # Only directories listed here are validated - others are ignored
 strict_format_roots = ["src"]
 
-# Maximum depth of custom/arbitrary-named folder nesting
-# Depth counts custom folders only, not standard folders
-# Example: src/features/auth/services/ = depth 2 (auth=1, services=2)
+# Maximum depth of feature folder nesting
+# Depth counts from base folder children (depth 0) downward
+# Example: src/features/auth/auth_login/ = depth 1
 folder_depth = 2
 
 # Standard folders that can appear inside feature/module directories
-# These represent common code organization patterns
+# These represent common code organization patterns and cannot have subdirectories
 standard_folders = ["types", "utils", "constants", "tests"]
 
-# Name of the special "general" folder for catch-all code
-# Can coexist with arbitrary-named folders, must contain standard folders
-general_folder = "general"
+# Separator used for feature folder prefix naming
+# Feature folders must be named: parent_name + separator + folder_name
+# Example with "_": auth folder contains auth_login, auth_logout
+# Set to "" for no separator (direct concatenation)
+prefix_separator = "_"
 
 # Python files allowed in any directory, even those that normally shouldn't contain files
 # Note: Non-.py files (like README.md, .gitkeep) are automatically ignored and don't need listing
 files_allowed_anywhere = ["__init__.py"]
+
+# Folder name patterns to ignore during structure validation
+# Supports wildcards (e.g., *.egg-info matches my_package.egg-info)
+# These are typically cache, build, or tool-generated directories
+ignored_folders = [
+    "__pycache__",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".hypothesis",
+    ".tox",
+    ".coverage",
+    "*.egg-info"
+]
 
 # ============================================================================
 # Usage Examples:
@@ -61,14 +77,16 @@ files_allowed_anywhere = ["__init__.py"]
 # ├── pyproject.toml          (contains this configuration)
 # ├── src/
 # │   └── features/           (base folder)
-# │       ├── authentication/ (feature directory)
-# │       │   ├── types/      (standard folder)
+# │       ├── authentication/ (feature directory at depth 0)
+# │       │   ├── types/      (standard folder - files allowed here)
 # │       │   ├── utils/      (standard folder)
 # │       │   ├── constants/  (standard folder)
 # │       │   ├── tests/      (standard folder)
-# │       │   └── general/    (general folder - can contain .py files)
-# │       │       └── login.py
-# │       └── reporting/      (another feature)
+# │       │   └── authentication_oauth/   (feature folder at depth 1, prefixed)
+# │       │       ├── types/
+# │       │       └── authentication_oauth_google/  (depth 2, fully prefixed)
+# │       │           └── types/
+# │       └── reporting/      (another feature at depth 0)
 # │           └── ...
 #
 # ============================================================================
@@ -82,4 +100,5 @@ files_allowed_anywhere = ["__init__.py"]
 # 5. Only include directories you want validated in strict_format_roots
 # 6. Adjust folder_depth for deeper or shallower nesting limits
 # 7. Disable validators you don't want with false
+# 8. Change prefix_separator to match your naming conventions
 #

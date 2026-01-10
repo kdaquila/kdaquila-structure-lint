@@ -4,74 +4,67 @@ from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
 from kdaquila_structure_lint.validation.utils.pattern_match import matches_any_pattern
-from kdaquila_structure_lint.validation.utils.structure_general_folder import validate_general_folder
 
 
 def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
-    """Validate custom folder in structured base."""
+    """Validate custom folder in structured base.
+
+    This function validates folders according to three rules:
+    1. Standard folders cannot contain subdirectories
+    2. Feature folders must be prefixed with parent's name + separator (except at depth 0)
+    3. Only certain files are allowed outside standard folders
+
+    Args:
+        path: The folder path to validate.
+        config: The configuration object.
+        depth: Current depth level (0 = direct child of base folder).
+
+    Returns:
+        List of error messages, empty if validation passes.
+    """
     errors: list[str] = []
 
-    files_allowed_anywhere = config.structure.files_allowed_anywhere
-    general_folder = config.structure.general_folder
-    standard_folders = config.structure.standard_folders
-
-    # Skip validation for standard folders (they can be empty)
-    if path.name in standard_folders:
-        return errors
-
-    # Check for disallowed files
+    # Check disallowed files (Rule 3)
     py_files = [c.name for c in path.iterdir() if c.is_file() and c.suffix == ".py"]
-    disallowed = [f for f in py_files if f not in files_allowed_anywhere]
+    disallowed = [f for f in py_files if f not in config.structure.files_allowed_anywhere]
     if disallowed:
-        errors.append(
-            f"{path}: Disallowed files (only {files_allowed_anywhere} allowed): {disallowed}"
-        )
+        errors.append(f"{path}: Disallowed files: {disallowed}")
 
+    # Get children (excluding ignored folders)
     children = [
         c
         for c in path.iterdir()
         if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
     ]
-    child_names = {c.name for c in children}
 
-    has_general = general_folder in child_names
-    has_standard = bool(child_names & standard_folders)
-    has_custom = bool(child_names - standard_folders - {general_folder})
+    # Validate each child
+    for child in children:
+        if child.name in config.structure.standard_folders:
+            # Standard folder: validate no subdirs (Rule 1)
+            subdirs = [
+                c
+                for c in child.iterdir()
+                if c.is_dir()
+                and not matches_any_pattern(c.name, config.structure.ignored_folders)
+            ]
+            if subdirs:
+                errors.append(f"{child}: Standard folder cannot have subdirectories")
+        else:
+            # Feature folder
+            # Check prefix (Rule 2) - but exempt if depth == 0 (parent is base folder)
+            if depth > 0:
+                expected_prefix = path.name + config.structure.prefix_separator
+                if not child.name.startswith(expected_prefix):
+                    errors.append(
+                        f"{child}: Feature folder must start with '{expected_prefix}'"
+                    )
 
-    if has_general and has_standard:
-        errors.append(f"{path}: Cannot mix general and standard folders.")
-    elif has_standard and has_custom:
-        errors.append(f"{path}: Cannot mix standard and custom folders at the same level.")
-    elif has_general and not has_custom:
-        errors.append(f"{path}: general requires at least one custom subfolder.")
-    elif has_custom or has_general:
-        # General folder also counts toward depth limit
-        if has_general:
-            max_depth = config.structure.folder_depth
-            general_path = path / general_folder
-            if depth >= max_depth:
-                errors.append(f"{general_path}: Exceeds max depth of {max_depth} custom layers.")
+            # Check depth limit
+            if depth >= config.structure.folder_depth:
+                errors.append(
+                    f"{child}: Exceeds max depth of {config.structure.folder_depth}"
+                )
             else:
-                errors.extend(validate_general_folder(general_path, config))
-        # Validate all custom subfolders
-        max_depth = config.structure.folder_depth
-        for child in children:
-            if child.name not in (general_folder, *standard_folders):
-                if depth >= max_depth:
-                    errors.append(f"{child}: Exceeds max depth of {max_depth} custom layers.")
-                else:
-                    errors.extend(validate_custom_folder(child, config, depth + 1))
-    elif not has_standard:
-        errors.append(f"{path}: Must contain standard folders or custom subfolders.")
-
-    for std in child_names & standard_folders:
-        std_path = path / std
-        subdirs = [
-            c
-            for c in std_path.iterdir()
-            if c.is_dir() and not matches_any_pattern(c.name, config.structure.ignored_folders)
-        ]
-        if subdirs:
-            errors.append(f"{std_path}: Standard folder cannot have subdirectories.")
+                errors.extend(validate_custom_folder(child, config, depth + 1))
 
     return errors

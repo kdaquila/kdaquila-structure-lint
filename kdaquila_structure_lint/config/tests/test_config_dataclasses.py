@@ -35,7 +35,7 @@ class TestConfigDataclasses:
         assert config.strict_format_roots == {"src"}
         assert config.folder_depth == 2
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
-        assert config.general_folder == "general"
+        assert config.prefix_separator == "_"
         assert config.files_allowed_anywhere == {"__init__.py"}
         assert config.ignored_folders == {
             "__pycache__",

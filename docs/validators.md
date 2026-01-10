@@ -70,7 +70,7 @@ def authenticate_user(credentials: Credentials) -> Optional[User]:
 
 Output:
 ```
-✅ All Python files are within 150 line limit!
+All Python files are within 150 line limit!
 ```
 
 #### Failing Example
@@ -94,11 +94,11 @@ class UserManager:
 
 Output:
 ```
-❌ Found 1 file(s) exceeding 150 line limit:
+Found 1 file(s) exceeding 150 line limit:
 
-  • src/features/auth/user_manager.py: 187 lines (exceeds 150 line limit)
+  src/features/auth/user_manager.py: 187 lines (exceeds 150 line limit)
 
-💡 Consider splitting large files into smaller, focused modules.
+Consider splitting large files into smaller, focused modules.
 ```
 
 ### Customization Options
@@ -276,14 +276,14 @@ class Token:  # Third class - violation!
 
 Output:
 ```
-❌ Found 1 file(s) with multiple definitions:
+Found 1 file(s) with multiple definitions:
 
-  • src/models/models.py: 3 definitions (expected 1)
+  src/models/models.py: 3 definitions (expected 1)
     - User (class)
     - Session (class)
     - Token (class)
 
-💡 Consider splitting into separate files for better modularity.
+Consider splitting into separate files for better modularity.
 ```
 
 **Better approach:**
@@ -411,111 +411,78 @@ Consistent structure provides:
 
 **Note**: This is **opt-in by default** because it's highly opinionated. Only enable if your team agrees to this structure.
 
-### Architecture Principles
+### The Three Rules
 
-The structure validator enforces feature/module-based organization within your source tree (`src/`).
+The structure validator enforces three simple rules:
 
-### Source Tree Rules
+#### Rule 1: Standard Folders Cannot Have Subdirectories
 
-#### Base Structure
+Standard folders (like `types/`, `utils/`, `constants/`, `tests/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
 
+**Valid:**
 ```
-src/
-├── features/          # Base folder (configurable)
-│   ├── feature1/
-│   ├── feature2/
-│   └── ...
-└── [other bases]/     # Additional base folders if configured
-```
-
-**Rules**:
-- `src/` must only contain base folders (no files except `README.md`)
-- Base folders (any subdirectories under src/) are automatically validated
-- Files not allowed in `src/` root
-
-#### Feature/Module Organization
-
-Each feature/module must follow this structure:
-
-```
-src/features/authentication/
-├── types/           # Type definitions, protocols, type aliases
-├── utils/           # Helper functions and utilities
-├── constants/       # Configuration and constants
-├── tests/           # Tests for this feature
-├── general/         # Miscellaneous code (see below)
-└── custom_name/     # Domain-specific folders (see below)
+auth/
+└── types/
+    ├── user.py
+    └── session.py
 ```
 
-**Standard Folders** (configurable via `standard_folders`):
-- `types/` - Type definitions, protocols, dataclasses
-- `utils/` - Helper functions and utilities
-- `constants/` - Configuration values and constants
-- `tests/` - Unit and integration tests
-
-**General Folder** (configurable via `general_folder`):
-- Special folder that can contain Python files directly
-- For code that doesn't fit into standard categories
-- Example: `general/login.py` (main login logic)
-
-**Custom Folders**:
-- Domain-specific organization
-- Must contain standard folders or general folder
-- Cannot contain Python files directly
-- Example:
-  ```
-  src/features/authentication/
-  └── services/        # Custom folder
-      ├── types/
-      ├── utils/
-      └── general/
-  ```
-
-#### Opt-In Root Validation
-
-Only directories listed in `strict_format_roots` are validated. This is an opt-in model:
-
-```toml
-[tool.structure-lint.structure]
-strict_format_roots = ["src", "lib"]  # Only these are validated
+**Invalid:**
+```
+auth/
+└── types/
+    └── models/        # ERROR: subdirectory in standard folder
+        └── user.py
 ```
 
+#### Rule 2: Feature Folders Must Be Prefixed with Parent's Name
+
+Feature folders (non-standard folders) must be named with their parent folder's name as a prefix, followed by a separator (default: `_`). This creates a clear hierarchy and prevents naming collisions.
+
+**Exception**: Children of base folders (depth 0) are exempt from this rule.
+
+**Valid:**
 ```
-project_root/
-├── src/            # Validated (in strict_format_roots)
-├── lib/            # Validated (in strict_format_roots)
-├── experiments/    # Not validated (not in strict_format_roots)
-└── legacy/         # Not validated (not in strict_format_roots)
-```
-
-**Behavior**:
-- At least one root must be specified (empty list causes an error)
-- Missing roots warn and skip (don't cause validation failure)
-- Each root is validated independently
-
-#### Folder Depth Limits
-
-The `folder_depth` setting limits how deep custom (arbitrary-named) folders can nest:
-
-```toml
-[tool.structure-lint.structure]
-folder_depth = 2  # Default
+src/features/
+├── auth/                    # depth 0, no prefix required
+│   ├── auth_oauth/          # depth 1, prefixed with "auth_"
+│   │   └── auth_oauth_google/  # depth 2, prefixed with "auth_oauth_"
+│   └── auth_login/          # depth 1, prefixed with "auth_"
+└── payments/                # depth 0, no prefix required
+    └── payments_stripe/     # depth 1, prefixed with "payments_"
 ```
 
+**Invalid:**
 ```
-src/features/authentication/     # depth 0 (base folder)
-├── services/                    # depth 1 (custom folder)
-│   └── oauth/                   # depth 2 (at limit)
-│       └── providers/           # ERROR: exceeds depth limit
+src/features/
+└── auth/
+    ├── oauth/               # ERROR: should be "auth_oauth"
+    └── auth_oauth/
+        └── google/          # ERROR: should be "auth_oauth_google"
 ```
 
-The `general` folder is also subject to this depth limit.
+#### Rule 3: Only Certain Files Allowed Outside Standard Folders
 
-#### Mutual Exclusivity Rules
+Python files can only appear in standard folders or in the `files_allowed_anywhere` list (default: `["__init__.py"]`). This prevents loose files from cluttering feature directories.
 
-At any folder level, you cannot mix:
-- **Standard folders with custom folders**: Choose one organization style
-- **General folder with standard folders**: `general` implies custom folder organization
+**Valid:**
+```
+auth/
+├── __init__.py              # Allowed everywhere
+├── types/
+│   └── user.py              # In standard folder
+└── utils/
+    └── hash.py              # In standard folder
+```
+
+**Invalid:**
+```
+auth/
+├── __init__.py
+├── login.py                 # ERROR: not in standard folder
+└── types/
+    └── user.py
+```
 
 ### Configuration
 
@@ -525,10 +492,11 @@ structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
 strict_format_roots = ["src"]  # Roots to validate (opt-in)
-folder_depth = 2               # Max nesting depth for custom folders
+folder_depth = 2               # Max nesting depth for feature folders
 standard_folders = ["types", "utils", "constants", "tests"]
-general_folder = "general"
+prefix_separator = "_"         # Separator for feature folder prefixes
 files_allowed_anywhere = ["__init__.py"]
+ignored_folders = ["__pycache__", ".mypy_cache", "*.egg-info"]
 ```
 
 ### Examples
@@ -540,6 +508,7 @@ project/
 ├── src/
 │   └── features/
 │       ├── authentication/
+│       │   ├── __init__.py
 │       │   ├── types/
 │       │   │   └── user.py
 │       │   ├── utils/
@@ -548,63 +517,74 @@ project/
 │       │   │   └── config.py
 │       │   ├── tests/
 │       │   │   └── test_login.py
-│       │   └── general/
-│       │       └── login.py
+│       │   └── authentication_oauth/    # Feature folder with prefix
+│       │       ├── types/
+│       │       │   └── token.py
+│       │       └── authentication_oauth_google/  # Nested with full prefix
+│       │           └── types/
+│       │               └── credentials.py
 │       └── reporting/
 │           ├── types/
-│           ├── utils/
-│           └── general/
+│           └── utils/
 ```
 
 #### Invalid Examples
 
-**Files in src root:**
-```
-src/
-├── main.py          # ❌ Files not allowed in src/
-└── features/
-```
-
-Error: `src/: Files not allowed in root: ['main.py']`
-
-**Missing base folder:**
-```
-src/
-└── authentication/  # ❌ Should be under features/
-```
-
-Error: `src/: Unexpected folders: {'authentication'}`
-
-**Python files in custom folder:**
+**Files outside standard folders:**
 ```
 src/features/auth/
-├── services/
-│   └── login.py     # ❌ Should be in services/general/login.py
+├── login.py          # ERROR: Files not allowed here
+└── types/
 ```
 
-Error: `src/features/auth/services/: Python files not allowed directly in custom folder`
+Error: `src/features/auth/: Disallowed files: ['login.py']`
 
-**Unknown standard folder:**
+**Feature folder without prefix:**
 ```
 src/features/auth/
-└── models/          # ❌ Not in standard_folders
+└── oauth/            # ERROR: Should be auth_oauth
 ```
 
-Error: `src/features/auth/: Unexpected folder 'models' (not in standard folders or custom)`
+Error: `src/features/auth/oauth: Feature folder must start with 'auth_'`
+
+**Subdirectory in standard folder:**
+```
+src/features/auth/
+└── types/
+    └── models/       # ERROR: Standard folders cannot have subdirectories
+```
+
+Error: `src/features/auth/types: Standard folder cannot have subdirectories`
+
+**Exceeding depth limit:**
+```
+src/features/auth/           # depth 0
+└── auth_services/           # depth 1
+    └── auth_services_oauth/ # depth 2 (at limit with default folder_depth=2)
+        └── auth_services_oauth_providers/  # ERROR: depth 3, exceeds limit
+```
+
+Error: `src/features/auth/auth_services/auth_services_oauth/auth_services_oauth_providers: Exceeds max depth of 2`
+
+### Standard and Feature Folders Can Coexist
+
+Unlike previous versions, standard folders and feature folders can now exist at the same level. This provides flexibility in organizing code:
+
+```
+src/features/auth/
+├── types/                   # Standard folder
+│   └── user.py
+├── utils/                   # Standard folder
+│   └── helper.py
+├── auth_oauth/              # Feature folder (with prefix)
+│   └── types/
+│       └── token.py
+└── auth_password/           # Feature folder (with prefix)
+    └── utils/
+        └── hasher.py
+```
 
 ### Customization Options
-
-#### Different Base Folders
-
-Any subdirectories under `src/` are automatically accepted as base folders:
-```
-src/
-├── features/
-├── services/
-└── components/
-```
-
-All base folders are validated according to the same structure rules.
 
 #### Different Standard Folders
 
@@ -622,17 +602,31 @@ src/features/authentication/
 └── tests/
 ```
 
-#### Custom Root Names and General Folder
+#### Custom Prefix Separator
 
 ```toml
 [tool.structure-lint.structure]
-strict_format_roots = ["lib"]
-general_folder = "common"
+prefix_separator = "-"  # Use dashes instead of underscores
 ```
 
 Results in:
 ```
-lib/features/auth/common/login.py
+src/features/auth/
+└── auth-oauth/        # Dash separator
+    └── auth-oauth-google/
+```
+
+Or no separator:
+```toml
+[tool.structure-lint.structure]
+prefix_separator = ""  # Direct concatenation
+```
+
+Results in:
+```
+src/features/auth/
+└── authoauth/
+    └── authoauthgoogle/
 ```
 
 #### Multiple Roots
@@ -656,6 +650,15 @@ project_root/
 [tool.structure-lint.structure]
 folder_depth = 3  # Allow deeper nesting (default is 2)
 ```
+
+#### Ignored Folders
+
+```toml
+[tool.structure-lint.structure]
+ignored_folders = ["__pycache__", ".mypy_cache", ".venv", "build", "dist", "*.egg-info"]
+```
+
+Add project-specific build or cache directories that should not be validated.
 
 ### Migration Strategy
 
@@ -696,7 +699,7 @@ Don't fight the tool - customize it:
 [tool.structure-lint.structure]
 # Match your team's conventions
 standard_folders = ["types", "models", "services", "utils", "tests"]
-general_folder = "core"
+prefix_separator = "-"  # If you prefer dashes
 folder_depth = 3  # Allow deeper nesting if needed
 ```
 
@@ -711,6 +714,9 @@ strict_format_roots = ["src"]
 
 # Added "services" as standard folder for our microservice architecture
 standard_folders = ["types", "services", "utils", "tests"]
+
+# Using dashes for better readability in folder names
+prefix_separator = "-"
 ```
 
 ### When to Use Structure Validation
@@ -756,6 +762,13 @@ Currently, validators skip these directories automatically:
 - `__pycache__/`
 - `.git/`, `.hg/`, `.svn/`
 - `node_modules/`
+
+For structure validation, use `ignored_folders`:
+
+```toml
+[tool.structure-lint.structure]
+ignored_folders = ["__pycache__", ".mypy_cache", "build", "dist"]
+```
 
 For more specific exclusions, adjust `search_paths`:
 

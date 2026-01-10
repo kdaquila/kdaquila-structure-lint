@@ -23,7 +23,7 @@ class TestLoadConfigDefaults:
         assert config.structure.strict_format_roots == {"src"}
         assert config.structure.folder_depth == 2
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
-        assert config.structure.general_folder == "general"
+        assert config.structure.prefix_separator == "_"
         assert config.structure.files_allowed_anywhere == {"__init__.py"}
         assert config.structure.ignored_folders == {
             "__pycache__",

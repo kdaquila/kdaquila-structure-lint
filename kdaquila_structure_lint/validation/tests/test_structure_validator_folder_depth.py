@@ -95,14 +95,14 @@ class TestFolderDepthVariations:
         # Default is 2, but let's be explicit
         config.structure.folder_depth = 2
 
-        # Create structure with 2 layers of custom folders
+        # Create structure with 2 layers of custom folders (with proper prefixes)
         src = config.project_root / "src"
         features = src / "features"
         features.mkdir(parents=True)
         (features / "domain").mkdir()
-        (features / "domain" / "subdomain").mkdir()
-        (features / "domain" / "subdomain" / "types").mkdir()
-        (features / "domain" / "subdomain" / "types" / "module.py").touch()
+        (features / "domain" / "domain_subdomain").mkdir()  # Properly prefixed
+        (features / "domain" / "domain_subdomain" / "types").mkdir()
+        (features / "domain" / "domain_subdomain" / "types" / "module.py").touch()
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -112,15 +112,15 @@ class TestFolderDepthVariations:
         config = create_minimal_config(tmp_path)
         config.structure.folder_depth = 3
 
-        # Create structure with 3 layers of custom folders
+        # Create structure with 3 layers of custom folders (with proper prefixes)
         src = config.project_root / "src"
         features = src / "features"
         features.mkdir(parents=True)
         (features / "level1").mkdir()
-        (features / "level1" / "level2").mkdir()
-        (features / "level1" / "level2" / "level3").mkdir()
-        (features / "level1" / "level2" / "level3" / "types").mkdir()
-        (features / "level1" / "level2" / "level3" / "types" / "module.py").touch()
+        (features / "level1" / "level1_level2").mkdir()  # Properly prefixed
+        (features / "level1" / "level1_level2" / "level1_level2_level3").mkdir()  # Properly prefixed
+        (features / "level1" / "level1_level2" / "level1_level2_level3" / "types").mkdir()
+        (features / "level1" / "level1_level2" / "level1_level2_level3" / "types" / "module.py").touch()
 
         exit_code = validate_structure(config)
         assert exit_code == 0

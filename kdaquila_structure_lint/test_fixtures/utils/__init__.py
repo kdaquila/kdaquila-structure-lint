@@ -1,6 +1,7 @@
 """Export all test helper functions and constants from individual files."""
 
 from kdaquila_structure_lint.test_fixtures.utils.custom_config import create_custom_config
+from kdaquila_structure_lint.test_fixtures.utils.folder_structure_builder import build_structure
 from kdaquila_structure_lint.test_fixtures.utils.minimal_config import create_minimal_config
 from kdaquila_structure_lint.test_fixtures.utils.python_file_factory import create_python_file
 from kdaquila_structure_lint.test_fixtures.utils.sample_empty_file_content import (
@@ -29,6 +30,7 @@ __all__ = [
     "SAMPLE_SYNTAX_ERROR_CONTENT",
     "SAMPLE_TOO_LONG_FILE_CONTENT",
     "SAMPLE_VALID_FILE_CONTENT",
+    "build_structure",
     "create_custom_config",
     "create_minimal_config",
     "create_python_file",

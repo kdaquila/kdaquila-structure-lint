@@ -39,7 +39,7 @@ def create_custom_config(tmp_path: Path) -> Config:
             strict_format_roots={"lib", "app"},
             folder_depth=3,
             standard_folders={"types", "utils", "helpers"},
-            general_folder="common",
+            prefix_separator="_",
             files_allowed_anywhere={"README.md", "NOTES.md"},
         ),
     )

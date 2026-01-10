@@ -24,7 +24,8 @@ class TestStructureValidatorIntegration:
             base_dir = lib / base
             base_dir.mkdir()
 
-            # Create a module in each - use only standard folders (no common/general)
+            # Create a module in each - use only standard folders
+            # Note: At depth 0 (children of base folder), no prefix required
             module_dir = base_dir / f"my_{base}"
             module_dir.mkdir()
 
@@ -33,12 +34,6 @@ class TestStructureValidatorIntegration:
                 folder_dir = module_dir / folder
                 folder_dir.mkdir()
                 (folder_dir / "module.py").touch()
-
-        # Custom scripts root: tools
-        tools = config.project_root / "tools"
-        tools.mkdir()
-        (tools / "build").mkdir()
-        (tools / "build" / "script.py").touch()
 
         exit_code = validate_structure(config)
         assert exit_code == 0
