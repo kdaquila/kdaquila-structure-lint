@@ -15,7 +15,7 @@ from kdaquila_structure_lint.validation.utils.file_finder import find_python_fil
 def validate_one_per_file(config: Config) -> int:
     """Run validation and return exit code."""
     project_root = config.project_root
-    search_paths = config.one_per_file.search_paths
+    search_paths = config.search_paths
     errors = []
 
     print("🔍 Checking for one function/class per file...\n")

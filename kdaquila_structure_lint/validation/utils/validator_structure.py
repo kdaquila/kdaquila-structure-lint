@@ -1,6 +1,6 @@
 """Validates project folder structure conventions.
 
-Validates strict_format_roots which have base_folders (apps, features) with structured rules.
+Validates search_paths which have base_folders (apps, features) with structured rules.
 
 See utils/structure/ modules for detailed validation logic.
 """
@@ -12,20 +12,20 @@ from kdaquila_structure_lint.validation.utils.structure_src_tree import validate
 
 
 def validate_structure(config: Config) -> int:
-    """Run validation on all strict_format_roots and return exit code."""
+    """Run validation on all search_paths and return exit code."""
     project_root = config.project_root
-    strict_format_roots = config.structure.strict_format_roots
+    search_paths = config.search_paths
     all_errors: list[str] = []
 
-    # Require at least one strict_format_root
-    if not strict_format_roots:
-        print("Error: strict_format_roots is empty. At least one root is required.")
+    # Require at least one search_path
+    if not search_paths:
+        print("Error: search_paths is empty. At least one path is required.")
         return 1
 
     validated_count = 0
 
-    # Validate each strict_format_root
-    for root_name in sorted(strict_format_roots):
+    # Validate each search_path
+    for root_name in sorted(search_paths):
         root_path = project_root / root_name
         if not root_path.exists():
             print(f"Warning: {root_name}/ not found, skipping")
@@ -49,7 +49,7 @@ def validate_structure(config: Config) -> int:
         return 1
 
     if validated_count == 0:
-        print("Warning: No strict_format_roots directories found to validate")
+        print("Warning: No search_paths directories found to validate")
 
     print("All folder structures are valid!")
     return 0

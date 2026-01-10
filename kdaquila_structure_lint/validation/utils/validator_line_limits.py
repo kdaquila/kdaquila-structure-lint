@@ -14,7 +14,7 @@ def validate_line_limits(config: Config) -> int:
     """Run validation and return exit code."""
     project_root = config.project_root
     max_lines = config.line_limits.max_lines
-    search_paths = config.line_limits.search_paths
+    search_paths = config.search_paths
     errors = []
 
     print(f"🔍 Checking Python files for {max_lines} line limit...\n")
