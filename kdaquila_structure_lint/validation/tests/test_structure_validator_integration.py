@@ -4,7 +4,11 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_custom_config, create_minimal_config
+from kdaquila_structure_lint.test_fixtures import (
+    build_structure,
+    create_custom_config,
+    create_minimal_config,
+)
 from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
 
 
@@ -15,25 +19,27 @@ class TestStructureValidatorIntegration:
         """Should validate with fully custom configuration."""
         config = create_custom_config(tmp_path)
 
-        # Create structure matching custom config
-        lib = config.project_root / "lib"
-        lib.mkdir()
-
-        # Custom base folders: apps, features
-        for base in ["apps", "features"]:
-            base_dir = lib / base
-            base_dir.mkdir()
-
-            # Create a module in each - use only standard folders
-            # Note: At depth 0 (children of base folder), no prefix required
-            module_dir = base_dir / f"my_{base}"
-            module_dir.mkdir()
-
-            # Custom standard folders: types, utils, helpers
-            for folder in ["types", "utils", "helpers"]:
-                folder_dir = module_dir / folder
-                folder_dir.mkdir()
-                (folder_dir / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "lib": {
+                    "apps": {
+                        "my_apps": {
+                            "types": {"module.py": ""},
+                            "utils": {"module.py": ""},
+                            "helpers": {"module.py": ""},
+                        },
+                    },
+                    "features": {
+                        "my_features": {
+                            "types": {"module.py": ""},
+                            "utils": {"module.py": ""},
+                            "helpers": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -44,13 +50,18 @@ class TestStructureValidatorIntegration:
         """Should produce clear output format."""
         config = create_minimal_config(tmp_path)
 
-        # Create valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()

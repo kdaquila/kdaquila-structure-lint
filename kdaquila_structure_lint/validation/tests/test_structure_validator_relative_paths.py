@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config
+from kdaquila_structure_lint.test_fixtures import build_structure, create_minimal_config
 from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
 
 
@@ -17,11 +17,15 @@ class TestStructureValidatorRelativePaths:
         """Should use relative paths in error messages."""
         config = create_minimal_config(tmp_path)
 
-        # Create invalid structure - files in src root
-        src = config.project_root / "src"
-        src.mkdir()
-        (src / "features").mkdir()
-        (src / "invalid_file.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {},
+                    "invalid_file.py": "",  # File in src root (not allowed)
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()

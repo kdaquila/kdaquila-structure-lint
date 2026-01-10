@@ -116,9 +116,7 @@ class TestPrefixValidation:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_prefix_separator_configuration(
-        self, tmp_path: Path, capsys: CaptureFixture[str]
-    ) -> None:
+    def test_prefix_separator_configuration(self, tmp_path: Path) -> None:
         """Custom prefix separator should be used for validation."""
         config = create_minimal_config(tmp_path)
         config.structure.prefix_separator = "-"

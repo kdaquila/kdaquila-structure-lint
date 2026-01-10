@@ -6,7 +6,9 @@ Encourages focused, single-responsibility modules.
 import sys
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation.utils.definition_counter_validator import validate_file_definitions
+from kdaquila_structure_lint.validation.utils.definition_counter_validator import (
+    validate_file_definitions,
+)
 from kdaquila_structure_lint.validation.utils.file_finder import find_python_files
 
 

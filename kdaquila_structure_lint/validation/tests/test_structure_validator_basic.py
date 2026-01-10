@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config
+from kdaquila_structure_lint.test_fixtures import build_structure, create_minimal_config
 from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
 
 
@@ -31,15 +31,18 @@ class TestStructureValidatorBasic:
         """Should pass with valid minimal structure."""
         config = create_minimal_config(tmp_path)
 
-        # Create minimal valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-
-        # Create a valid folder in features
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -48,12 +51,15 @@ class TestStructureValidatorBasic:
         """Should fail when files exist in src root."""
         config = create_minimal_config(tmp_path)
 
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-
-        # Add file in src root (not allowed)
-        (src / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {},
+                    "module.py": "",  # File in src root (not allowed)
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 1
@@ -64,14 +70,18 @@ class TestStructureValidatorBasic:
         """Should fail when files exist directly in base folders like features/."""
         config = create_minimal_config(tmp_path)
 
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-
-        # Add files directly in features/ (not allowed)
-        (features / "calculator.py").touch()
-        (features / "validator.py").touch()
-        (features / "process_data.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "calculator.py": "",  # Files directly in features/ (not allowed)
+                        "validator.py": "",
+                        "process_data.py": "",
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
@@ -84,17 +94,31 @@ class TestStructureValidatorBasic:
         """Multiple base folders in src/ should be accepted with valid content."""
         config = create_minimal_config(tmp_path)
 
-        # Create multiple base folders with valid structure
-        src = config.project_root / "src"
-        for folder in ["features", "apps", "libs"]:
-            base = src / folder
-            base.mkdir(parents=True)
-            (base / "__init__.py").touch()
-            # Each base folder needs a custom folder with standard folders
-            custom = base / "my_module"
-            custom.mkdir()
-            (custom / "types").mkdir()
-            (custom / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "__init__.py": "",
+                        "my_module": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                    "apps": {
+                        "__init__.py": "",
+                        "my_module": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                    "libs": {
+                        "__init__.py": "",
+                        "my_module": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
 

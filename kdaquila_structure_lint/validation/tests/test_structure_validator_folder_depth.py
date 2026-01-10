@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config
+from kdaquila_structure_lint.test_fixtures import build_structure, create_minimal_config
 from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
 
 
@@ -16,12 +16,16 @@ class TestFolderDepthVariations:
         config = create_minimal_config(tmp_path)
         config.structure.folder_depth = 0
 
-        # Create structure: src/features/ must have standard folders only
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "types").mkdir()
-        (features / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "types": {"module.py": ""},
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         # This should pass - base folder has standard folders
@@ -34,15 +38,21 @@ class TestFolderDepthVariations:
         config = create_minimal_config(tmp_path)
         config.structure.folder_depth = 0
 
-        # Create structure with nested custom folder inside first custom layer
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        # nested_feature is a CUSTOM folder inside my_feature - should fail
-        (features / "my_feature" / "nested_feature").mkdir()
-        (features / "my_feature" / "nested_feature" / "types").mkdir()
-        (features / "my_feature" / "nested_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            # nested_feature is a CUSTOM folder inside my_feature - should fail
+                            "nested_feature": {
+                                "types": {"module.py": ""},
+                            },
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
@@ -56,13 +66,18 @@ class TestFolderDepthVariations:
         config = create_minimal_config(tmp_path)
         config.structure.folder_depth = 1
 
-        # Create structure: src/features/my_feature/types/
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -74,14 +89,20 @@ class TestFolderDepthVariations:
         config = create_minimal_config(tmp_path)
         config.structure.folder_depth = 1
 
-        # Create structure with 2 layers of custom folders
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "domain").mkdir()
-        (features / "domain" / "subdomain").mkdir()
-        (features / "domain" / "subdomain" / "types").mkdir()
-        (features / "domain" / "subdomain" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "domain": {
+                            "subdomain": {
+                                "types": {"module.py": ""},
+                            },
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
@@ -95,14 +116,20 @@ class TestFolderDepthVariations:
         # Default is 2, but let's be explicit
         config.structure.folder_depth = 2
 
-        # Create structure with 2 layers of custom folders (with proper prefixes)
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "domain").mkdir()
-        (features / "domain" / "domain_subdomain").mkdir()  # Properly prefixed
-        (features / "domain" / "domain_subdomain" / "types").mkdir()
-        (features / "domain" / "domain_subdomain" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "domain": {
+                            "domain_subdomain": {  # Properly prefixed
+                                "types": {"module.py": ""},
+                            },
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -112,15 +139,22 @@ class TestFolderDepthVariations:
         config = create_minimal_config(tmp_path)
         config.structure.folder_depth = 3
 
-        # Create structure with 3 layers of custom folders (with proper prefixes)
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "level1").mkdir()
-        (features / "level1" / "level1_level2").mkdir()  # Properly prefixed
-        (features / "level1" / "level1_level2" / "level1_level2_level3").mkdir()  # Properly prefixed
-        (features / "level1" / "level1_level2" / "level1_level2_level3" / "types").mkdir()
-        (features / "level1" / "level1_level2" / "level1_level2_level3" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "level1": {
+                            "level1_level2": {  # Properly prefixed
+                                "level1_level2_level3": {  # Properly prefixed
+                                    "types": {"module.py": ""},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0

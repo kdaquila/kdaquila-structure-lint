@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config
+from kdaquila_structure_lint.test_fixtures import build_structure, create_minimal_config
 from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
 
 
@@ -15,18 +15,19 @@ class TestStructureValidatorEdgeCases:
         """Should ignore __pycache__ directories."""
         config = create_minimal_config(tmp_path)
 
-        # Create valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-
-        # Add __pycache__ (should be ignored)
-        (src / "__pycache__").mkdir()
-
-        # Add valid content
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "__pycache__": {},  # Should be ignored
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -37,15 +38,17 @@ class TestStructureValidatorEdgeCases:
         """Should report all violations, not just first one."""
         config = create_minimal_config(tmp_path)
 
-        # Create structure with multiple issues
-        src = config.project_root / "src"
-        src.mkdir()
-        # Base folders (automatically accepted)
-        (src / "base1").mkdir()
-        (src / "base2").mkdir()
-        # Create files directly in root - these are not allowed
-        (src / "file1.py").touch()
-        (src / "file2.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "base1": {},  # Base folders (automatically accepted)
+                    "base2": {},
+                    "file1.py": "",  # Files directly in root - not allowed
+                    "file2.py": "",
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
@@ -58,8 +61,12 @@ class TestStructureValidatorEdgeCases:
         """Should pass when src directory is empty (no base folders yet)."""
         config = create_minimal_config(tmp_path)
 
-        # Create empty src directory
-        (config.project_root / "src").mkdir()
+        build_structure(
+            tmp_path,
+            {
+                "src": {},  # Empty src directory
+            },
+        )
 
         exit_code = validate_structure(config)
         # Empty src is valid - allows gradual project setup
@@ -69,29 +76,32 @@ class TestStructureValidatorEdgeCases:
         """Should pass with complex but valid structure."""
         config = create_minimal_config(tmp_path)
 
-        # Create complex valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-
-        # Multiple features - use only standard folders (no general)
-        for feature_name in ["auth", "users", "posts"]:
-            feature_dir = features / feature_name
-            feature_dir.mkdir()
-
-            # Standard folders in each feature
-            for folder in ["types", "utils"]:
-                folder_dir = feature_dir / folder
-                folder_dir.mkdir()
-                (folder_dir / f"{feature_name}_{folder}.py").touch()
-
-        # Scripts directory
-        scripts = config.project_root / "scripts"
-        scripts.mkdir()
-        for script_folder in ["build", "test", "deploy"]:
-            script_dir = scripts / script_folder
-            script_dir.mkdir()
-            (script_dir / "run.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "auth": {
+                            "types": {"auth_types.py": ""},
+                            "utils": {"auth_utils.py": ""},
+                        },
+                        "users": {
+                            "types": {"users_types.py": ""},
+                            "utils": {"users_utils.py": ""},
+                        },
+                        "posts": {
+                            "types": {"posts_types.py": ""},
+                            "utils": {"posts_utils.py": ""},
+                        },
+                    },
+                },
+                "scripts": {
+                    "build": {"run.py": ""},
+                    "test": {"run.py": ""},
+                    "deploy": {"run.py": ""},
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -100,18 +110,22 @@ class TestStructureValidatorEdgeCases:
         """Should ignore .egg-info directories without causing validation errors."""
         config = create_minimal_config(tmp_path)
 
-        # Create valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Add .egg-info directory - should be ignored via wildcard pattern *.egg-info
-        (src / "my_package.egg-info").mkdir()
-        (src / "my_package.egg-info" / "PKG-INFO").touch()
-        (src / "my_package.egg-info" / "SOURCES.txt").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                    "my_package.egg-info": {  # Should be ignored via wildcard pattern
+                        "PKG-INFO": "",
+                        "SOURCES.txt": "",
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0

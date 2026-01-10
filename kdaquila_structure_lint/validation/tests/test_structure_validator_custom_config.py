@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config
+from kdaquila_structure_lint.test_fixtures import build_structure, create_minimal_config
 from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
 
 
@@ -16,13 +16,18 @@ class TestStructureValidatorCustomConfig:
         config = create_minimal_config(tmp_path)
         config.structure.strict_format_roots = {"lib"}
 
-        # Create structure with custom strict_format_root
-        lib = config.project_root / "lib"
-        features = lib / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "lib": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -34,14 +39,25 @@ class TestStructureValidatorCustomConfig:
         config = create_minimal_config(tmp_path)
         config.structure.strict_format_roots = {"src", "lib"}
 
-        # Create valid structures in both roots
-        for root_name in ["src", "lib"]:
-            root = config.project_root / root_name
-            features = root / "features"
-            features.mkdir(parents=True)
-            (features / "my_feature").mkdir()
-            (features / "my_feature" / "types").mkdir()
-            (features / "my_feature" / "types" / "module.py").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+                "lib": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
@@ -69,16 +85,19 @@ class TestStructureValidatorCustomConfig:
         config = create_minimal_config(tmp_path)
         config.structure.files_allowed_anywhere = {"__init__.py", "py.typed"}
 
-        # Create valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Add custom allowed file - should be allowed
-        (features / "my_feature" / "py.typed").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                            "py.typed": "",  # Custom allowed file - should be allowed
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
@@ -93,19 +112,24 @@ class TestStructureValidatorCustomConfig:
             ".egg-info",
         }
 
-        # Create valid structure
-        src = config.project_root / "src"
-        features = src / "features"
-        features.mkdir(parents=True)
-        (features / "my_feature").mkdir()
-        (features / "my_feature" / "types").mkdir()
-        (features / "my_feature" / "types" / "module.py").touch()
-
-        # Add ignored directories - should be ignored
-        (features / "my_feature" / ".venv").mkdir()
-        (features / "my_feature" / ".venv" / "lib").mkdir()
-        (features / "my_feature" / "build").mkdir()
-        (features / "my_feature" / "build" / "output.txt").touch()
+        build_structure(
+            tmp_path,
+            {
+                "src": {
+                    "features": {
+                        "my_feature": {
+                            "types": {"module.py": ""},
+                            ".venv": {  # Ignored directories
+                                "lib": {},
+                            },
+                            "build": {
+                                "output.txt": "",
+                            },
+                        },
+                    },
+                },
+            },
+        )
 
         exit_code = validate_structure(config)
         assert exit_code == 0
