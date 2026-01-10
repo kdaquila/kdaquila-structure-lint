@@ -23,6 +23,7 @@ def create_minimal_config(tmp_path: Path) -> Config:
     return Config(
         enabled=True,
         project_root=tmp_path,
+        search_paths=["src"],
         validators=ValidatorToggles(),
         line_limits=LineLimitsConfig(),
         one_per_file=OnePerFileConfig(),

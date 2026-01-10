@@ -23,6 +23,7 @@ def create_custom_config(tmp_path: Path) -> Config:
     return Config(
         enabled=True,
         project_root=tmp_path,
+        search_paths=["src", "lib"],
         validators=ValidatorToggles(
             structure=True,
             line_limits=True,
@@ -30,13 +31,9 @@ def create_custom_config(tmp_path: Path) -> Config:
         ),
         line_limits=LineLimitsConfig(
             max_lines=100,
-            search_paths=["src", "lib"],
         ),
-        one_per_file=OnePerFileConfig(
-            search_paths=["src", "lib"],
-        ),
+        one_per_file=OnePerFileConfig(),
         structure=StructureConfig(
-            strict_format_roots={"lib", "app"},
             folder_depth=3,
             standard_folders={"types", "utils", "helpers"},
             prefix_separator="_",
