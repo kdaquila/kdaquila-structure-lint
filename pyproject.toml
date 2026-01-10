@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kdaquila-structure-lint"
-version = "4.0.0"
+version = "5.0.0"
 description = "Opinionated Python project structure and code quality linter"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -47,14 +47,12 @@ packages = ["kdaquila_structure_lint"]
 
 [tool.structure-lint]
 enabled = true
+search_paths = ["kdaquila_structure_lint"]
 
 [tool.structure-lint.validators]
 line_limits = true
 one_per_file = true
 structure = true
-
-[tool.structure-lint.structure]
-strict_format_roots = ["kdaquila_structure_lint"]
 
 [tool.pytest.ini_options]
 testpaths = ["kdaquila_structure_lint"]
