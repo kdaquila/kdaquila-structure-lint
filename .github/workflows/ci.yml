@@ -28,15 +28,15 @@ jobs:
 
     - name: Run mypy type checking
       run: |
-        mypy src/features --strict
+        mypy kdaquila_structure_lint --strict
 
     - name: Run ruff linting
       run: |
-        ruff check src/features
+        ruff check kdaquila_structure_lint
 
     - name: Run pytest
       run: |
-        pytest src/
+        pytest kdaquila_structure_lint/
 
     - name: Self-lint (run structure-lint on itself)
       run: |
