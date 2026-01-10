@@ -53,6 +53,9 @@ line_limits = true
 one_per_file = true
 structure = true
 
+[tool.structure-lint.structure]
+strict_format_roots = ["kdaquila_structure_lint"]
+
 [tool.pytest.ini_options]
 testpaths = ["kdaquila_structure_lint"]
 python_files = ["test_*.py"]
