@@ -14,7 +14,7 @@ class TestOnePerFileValidatorConfig:
     def test_custom_search_paths(self, tmp_path: Path) -> None:
         """Should check custom search paths."""
         config = create_minimal_config(tmp_path)
-        config.one_per_file.search_paths = ["lib", "app"]
+        config.search_paths = ["lib", "app"]
 
         (config.project_root / "lib").mkdir()
         (config.project_root / "app").mkdir()
@@ -31,7 +31,7 @@ class TestOnePerFileValidatorConfig:
     ) -> None:
         """Should warn about missing search paths and continue."""
         config = create_minimal_config(tmp_path)
-        config.one_per_file.search_paths = ["nonexistent", "src"]
+        config.search_paths = ["nonexistent", "src"]
 
         # Create valid file in src
         (config.project_root / "src").mkdir()
@@ -50,7 +50,7 @@ class TestOnePerFileValidatorConfig:
     ) -> None:
         """Should handle all search paths missing gracefully."""
         config = create_minimal_config(tmp_path)
-        config.one_per_file.search_paths = ["nonexistent1", "nonexistent2"]
+        config.search_paths = ["nonexistent1", "nonexistent2"]
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()

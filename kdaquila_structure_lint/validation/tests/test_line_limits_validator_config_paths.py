@@ -14,7 +14,7 @@ class TestLineLimitsValidatorConfigPaths:
     def test_custom_search_paths(self, tmp_path: Path) -> None:
         """Should check custom search paths."""
         config = create_minimal_config(tmp_path)
-        config.line_limits.search_paths = ["lib", "app"]
+        config.search_paths = ["lib", "app"]
         config.line_limits.max_lines = 5
 
         (config.project_root / "lib").mkdir()
@@ -32,7 +32,7 @@ class TestLineLimitsValidatorConfigPaths:
     ) -> None:
         """Should warn about missing search paths and continue."""
         config = create_minimal_config(tmp_path)
-        config.line_limits.search_paths = ["nonexistent", "src"]
+        config.search_paths = ["nonexistent", "src"]
 
         # Create valid file in src
         (config.project_root / "src").mkdir()
@@ -51,7 +51,7 @@ class TestLineLimitsValidatorConfigPaths:
     ) -> None:
         """Should handle all search paths missing gracefully."""
         config = create_minimal_config(tmp_path)
-        config.line_limits.search_paths = ["nonexistent1", "nonexistent2"]
+        config.search_paths = ["nonexistent1", "nonexistent2"]
 
         exit_code = validate_line_limits(config)
         captured = capsys.readouterr()

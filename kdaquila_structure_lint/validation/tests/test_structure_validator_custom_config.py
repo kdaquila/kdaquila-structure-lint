@@ -11,10 +11,10 @@ from kdaquila_structure_lint.validation.utils.validator_structure import validat
 class TestStructureValidatorCustomConfig:
     """Tests for custom structure configuration."""
 
-    def test_custom_strict_format_roots(self, tmp_path: Path) -> None:
-        """Should use custom strict_format_roots."""
+    def test_custom_search_paths(self, tmp_path: Path) -> None:
+        """Should use custom search_paths."""
         config = create_minimal_config(tmp_path)
-        config.structure.strict_format_roots = {"lib"}
+        config.search_paths = ["lib"]
 
         build_structure(
             tmp_path,
@@ -32,12 +32,12 @@ class TestStructureValidatorCustomConfig:
         exit_code = validate_structure(config)
         assert exit_code == 0
 
-    def test_multiple_strict_format_roots(
+    def test_multiple_search_paths(
         self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
-        """Should validate multiple strict_format_roots."""
+        """Should validate multiple search_paths."""
         config = create_minimal_config(tmp_path)
-        config.structure.strict_format_roots = {"src", "lib"}
+        config.search_paths = ["src", "lib"]
 
         build_structure(
             tmp_path,
@@ -67,17 +67,17 @@ class TestStructureValidatorCustomConfig:
         assert "Validating lib/" in captured.out
         assert exit_code == 0
 
-    def test_empty_strict_format_roots_fails(
+    def test_empty_search_paths_fails(
         self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
-        """Should fail when strict_format_roots is empty."""
+        """Should fail when search_paths is empty."""
         config = create_minimal_config(tmp_path)
-        config.structure.strict_format_roots = set()
+        config.search_paths = []
 
         exit_code = validate_structure(config)
         captured = capsys.readouterr()
 
-        assert "strict_format_roots is empty" in captured.out
+        assert "search_paths is empty" in captured.out
         assert exit_code == 1
 
     def test_custom_files_allowed_anywhere(self, tmp_path: Path) -> None:

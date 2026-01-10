@@ -2,7 +2,6 @@
 
 from kdaquila_structure_lint.config import (
     LineLimitsConfig,
-    OnePerFileConfig,
     StructureConfig,
     ValidatorToggles,
 )
@@ -22,17 +21,10 @@ class TestConfigDataclasses:
         """Should have correct default values."""
         config = LineLimitsConfig()
         assert config.max_lines == 150
-        assert config.search_paths == ["src"]
-
-    def test_one_per_file_config_defaults(self) -> None:
-        """Should have correct default values."""
-        config = OnePerFileConfig()
-        assert config.search_paths == ["src"]
 
     def test_structure_config_defaults(self) -> None:
         """Should have correct default values."""
         config = StructureConfig()
-        assert config.strict_format_roots == {"src"}
         assert config.folder_depth == 2
         assert config.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.prefix_separator == "_"

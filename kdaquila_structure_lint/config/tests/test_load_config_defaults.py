@@ -14,13 +14,11 @@ class TestLoadConfigDefaults:
 
         assert config.enabled is True
         assert config.project_root == tmp_path
+        assert config.search_paths == ["src"]
         assert config.validators.structure is False
         assert config.validators.line_limits is True
         assert config.validators.one_per_file is True
         assert config.line_limits.max_lines == 150
-        assert config.line_limits.search_paths == ["src"]
-        assert config.one_per_file.search_paths == ["src"]
-        assert config.structure.strict_format_roots == {"src"}
         assert config.structure.folder_depth == 2
         assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
         assert config.structure.prefix_separator == "_"
@@ -57,13 +55,12 @@ enabled = false
         pyproject.write_text("""
 [tool.structure-lint.line_limits]
 max_lines = 80
-# search_paths not specified, should use default
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
         assert config.line_limits.max_lines == 80
-        assert config.line_limits.search_paths == ["src"]  # default
+        assert config.search_paths == ["src"]  # default
 
     def test_load_config_missing_tool_section(self, tmp_path: Path) -> None:
         """Should use defaults when [tool.structure-lint] section missing."""

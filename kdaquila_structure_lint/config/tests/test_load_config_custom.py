@@ -24,38 +24,27 @@ one_per_file = false
         assert config.validators.line_limits is False
         assert config.validators.one_per_file is False
 
-    def test_load_config_with_custom_line_limits(self, tmp_path: Path) -> None:
-        """Should load custom line limits configuration."""
+    def test_load_config_with_custom_search_paths(self, tmp_path: Path) -> None:
+        """Should load custom search_paths at root level."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
+[tool.structure-lint]
+search_paths = ["src", "lib", "app"]
+
 [tool.structure-lint.line_limits]
 max_lines = 100
-search_paths = ["src", "lib", "app"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
+        assert config.search_paths == ["src", "lib", "app"]
         assert config.line_limits.max_lines == 100
-        assert config.line_limits.search_paths == ["src", "lib", "app"]
-
-    def test_load_config_with_custom_one_per_file(self, tmp_path: Path) -> None:
-        """Should load custom one-per-file configuration."""
-        pyproject = tmp_path / "pyproject.toml"
-        pyproject.write_text("""
-[tool.structure-lint.one_per_file]
-search_paths = ["modules"]
-""")
-
-        config = load_config(project_root=tmp_path, config_path=pyproject)
-
-        assert config.one_per_file.search_paths == ["modules"]
 
     def test_load_config_with_custom_structure(self, tmp_path: Path) -> None:
         """Should load custom structure configuration."""
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("""
 [tool.structure-lint.structure]
-strict_format_roots = ["lib", "app"]
 folder_depth = 3
 standard_folders = ["types", "helpers"]
 prefix_separator = "-"
@@ -64,7 +53,6 @@ files_allowed_anywhere = ["README.md", "NOTES.md"]
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
-        assert config.structure.strict_format_roots == {"lib", "app"}
         assert config.structure.folder_depth == 3
         assert config.structure.standard_folders == {"types", "helpers"}
         assert config.structure.prefix_separator == "-"
@@ -76,6 +64,7 @@ files_allowed_anywhere = ["README.md", "NOTES.md"]
         pyproject.write_text("""
 [tool.structure-lint]
 enabled = true
+search_paths = ["src"]
 
 [tool.structure-lint.validators]
 structure = true
@@ -84,13 +73,8 @@ one_per_file = false
 
 [tool.structure-lint.line_limits]
 max_lines = 200
-search_paths = ["src"]
-
-[tool.structure-lint.one_per_file]
-search_paths = ["src"]
 
 [tool.structure-lint.structure]
-strict_format_roots = ["source"]
 folder_depth = 1
 standard_folders = ["utils"]
 prefix_separator = "-"
@@ -101,13 +85,11 @@ files_allowed_anywhere = ["README.md"]
 
         # Verify all settings
         assert config.enabled is True
+        assert config.search_paths == ["src"]
         assert config.validators.structure is True
         assert config.validators.line_limits is True
         assert config.validators.one_per_file is False
         assert config.line_limits.max_lines == 200
-        assert config.line_limits.search_paths == ["src"]
-        assert config.one_per_file.search_paths == ["src"]
-        assert config.structure.strict_format_roots == {"source"}
         assert config.structure.folder_depth == 1
         assert config.structure.standard_folders == {"utils"}
         assert config.structure.prefix_separator == "-"
