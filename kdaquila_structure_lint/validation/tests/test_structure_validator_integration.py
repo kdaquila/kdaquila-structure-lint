@@ -26,14 +26,14 @@ class TestStructureValidatorIntegration:
                     "apps": {
                         "my_apps": {
                             "types": {"module.py": ""},
-                            "utils": {"module.py": ""},
+                            "functions": {"module.py": ""},
                             "helpers": {"module.py": ""},
                         },
                     },
                     "features": {
                         "my_features": {
                             "types": {"module.py": ""},
-                            "utils": {"module.py": ""},
+                            "functions": {"module.py": ""},
                             "helpers": {"module.py": ""},
                         },
                     },

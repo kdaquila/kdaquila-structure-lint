@@ -35,7 +35,7 @@ def create_custom_config(tmp_path: Path) -> Config:
         one_per_file=OnePerFileConfig(),
         structure=StructureConfig(
             folder_depth=3,
-            standard_folders={"types", "utils", "helpers"},
+            standard_folders={"types", "functions", "helpers"},
             prefix_separator="_",
             files_allowed_anywhere={"README.md", "NOTES.md"},
         ),

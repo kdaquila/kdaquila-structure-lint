@@ -83,15 +83,15 @@ class TestStructureValidatorEdgeCases:
                     "features": {
                         "auth": {
                             "types": {"auth_types.py": ""},
-                            "utils": {"auth_utils.py": ""},
+                            "functions": {"auth_functions.py": ""},
                         },
                         "users": {
                             "types": {"users_types.py": ""},
-                            "utils": {"users_utils.py": ""},
+                            "functions": {"users_functions.py": ""},
                         },
                         "posts": {
                             "types": {"posts_types.py": ""},
-                            "utils": {"posts_utils.py": ""},
+                            "functions": {"posts_functions.py": ""},
                         },
                     },
                 },

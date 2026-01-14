@@ -25,7 +25,7 @@ class TestPrefixValidation:
                                 "types": {"user.py": "# user types"},
                             },
                             "auth_logout": {
-                                "utils": {"helper.py": "# helper"},
+                                "functions": {"helper.py": "# helper"},
                             },
                         },
                     },
@@ -77,7 +77,7 @@ class TestPrefixValidation:
                             "types": {"user.py": "# user types"},
                         },
                         "payments": {
-                            "utils": {"helper.py": "# helper"},
+                            "functions": {"helper.py": "# helper"},
                         },
                         "reports": {
                             "constants": {"config.py": "# config"},
@@ -102,7 +102,7 @@ class TestPrefixValidation:
                         "auth": {
                             # Standard folders
                             "types": {"user.py": "# user types"},
-                            "utils": {"helper.py": "# helper"},
+                            "functions": {"helper.py": "# helper"},
                             # Feature folder with correct prefix
                             "auth_oauth": {
                                 "types": {"token.py": "# token types"},
