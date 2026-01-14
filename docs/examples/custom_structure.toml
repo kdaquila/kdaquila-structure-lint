@@ -38,7 +38,7 @@ folder_depth = 3
 # - services: Business logic layer
 # - repositories: Data access layer
 # - types: Type definitions
-# - utils: Helper functions
+# - functions: Helper functions
 # - tests: Unit and integration tests
 standard_folders = [
     "models",
@@ -47,7 +47,7 @@ standard_folders = [
     "services",
     "repositories",
     "types",
-    "utils",
+    "functions",
     "tests"
 ]
 
@@ -72,7 +72,7 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # │   │   │   ├── services/       (Authentication service)
 # │   │   │   ├── repositories/   (User repository)
 # │   │   │   ├── types/          (API schemas)
-# │   │   │   ├── utils/          (Password hashing, JWT utils)
+# │   │   │   ├── functions/       (Password hashing, JWT helpers)
 # │   │   │   ├── tests/
 # │   │   │   └── authentication-oauth/   (feature folder, prefixed)
 # │   │   │       ├── types/
@@ -181,7 +181,7 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #    - controllers/: HTTP request handling
 #    - views/: Templates and rendering
 #    - types/: Type hints, protocols
-#    - utils/: Pure functions, helpers
+#    - functions/: Pure functions, helpers
 #
 # 4. Feature Folder Naming:
 #    - Use prefix separator consistently (authentication-oauth, not authentication_oauth)

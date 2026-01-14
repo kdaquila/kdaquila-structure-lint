@@ -155,22 +155,24 @@ src/features/authentication/     # depth 0 (child of base folder)
 #### `structure.standard_folders`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["types", "utils", "constants", "tests"]`
+**Default**: `["types", "functions", "constants", "tests", "errors", "classes"]`
 
 List of standard folder names that can appear in feature/module directories. These represent common supporting code categories and cannot contain subdirectories.
 
 ```toml
 [tool.structure-lint.structure]
-standard_folders = ["types", "utils", "constants", "tests", "models", "views"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes", "models", "views"]
 ```
 
 **Example Structure**:
 ```
 src/features/authentication/
 ├── types/
-├── utils/
+├── functions/
 ├── constants/
-└── tests/
+├── tests/
+├── errors/
+└── classes/
 ```
 
 #### `structure.prefix_separator`
@@ -292,7 +294,7 @@ search_paths = ["src"]
 structure = true  # Opt-in
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "utils", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 folder_depth = 2
 prefix_separator = "_"
 ```
@@ -352,7 +354,7 @@ structure = true
 max_lines = 100  # Very strict
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "utils", "constants", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 prefix_separator = "_"
 folder_depth = 2
 files_allowed_anywhere = ["__init__.py"]
@@ -463,7 +465,7 @@ search_paths = ["src", "lib"]
 
 [tool.structure-lint.structure]
 strict_format_roots = ["src", "lib"]
-standard_folders = ["types", "utils", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 ```
 
 **After (v5.0.0)**:
@@ -479,7 +481,7 @@ structure = true
 max_lines = 150
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "utils", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 ```
 
 ### Behavioral Changes
@@ -511,7 +513,7 @@ Version 2.0.0 introduced breaking changes to the structure validation configurat
 [tool.structure-lint.structure]
 src_root = "src"
 free_form_roots = ["experiments", "legacy"]
-standard_folders = ["types", "utils", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 general_folder = "general"
 ```
 
@@ -522,7 +524,7 @@ search_paths = ["src"]  # Only validate src/
 # experiments/ and legacy/ are NOT validated (not in search_paths)
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "utils", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 folder_depth = 2
 prefix_separator = "_"
 ```

@@ -234,7 +234,7 @@ class User:
 
 **Single function:**
 ```python
-# src/utils/formatters/date_formatter.py
+# src/functions/formatters/date_formatter.py
 """Format dates for display."""
 
 from datetime import datetime
@@ -298,7 +298,7 @@ src/models/
 
 **Multiple functions:**
 ```python
-# src/utils/helpers.py  # BAD: Grab-bag of utilities
+# src/functions/helpers.py  # BAD: Grab-bag of functions
 """Various helper functions."""
 
 def format_date(date): ...   # First function
@@ -308,7 +308,7 @@ def validate_email(email): ... # Third function - violation!
 
 **Better approach:**
 ```
-src/utils/
+src/functions/
 ├── date_formatter.py      # Only format_date
 ├── date_parser.py         # Only parse_date
 └── email_validator.py     # Only validate_email
@@ -381,7 +381,7 @@ Example refactoring:
 
 **Before:**
 ```python
-# src/utils/string_utils.py (3 definitions)
+# src/functions/string_functions.py (3 definitions)
 def capitalize_words(s): ...
 def snake_to_camel(s): ...
 def truncate_string(s, length): ...
@@ -389,7 +389,7 @@ def truncate_string(s, length): ...
 
 **After:**
 ```
-src/utils/
+src/functions/
 ├── word_capitalizer.py   # capitalize_words
 ├── case_converter.py     # snake_to_camel
 └── string_truncator.py   # truncate_string
@@ -419,14 +419,16 @@ The structure validator enforces three simple rules:
 
 #### Rule 1: Standard Folders Cannot Have Subdirectories
 
-Standard folders (like `types/`, `utils/`, `constants/`, `tests/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
+Standard folders (like `types/`, `functions/`, `constants/`, `tests/`, `errors/`, `classes/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
 
 **Valid:**
 ```
 auth/
-└── types/
-    ├── user.py
-    └── session.py
+├── types/
+│   ├── user.py
+│   └── session.py
+└── functions/
+    └── hash_password.py
 ```
 
 **Invalid:**
@@ -473,7 +475,7 @@ auth/
 ├── __init__.py              # Allowed everywhere
 ├── types/
 │   └── user.py              # In standard folder
-└── utils/
+└── functions/
     └── hash.py              # In standard folder
 ```
 
@@ -497,7 +499,7 @@ structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
 folder_depth = 2               # Max nesting depth for feature folders
-standard_folders = ["types", "utils", "constants", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 prefix_separator = "_"         # Separator for feature folder prefixes
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", "*.egg-info"]
@@ -515,7 +517,7 @@ project/
 │       │   ├── __init__.py
 │       │   ├── types/
 │       │   │   └── user.py
-│       │   ├── utils/
+│       │   ├── functions/
 │       │   │   └── hash_password.py
 │       │   ├── constants/
 │       │   │   └── config.py
@@ -529,7 +531,7 @@ project/
 │       │               └── credentials.py
 │       └── reporting/
 │           ├── types/
-│           └── utils/
+│           └── functions/
 ```
 
 #### Invalid Examples
@@ -578,13 +580,13 @@ Unlike previous versions, standard folders and feature folders can now exist at 
 src/features/auth/
 ├── types/                   # Standard folder
 │   └── user.py
-├── utils/                   # Standard folder
+├── functions/               # Standard folder
 │   └── helper.py
 ├── auth_oauth/              # Feature folder (with prefix)
 │   └── types/
 │       └── token.py
 └── auth_password/           # Feature folder (with prefix)
-    └── utils/
+    └── functions/
         └── hasher.py
 ```
 
@@ -702,7 +704,7 @@ Don't fight the tool - customize it:
 ```toml
 [tool.structure-lint.structure]
 # Match your team's conventions
-standard_folders = ["types", "models", "services", "utils", "tests"]
+standard_folders = ["types", "models", "services", "functions", "tests", "errors", "classes"]
 prefix_separator = "-"  # If you prefer dashes
 folder_depth = 3  # Allow deeper nesting if needed
 ```
@@ -718,7 +720,7 @@ search_paths = ["src"]
 
 [tool.structure-lint.structure]
 # Added "services" as standard folder for our microservice architecture
-standard_folders = ["types", "services", "utils", "tests"]
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes", "services"]
 
 # Using dashes for better readability in folder names
 prefix_separator = "-"
