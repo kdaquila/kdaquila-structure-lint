@@ -413,9 +413,9 @@ Consistent structure provides:
 
 **Note**: This is **opt-in by default** because it's highly opinionated. Only enable if your team agrees to this structure.
 
-### The Three Rules
+### The Two Rules
 
-The structure validator enforces three simple rules:
+The structure validator enforces two simple rules:
 
 #### Rule 1: Standard Folders Cannot Have Subdirectories
 
@@ -439,33 +439,7 @@ auth/
         └── user.py
 ```
 
-#### Rule 2: Feature Folders Must Be Prefixed with Parent's Name
-
-Feature folders (non-standard folders) must be named with their parent folder's name as a prefix, followed by a separator (default: `_`). This creates a clear hierarchy and prevents naming collisions.
-
-**Exception**: Children of base folders (depth 0) are exempt from this rule.
-
-**Valid:**
-```
-src/features/
-├── auth/                    # depth 0, no prefix required
-│   ├── auth_oauth/          # depth 1, prefixed with "auth_"
-│   │   └── auth_oauth_google/  # depth 2, prefixed with "auth_oauth_"
-│   └── auth_login/          # depth 1, prefixed with "auth_"
-└── payments/                # depth 0, no prefix required
-    └── payments_stripe/     # depth 1, prefixed with "payments_"
-```
-
-**Invalid:**
-```
-src/features/
-└── auth/
-    ├── oauth/               # ERROR: should be "auth_oauth"
-    └── auth_oauth/
-        └── google/          # ERROR: should be "auth_oauth_google"
-```
-
-#### Rule 3: Only Certain Files Allowed Outside Standard Folders
+#### Rule 2: Only Certain Files Allowed Outside Standard Folders
 
 Python files can only appear in standard folders or in the `files_allowed_anywhere` list (default: `["__init__.py"]`). This prevents loose files from cluttering feature directories.
 
@@ -500,7 +474,6 @@ structure = true  # Must opt-in explicitly
 [tool.structure-lint.structure]
 folder_depth = 2               # Max nesting depth for feature folders
 standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
-prefix_separator = "_"         # Separator for feature folder prefixes
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", "*.egg-info"]
 ```
@@ -523,10 +496,10 @@ project/
 │       │   │   └── config.py
 │       │   ├── tests/
 │       │   │   └── test_login.py
-│       │   └── authentication_oauth/    # Feature folder with prefix
+│       │   └── oauth/                   # Feature folder (nested)
 │       │       ├── types/
 │       │       │   └── token.py
-│       │       └── authentication_oauth_google/  # Nested with full prefix
+│       │       └── google/              # Nested feature folder
 │       │           └── types/
 │       │               └── credentials.py
 │       └── reporting/
@@ -545,14 +518,6 @@ src/features/auth/
 
 Error: `src/features/auth/: Disallowed files: ['login.py']`
 
-**Feature folder without prefix:**
-```
-src/features/auth/
-└── oauth/            # ERROR: Should be auth_oauth
-```
-
-Error: `src/features/auth/oauth: Feature folder must start with 'auth_'`
-
 **Subdirectory in standard folder:**
 ```
 src/features/auth/
@@ -565,12 +530,12 @@ Error: `src/features/auth/types: Standard folder cannot have subdirectories`
 **Exceeding depth limit:**
 ```
 src/features/auth/           # depth 0
-└── auth_services/           # depth 1
-    └── auth_services_oauth/ # depth 2 (at limit with default folder_depth=2)
-        └── auth_services_oauth_providers/  # ERROR: depth 3, exceeds limit
+└── services/                # depth 1
+    └── oauth/               # depth 2 (at limit with default folder_depth=2)
+        └── providers/       # ERROR: depth 3, exceeds limit
 ```
 
-Error: `src/features/auth/auth_services/auth_services_oauth/auth_services_oauth_providers: Exceeds max depth of 2`
+Error: `src/features/auth/services/oauth/providers: Exceeds max depth of 2`
 
 ### Standard and Feature Folders Can Coexist
 
@@ -582,10 +547,10 @@ src/features/auth/
 │   └── user.py
 ├── functions/               # Standard folder
 │   └── helper.py
-├── auth_oauth/              # Feature folder (with prefix)
+├── oauth/                   # Feature folder (nested)
 │   └── types/
 │       └── token.py
-└── auth_password/           # Feature folder (with prefix)
+└── password/                # Feature folder (nested)
     └── functions/
         └── hasher.py
 ```
@@ -606,33 +571,6 @@ src/features/authentication/
 ├── views/
 ├── controllers/
 └── tests/
-```
-
-#### Custom Prefix Separator
-
-```toml
-[tool.structure-lint.structure]
-prefix_separator = "-"  # Use dashes instead of underscores
-```
-
-Results in:
-```
-src/features/auth/
-└── auth-oauth/        # Dash separator
-    └── auth-oauth-google/
-```
-
-Or no separator:
-```toml
-[tool.structure-lint.structure]
-prefix_separator = ""  # Direct concatenation
-```
-
-Results in:
-```
-src/features/auth/
-└── authoauth/
-    └── authoauthgoogle/
 ```
 
 #### Multiple Roots
@@ -705,7 +643,6 @@ Don't fight the tool - customize it:
 [tool.structure-lint.structure]
 # Match your team's conventions
 standard_folders = ["types", "models", "services", "functions", "tests", "errors", "classes"]
-prefix_separator = "-"  # If you prefer dashes
 folder_depth = 3  # Allow deeper nesting if needed
 ```
 
@@ -721,9 +658,6 @@ search_paths = ["src"]
 [tool.structure-lint.structure]
 # Added "services" as standard folder for our microservice architecture
 standard_folders = ["types", "functions", "constants", "tests", "errors", "classes", "services"]
-
-# Using dashes for better readability in folder names
-prefix_separator = "-"
 ```
 
 ### When to Use Structure Validation

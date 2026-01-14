@@ -175,43 +175,6 @@ src/features/authentication/
 └── classes/
 ```
 
-#### `structure.prefix_separator`
-
-**Type**: `str`
-**Default**: `"_"`
-
-Separator used for feature folder prefix naming. Feature folders (non-standard folders at depth > 0) must be named with their parent folder's name + this separator as a prefix.
-
-```toml
-[tool.structure-lint.structure]
-prefix_separator = "-"  # Use dashes instead of underscores
-```
-
-**Examples**:
-
-With `prefix_separator = "_"` (default):
-```
-src/features/auth/
-├── auth_oauth/        # Prefixed with "auth_"
-└── auth_login/        # Prefixed with "auth_"
-```
-
-With `prefix_separator = "-"`:
-```
-src/features/auth/
-├── auth-oauth/        # Prefixed with "auth-"
-└── auth-login/        # Prefixed with "auth-"
-```
-
-With `prefix_separator = ""` (empty):
-```
-src/features/auth/
-├── authoauth/         # Prefixed with "auth" (no separator)
-└── authlogin/         # Prefixed with "auth" (no separator)
-```
-
-**Note**: Children of base folders (depth 0) are exempt from the prefix rule.
-
 #### `structure.files_allowed_anywhere`
 
 **Type**: `list[str]` (converted to set internally)
@@ -296,7 +259,6 @@ structure = true  # Opt-in
 [tool.structure-lint.structure]
 standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 folder_depth = 2
-prefix_separator = "_"
 ```
 
 ### Custom Project Layout
@@ -314,7 +276,6 @@ max_lines = 200
 
 [tool.structure-lint.structure]
 standard_folders = ["models", "views", "controllers", "tests"]
-prefix_separator = "-"
 folder_depth = 3
 ```
 
@@ -355,7 +316,6 @@ max_lines = 100  # Very strict
 
 [tool.structure-lint.structure]
 standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
-prefix_separator = "_"
 folder_depth = 2
 files_allowed_anywhere = ["__init__.py"]
 ```
@@ -502,9 +462,8 @@ Version 2.0.0 introduced breaking changes to the structure validation configurat
 |------------|---------------|-------|
 | `src_root = "src"` | `search_paths = ["src"]` | Moved to root level in v5.0.0 |
 | `free_form_roots = ["experiments"]` | (removed) | Just don't include in `search_paths` |
-| `general_folder = "general"` | (removed) | Use `prefix_separator` for naming conventions |
+| `general_folder = "general"` | (removed) | No longer needed |
 | (new) | `folder_depth = 2` | Configurable max nesting depth |
-| (new) | `prefix_separator = "_"` | Feature folder naming convention |
 
 ### Migration Examples
 
@@ -526,7 +485,6 @@ search_paths = ["src"]  # Only validate src/
 [tool.structure-lint.structure]
 standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 folder_depth = 2
-prefix_separator = "_"
 ```
 
 ### Behavioral Changes
@@ -542,9 +500,7 @@ prefix_separator = "_"
 
 4. **Depth Limits**: The `folder_depth` setting limits how deep feature folders can nest.
 
-5. **Prefix Naming**: Feature folders must now be prefixed with their parent's name + separator. The `general_folder` concept has been removed in favor of this naming convention.
-
-6. **Standard + Feature Coexistence**: Standard folders and feature folders can now coexist at the same level (previously there were mutual exclusivity rules).
+5. **Standard + Feature Coexistence**: Standard folders and feature folders can now coexist at the same level (previously there were mutual exclusivity rules).
 
 ## See Also
 
