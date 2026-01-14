@@ -105,7 +105,7 @@ def load_config(
     structure = StructureConfig(
         folder_depth=structure_data.get("folder_depth", 2),
         standard_folders=set(
-            structure_data.get("standard_folders", ["types", "utils", "constants", "tests"])
+            structure_data.get("standard_folders", ["types", "functions", "constants", "tests", "errors", "classes"])
         ),
         prefix_separator=structure_data.get("prefix_separator", "_"),
         files_allowed_anywhere=set(structure_data.get("files_allowed_anywhere", ["__init__.py"])),
