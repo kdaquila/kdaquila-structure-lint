@@ -21,7 +21,7 @@ class TestFolderDepthDeep:
                 "src": {
                     "features": {
                         "domain": {
-                            "domain_subdomain": {  # Properly prefixed
+                            "subdomain": {
                                 "types": {"module.py": ""},
                             },
                         },
@@ -44,8 +44,8 @@ class TestFolderDepthDeep:
                 "src": {
                     "features": {
                         "level1": {
-                            "level1_level2": {  # Properly prefixed
-                                "level1_level2_level3": {  # Properly prefixed
+                            "level2": {
+                                "level3": {
                                     "types": {"module.py": ""},
                                 },
                             },
