@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.validation.utils.line_counter_counter import count_file_lines
+from kdaquila_structure_lint.validation.functions.line_counter_counter import count_file_lines
 
 
 def validate_file_lines(file_path: Path, max_lines: int) -> str | None:

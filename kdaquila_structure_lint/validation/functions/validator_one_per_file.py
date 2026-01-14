@@ -1,23 +1,24 @@
-"""Validates that Python files do not exceed maximum line count.
+"""Validates that Python files contain at most one top-level function or class.
 
-Enforces a line limit to encourage modular, focused files.
+Encourages focused, single-responsibility modules.
 """
 
 import sys
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation.utils.file_finder import find_python_files
-from kdaquila_structure_lint.validation.utils.line_counter_validator import validate_file_lines
+from kdaquila_structure_lint.validation.functions.definition_counter_validator import (
+    validate_file_definitions,
+)
+from kdaquila_structure_lint.validation.functions.file_finder import find_python_files
 
 
-def validate_line_limits(config: Config) -> int:
+def validate_one_per_file(config: Config) -> int:
     """Run validation and return exit code."""
     project_root = config.project_root
-    max_lines = config.line_limits.max_lines
     search_paths = config.search_paths
     errors = []
 
-    print(f"🔍 Checking Python files for {max_lines} line limit...\n")
+    print("🔍 Checking for one function/class per file...\n")
 
     for search_path in search_paths:
         path = project_root / search_path
@@ -35,20 +36,20 @@ def validate_line_limits(config: Config) -> int:
             except ValueError:
                 relative_path = file_path
 
-            error = validate_file_lines(file_path, max_lines)
+            error = validate_file_definitions(file_path)
             if error:
                 # Replace absolute path with relative path in error message
                 error = error.replace(str(file_path), str(relative_path))
                 errors.append(error)
 
     if errors:
-        print(f"\n❌ Found {len(errors)} file(s) exceeding {max_lines} line limit:\n")
+        print(f"\n❌ Found {len(errors)} file(s) with multiple definitions:\n")
         for error in errors:
             print(f"  • {error}")
-        print("\n💡 Consider splitting large files into smaller, focused modules.")
+        print("\n💡 Consider splitting into separate files for better modularity.")
         return 1
 
-    print(f"\n✅ All Python files are within {max_lines} line limit!")
+    print("\n✅ All files have at most one top-level function or class!")
     return 0
 
 
@@ -56,4 +57,4 @@ if __name__ == "__main__":
     from kdaquila_structure_lint.config import load_config
 
     config = load_config()
-    sys.exit(validate_line_limits(config))
+    sys.exit(validate_one_per_file(config))

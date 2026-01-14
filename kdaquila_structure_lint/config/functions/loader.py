@@ -10,7 +10,7 @@ from kdaquila_structure_lint.config.types import (
     StructureConfig,
     ValidatorToggles,
 )
-from kdaquila_structure_lint.config.utils.project_root import find_project_root
+from kdaquila_structure_lint.config.functions.project_root import find_project_root
 
 # Python 3.11+ has tomllib, older versions need tomli
 if sys.version_info >= (3, 11):

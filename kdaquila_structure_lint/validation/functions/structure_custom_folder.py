@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation.utils.pattern_match import matches_any_pattern
+from kdaquila_structure_lint.validation.functions.pattern_match import matches_any_pattern
 
 
 def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:

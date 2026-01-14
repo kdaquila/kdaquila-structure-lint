@@ -2,13 +2,13 @@
 
 Validates search_paths which have base_folders (apps, features) with structured rules.
 
-See utils/structure/ modules for detailed validation logic.
+See functions/structure modules for detailed validation logic.
 """
 
 import sys
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation.utils.structure_src_tree import validate_src_tree
+from kdaquila_structure_lint.validation.functions.structure_src_tree import validate_src_tree
 
 
 def validate_structure(config: Config) -> int:

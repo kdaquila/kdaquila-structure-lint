@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.test_fixtures import build_structure, create_minimal_config
-from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
+from kdaquila_structure_lint.validation.functions.validator_structure import validate_structure
 
 
 class TestFolderDepthDeep:
