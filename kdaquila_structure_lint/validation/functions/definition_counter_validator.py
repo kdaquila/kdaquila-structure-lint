@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.validation.utils.definition_counter_counter import (
+from kdaquila_structure_lint.validation.functions.definition_counter_counter import (
     count_top_level_definitions,
 )
 

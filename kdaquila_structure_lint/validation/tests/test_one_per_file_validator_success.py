@@ -3,7 +3,9 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
-from kdaquila_structure_lint.validation.utils.validator_one_per_file import validate_one_per_file
+from kdaquila_structure_lint.validation.functions.validator_one_per_file import (
+    validate_one_per_file,
+)
 
 
 class TestOnePerFileValidatorSuccess:

@@ -9,9 +9,8 @@ class StructureConfig:
 
     folder_depth: int = 2
     standard_folders: set[str] = field(
-        default_factory=lambda: {"types", "utils", "constants", "tests"}
+        default_factory=lambda: {"types", "functions", "constants", "tests", "errors", "classes"}
     )
-    prefix_separator: str = "_"
     files_allowed_anywhere: set[str] = field(default_factory=lambda: {"__init__.py"})
     ignored_folders: set[str] = field(
         default_factory=lambda: {

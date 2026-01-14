@@ -9,7 +9,7 @@ from kdaquila_structure_lint.test_fixtures import (
     create_custom_config,
     create_minimal_config,
 )
-from kdaquila_structure_lint.validation.utils.validator_structure import validate_structure
+from kdaquila_structure_lint.validation.functions.validator_structure import validate_structure
 
 
 class TestStructureValidatorIntegration:
@@ -26,14 +26,14 @@ class TestStructureValidatorIntegration:
                     "apps": {
                         "my_apps": {
                             "types": {"module.py": ""},
-                            "utils": {"module.py": ""},
+                            "functions": {"module.py": ""},
                             "helpers": {"module.py": ""},
                         },
                     },
                     "features": {
                         "my_features": {
                             "types": {"module.py": ""},
-                            "utils": {"module.py": ""},
+                            "functions": {"module.py": ""},
                             "helpers": {"module.py": ""},
                         },
                     },

@@ -234,7 +234,7 @@ class User:
 
 **Single function:**
 ```python
-# src/utils/formatters/date_formatter.py
+# src/functions/formatters/date_formatter.py
 """Format dates for display."""
 
 from datetime import datetime
@@ -298,7 +298,7 @@ src/models/
 
 **Multiple functions:**
 ```python
-# src/utils/helpers.py  # BAD: Grab-bag of utilities
+# src/functions/helpers.py  # BAD: Grab-bag of functions
 """Various helper functions."""
 
 def format_date(date): ...   # First function
@@ -308,7 +308,7 @@ def validate_email(email): ... # Third function - violation!
 
 **Better approach:**
 ```
-src/utils/
+src/functions/
 ├── date_formatter.py      # Only format_date
 ├── date_parser.py         # Only parse_date
 └── email_validator.py     # Only validate_email
@@ -381,7 +381,7 @@ Example refactoring:
 
 **Before:**
 ```python
-# src/utils/string_utils.py (3 definitions)
+# src/functions/string_functions.py (3 definitions)
 def capitalize_words(s): ...
 def snake_to_camel(s): ...
 def truncate_string(s, length): ...
@@ -389,7 +389,7 @@ def truncate_string(s, length): ...
 
 **After:**
 ```
-src/utils/
+src/functions/
 ├── word_capitalizer.py   # capitalize_words
 ├── case_converter.py     # snake_to_camel
 └── string_truncator.py   # truncate_string
@@ -413,20 +413,22 @@ Consistent structure provides:
 
 **Note**: This is **opt-in by default** because it's highly opinionated. Only enable if your team agrees to this structure.
 
-### The Three Rules
+### The Two Rules
 
-The structure validator enforces three simple rules:
+The structure validator enforces two simple rules:
 
 #### Rule 1: Standard Folders Cannot Have Subdirectories
 
-Standard folders (like `types/`, `utils/`, `constants/`, `tests/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
+Standard folders (like `types/`, `functions/`, `constants/`, `tests/`, `errors/`, `classes/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
 
 **Valid:**
 ```
 auth/
-└── types/
-    ├── user.py
-    └── session.py
+├── types/
+│   ├── user.py
+│   └── session.py
+└── functions/
+    └── hash_password.py
 ```
 
 **Invalid:**
@@ -437,33 +439,7 @@ auth/
         └── user.py
 ```
 
-#### Rule 2: Feature Folders Must Be Prefixed with Parent's Name
-
-Feature folders (non-standard folders) must be named with their parent folder's name as a prefix, followed by a separator (default: `_`). This creates a clear hierarchy and prevents naming collisions.
-
-**Exception**: Children of base folders (depth 0) are exempt from this rule.
-
-**Valid:**
-```
-src/features/
-├── auth/                    # depth 0, no prefix required
-│   ├── auth_oauth/          # depth 1, prefixed with "auth_"
-│   │   └── auth_oauth_google/  # depth 2, prefixed with "auth_oauth_"
-│   └── auth_login/          # depth 1, prefixed with "auth_"
-└── payments/                # depth 0, no prefix required
-    └── payments_stripe/     # depth 1, prefixed with "payments_"
-```
-
-**Invalid:**
-```
-src/features/
-└── auth/
-    ├── oauth/               # ERROR: should be "auth_oauth"
-    └── auth_oauth/
-        └── google/          # ERROR: should be "auth_oauth_google"
-```
-
-#### Rule 3: Only Certain Files Allowed Outside Standard Folders
+#### Rule 2: Only Certain Files Allowed Outside Standard Folders
 
 Python files can only appear in standard folders or in the `files_allowed_anywhere` list (default: `["__init__.py"]`). This prevents loose files from cluttering feature directories.
 
@@ -473,7 +449,7 @@ auth/
 ├── __init__.py              # Allowed everywhere
 ├── types/
 │   └── user.py              # In standard folder
-└── utils/
+└── functions/
     └── hash.py              # In standard folder
 ```
 
@@ -497,8 +473,7 @@ structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
 folder_depth = 2               # Max nesting depth for feature folders
-standard_folders = ["types", "utils", "constants", "tests"]
-prefix_separator = "_"         # Separator for feature folder prefixes
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", "*.egg-info"]
 ```
@@ -515,21 +490,21 @@ project/
 │       │   ├── __init__.py
 │       │   ├── types/
 │       │   │   └── user.py
-│       │   ├── utils/
+│       │   ├── functions/
 │       │   │   └── hash_password.py
 │       │   ├── constants/
 │       │   │   └── config.py
 │       │   ├── tests/
 │       │   │   └── test_login.py
-│       │   └── authentication_oauth/    # Feature folder with prefix
+│       │   └── oauth/                   # Feature folder (nested)
 │       │       ├── types/
 │       │       │   └── token.py
-│       │       └── authentication_oauth_google/  # Nested with full prefix
+│       │       └── google/              # Nested feature folder
 │       │           └── types/
 │       │               └── credentials.py
 │       └── reporting/
 │           ├── types/
-│           └── utils/
+│           └── functions/
 ```
 
 #### Invalid Examples
@@ -543,14 +518,6 @@ src/features/auth/
 
 Error: `src/features/auth/: Disallowed files: ['login.py']`
 
-**Feature folder without prefix:**
-```
-src/features/auth/
-└── oauth/            # ERROR: Should be auth_oauth
-```
-
-Error: `src/features/auth/oauth: Feature folder must start with 'auth_'`
-
 **Subdirectory in standard folder:**
 ```
 src/features/auth/
@@ -563,12 +530,12 @@ Error: `src/features/auth/types: Standard folder cannot have subdirectories`
 **Exceeding depth limit:**
 ```
 src/features/auth/           # depth 0
-└── auth_services/           # depth 1
-    └── auth_services_oauth/ # depth 2 (at limit with default folder_depth=2)
-        └── auth_services_oauth_providers/  # ERROR: depth 3, exceeds limit
+└── services/                # depth 1
+    └── oauth/               # depth 2 (at limit with default folder_depth=2)
+        └── providers/       # ERROR: depth 3, exceeds limit
 ```
 
-Error: `src/features/auth/auth_services/auth_services_oauth/auth_services_oauth_providers: Exceeds max depth of 2`
+Error: `src/features/auth/services/oauth/providers: Exceeds max depth of 2`
 
 ### Standard and Feature Folders Can Coexist
 
@@ -578,13 +545,13 @@ Unlike previous versions, standard folders and feature folders can now exist at 
 src/features/auth/
 ├── types/                   # Standard folder
 │   └── user.py
-├── utils/                   # Standard folder
+├── functions/               # Standard folder
 │   └── helper.py
-├── auth_oauth/              # Feature folder (with prefix)
+├── oauth/                   # Feature folder (nested)
 │   └── types/
 │       └── token.py
-└── auth_password/           # Feature folder (with prefix)
-    └── utils/
+└── password/                # Feature folder (nested)
+    └── functions/
         └── hasher.py
 ```
 
@@ -604,33 +571,6 @@ src/features/authentication/
 ├── views/
 ├── controllers/
 └── tests/
-```
-
-#### Custom Prefix Separator
-
-```toml
-[tool.structure-lint.structure]
-prefix_separator = "-"  # Use dashes instead of underscores
-```
-
-Results in:
-```
-src/features/auth/
-└── auth-oauth/        # Dash separator
-    └── auth-oauth-google/
-```
-
-Or no separator:
-```toml
-[tool.structure-lint.structure]
-prefix_separator = ""  # Direct concatenation
-```
-
-Results in:
-```
-src/features/auth/
-└── authoauth/
-    └── authoauthgoogle/
 ```
 
 #### Multiple Roots
@@ -702,8 +642,7 @@ Don't fight the tool - customize it:
 ```toml
 [tool.structure-lint.structure]
 # Match your team's conventions
-standard_folders = ["types", "models", "services", "utils", "tests"]
-prefix_separator = "-"  # If you prefer dashes
+standard_folders = ["types", "models", "services", "functions", "tests", "errors", "classes"]
 folder_depth = 3  # Allow deeper nesting if needed
 ```
 
@@ -718,10 +657,7 @@ search_paths = ["src"]
 
 [tool.structure-lint.structure]
 # Added "services" as standard folder for our microservice architecture
-standard_folders = ["types", "services", "utils", "tests"]
-
-# Using dashes for better readability in folder names
-prefix_separator = "-"
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes", "services"]
 ```
 
 ### When to Use Structure Validation

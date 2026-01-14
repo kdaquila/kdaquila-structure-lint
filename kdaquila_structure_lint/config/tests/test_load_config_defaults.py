@@ -20,8 +20,10 @@ class TestLoadConfigDefaults:
         assert config.validators.one_per_file is True
         assert config.line_limits.max_lines == 150
         assert config.structure.folder_depth == 2
-        assert config.structure.standard_folders == {"types", "utils", "constants", "tests"}
-        assert config.structure.prefix_separator == "_"
+        expected_folders = {
+            "types", "functions", "constants", "tests", "errors", "classes"
+        }
+        assert config.structure.standard_folders == expected_folders
         assert config.structure.files_allowed_anywhere == {"__init__.py"}
         assert config.structure.ignored_folders == {
             "__pycache__",

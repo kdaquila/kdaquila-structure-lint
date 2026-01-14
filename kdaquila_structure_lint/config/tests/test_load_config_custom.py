@@ -47,7 +47,6 @@ max_lines = 100
 [tool.structure-lint.structure]
 folder_depth = 3
 standard_folders = ["types", "helpers"]
-prefix_separator = "-"
 files_allowed_anywhere = ["README.md", "NOTES.md"]
 """)
 
@@ -55,7 +54,6 @@ files_allowed_anywhere = ["README.md", "NOTES.md"]
 
         assert config.structure.folder_depth == 3
         assert config.structure.standard_folders == {"types", "helpers"}
-        assert config.structure.prefix_separator == "-"
         assert config.structure.files_allowed_anywhere == {"README.md", "NOTES.md"}
 
     def test_load_config_with_full_custom_config(self, tmp_path: Path) -> None:
@@ -77,7 +75,6 @@ max_lines = 200
 [tool.structure-lint.structure]
 folder_depth = 1
 standard_folders = ["utils"]
-prefix_separator = "-"
 files_allowed_anywhere = ["README.md"]
 """)
 
@@ -92,7 +89,6 @@ files_allowed_anywhere = ["README.md"]
         assert config.line_limits.max_lines == 200
         assert config.structure.folder_depth == 1
         assert config.structure.standard_folders == {"utils"}
-        assert config.structure.prefix_separator == "-"
         assert config.structure.files_allowed_anywhere == {"README.md"}
 
     def test_load_structure_files_allowed_anywhere_and_ignored(

@@ -30,18 +30,12 @@ max_lines = 150
 
 # Maximum depth of feature folder nesting
 # Depth counts from base folder children (depth 0) downward
-# Example: src/features/auth/auth_login/ = depth 1
+# Example: src/features/auth/login/ = depth 1
 folder_depth = 2
 
 # Standard folders that can appear inside feature/module directories
 # These represent common code organization patterns and cannot have subdirectories
-standard_folders = ["types", "utils", "constants", "tests"]
-
-# Separator used for feature folder prefix naming
-# Feature folders must be named: parent_name + separator + folder_name
-# Example with "_": auth folder contains auth_login, auth_logout
-# Set to "" for no separator (direct concatenation)
-prefix_separator = "_"
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 
 # Python files allowed in any directory, even those that normally shouldn't contain files
 # Note: Non-.py files (like README.md, .gitkeep) are automatically ignored and don't need listing
@@ -73,12 +67,12 @@ ignored_folders = [
 # │   └── features/           (base folder)
 # │       ├── authentication/ (feature directory at depth 0)
 # │       │   ├── types/      (standard folder - files allowed here)
-# │       │   ├── utils/      (standard folder)
+# │       │   ├── functions/  (standard folder)
 # │       │   ├── constants/  (standard folder)
 # │       │   ├── tests/      (standard folder)
-# │       │   └── authentication_oauth/   (feature folder at depth 1, prefixed)
+# │       │   └── oauth/      (feature folder at depth 1)
 # │       │       ├── types/
-# │       │       └── authentication_oauth_google/  (depth 2, fully prefixed)
+# │       │       └── google/ (depth 2)
 # │       │           └── types/
 # │       └── reporting/      (another feature at depth 0)
 # │           └── ...
@@ -94,5 +88,4 @@ ignored_folders = [
 # 5. Only include directories you want validated in search_paths
 # 6. Adjust folder_depth for deeper or shallower nesting limits
 # 7. Disable validators you don't want with false
-# 8. Change prefix_separator to match your naming conventions
 #

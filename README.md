@@ -106,7 +106,7 @@ search_paths = ["src"]  # Applies to all validators
 ============================================================
 Running one-per-file validation...
 ============================================================
-✗ src/utils/helpers.py: 3 definitions (expected 1)
+✗ src/functions/helpers.py: 3 definitions (expected 1)
   - format_date (function)
   - parse_date (function)
   - DateFormatter (class)
@@ -158,8 +158,7 @@ max_lines = 150
 
 [tool.structure-lint.structure]
 folder_depth = 2
-standard_folders = ["types", "utils", "constants", "tests"]
-prefix_separator = "_"
+standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```

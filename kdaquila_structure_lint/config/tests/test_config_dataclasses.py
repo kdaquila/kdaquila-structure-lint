@@ -26,8 +26,10 @@ class TestConfigDataclasses:
         """Should have correct default values."""
         config = StructureConfig()
         assert config.folder_depth == 2
-        assert config.standard_folders == {"types", "utils", "constants", "tests"}
-        assert config.prefix_separator == "_"
+        expected_folders = {
+            "types", "functions", "constants", "tests", "errors", "classes"
+        }
+        assert config.standard_folders == expected_folders
         assert config.files_allowed_anywhere == {"__init__.py"}
         assert config.ignored_folders == {
             "__pycache__",
