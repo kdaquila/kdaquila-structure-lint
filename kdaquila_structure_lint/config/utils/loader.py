@@ -91,8 +91,7 @@ def load_config(
     # Deprecation warning for general_folder
     if "general_folder" in structure_data:
         print(
-            "Warning: 'general_folder' is deprecated and will be ignored. "
-            "Use 'prefix_separator' for feature folder naming conventions."
+            "Warning: 'general_folder' is deprecated and will be ignored."
         )
 
     # Deprecation warning for structure.strict_format_roots
@@ -107,7 +106,6 @@ def load_config(
         standard_folders=set(
             structure_data.get("standard_folders", ["types", "functions", "constants", "tests", "errors", "classes"])
         ),
-        prefix_separator=structure_data.get("prefix_separator", "_"),
         files_allowed_anywhere=set(structure_data.get("files_allowed_anywhere", ["__init__.py"])),
         ignored_folders=set(
             structure_data.get(
