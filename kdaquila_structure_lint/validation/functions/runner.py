@@ -2,7 +2,9 @@
 
 from kdaquila_structure_lint.config import Config
 from kdaquila_structure_lint.validation.functions.validator_line_limits import validate_line_limits
-from kdaquila_structure_lint.validation.functions.validator_one_per_file import validate_one_per_file
+from kdaquila_structure_lint.validation.functions.validator_one_per_file import (
+    validate_one_per_file,
+)
 from kdaquila_structure_lint.validation.functions.validator_structure import validate_structure
 
 

@@ -3,6 +3,7 @@
 import sys
 from pathlib import Path
 
+from kdaquila_structure_lint.config.functions.project_root import find_project_root
 from kdaquila_structure_lint.config.types import (
     Config,
     LineLimitsConfig,
@@ -10,7 +11,6 @@ from kdaquila_structure_lint.config.types import (
     StructureConfig,
     ValidatorToggles,
 )
-from kdaquila_structure_lint.config.functions.project_root import find_project_root
 
 # Python 3.11+ has tomllib, older versions need tomli
 if sys.version_info >= (3, 11):
@@ -101,10 +101,13 @@ def load_config(
             "Use 'search_paths' at the root level of [tool.structure-lint] instead."
         )
 
+    default_standard_folders = [
+        "types", "functions", "constants", "tests", "errors", "classes"
+    ]
     structure = StructureConfig(
         folder_depth=structure_data.get("folder_depth", 2),
         standard_folders=set(
-            structure_data.get("standard_folders", ["types", "functions", "constants", "tests", "errors", "classes"])
+            structure_data.get("standard_folders", default_standard_folders)
         ),
         files_allowed_anywhere=set(structure_data.get("files_allowed_anywhere", ["__init__.py"])),
         ignored_folders=set(

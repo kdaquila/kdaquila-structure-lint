@@ -60,14 +60,13 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
             ]
             if subdirs:
                 errors.append(f"{child}: Standard folder cannot have subdirectories")
+        # Feature folder
+        # Check depth limit
+        elif depth >= config.structure.folder_depth:
+            errors.append(
+                f"{child}: Exceeds max depth of {config.structure.folder_depth}"
+            )
         else:
-            # Feature folder
-            # Check depth limit
-            if depth >= config.structure.folder_depth:
-                errors.append(
-                    f"{child}: Exceeds max depth of {config.structure.folder_depth}"
-                )
-            else:
-                errors.extend(validate_custom_folder(child, config, depth + 1))
+            errors.extend(validate_custom_folder(child, config, depth + 1))
 
     return errors
