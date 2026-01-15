@@ -25,16 +25,16 @@ class TestStructureValidatorIntegration:
                 "lib": {
                     "apps": {
                         "my_apps": {
-                            "types": {"module.py": ""},
-                            "functions": {"module.py": ""},
-                            "helpers": {"module.py": ""},
+                            "_types": {"module.py": ""},
+                            "_functions": {"module.py": ""},
+                            "_helpers": {"module.py": ""},
                         },
                     },
                     "features": {
                         "my_features": {
-                            "types": {"module.py": ""},
-                            "functions": {"module.py": ""},
-                            "helpers": {"module.py": ""},
+                            "_types": {"module.py": ""},
+                            "_functions": {"module.py": ""},
+                            "_helpers": {"module.py": ""},
                         },
                     },
                 },
@@ -56,7 +56,7 @@ class TestStructureValidatorIntegration:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },

@@ -21,7 +21,7 @@ class TestFolderDepthShallow:
             {
                 "src": {
                     "features": {
-                        "types": {"module.py": ""},
+                        "_types": {"module.py": ""},
                     },
                 },
             },
@@ -46,7 +46,7 @@ class TestFolderDepthShallow:
                         "my_feature": {
                             # nested_feature is a CUSTOM folder inside my_feature
                             "nested_feature": {
-                                "types": {"module.py": ""},
+                                "_types": {"module.py": ""},
                             },
                         },
                     },
@@ -72,7 +72,7 @@ class TestFolderDepthShallow:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },
@@ -96,7 +96,7 @@ class TestFolderDepthShallow:
                     "features": {
                         "domain": {
                             "subdomain": {
-                                "types": {"module.py": ""},
+                                "_types": {"module.py": ""},
                             },
                         },
                     },

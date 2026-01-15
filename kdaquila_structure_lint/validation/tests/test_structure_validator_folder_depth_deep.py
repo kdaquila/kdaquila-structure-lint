@@ -22,7 +22,7 @@ class TestFolderDepthDeep:
                     "features": {
                         "domain": {
                             "subdomain": {
-                                "types": {"module.py": ""},
+                                "_types": {"module.py": ""},
                             },
                         },
                     },
@@ -46,7 +46,7 @@ class TestFolderDepthDeep:
                         "level1": {
                             "level2": {
                                 "level3": {
-                                    "types": {"module.py": ""},
+                                    "_types": {"module.py": ""},
                                 },
                             },
                         },

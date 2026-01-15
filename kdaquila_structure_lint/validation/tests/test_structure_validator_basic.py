@@ -37,7 +37,7 @@ class TestStructureValidatorBasic:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },
@@ -101,19 +101,19 @@ class TestStructureValidatorBasic:
                     "features": {
                         "__init__.py": "",
                         "my_module": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                     "apps": {
                         "__init__.py": "",
                         "my_module": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                     "libs": {
                         "__init__.py": "",
                         "my_module": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },

@@ -27,7 +27,7 @@ class TestConfigDataclasses:
         config = StructureConfig()
         assert config.folder_depth == 2
         expected_folders = {
-            "types", "functions", "constants", "tests", "errors", "classes"
+            "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
         }
         assert config.standard_folders == expected_folders
         assert config.files_allowed_anywhere == {"__init__.py"}

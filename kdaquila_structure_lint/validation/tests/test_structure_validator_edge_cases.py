@@ -22,7 +22,7 @@ class TestStructureValidatorEdgeCases:
                     "__pycache__": {},  # Should be ignored
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },
@@ -82,16 +82,16 @@ class TestStructureValidatorEdgeCases:
                 "src": {
                     "features": {
                         "auth": {
-                            "types": {"auth_types.py": ""},
-                            "functions": {"auth_functions.py": ""},
+                            "_types": {"auth_types.py": ""},
+                            "_functions": {"auth_functions.py": ""},
                         },
                         "users": {
-                            "types": {"users_types.py": ""},
-                            "functions": {"users_functions.py": ""},
+                            "_types": {"users_types.py": ""},
+                            "_functions": {"users_functions.py": ""},
                         },
                         "posts": {
-                            "types": {"posts_types.py": ""},
-                            "functions": {"posts_functions.py": ""},
+                            "_types": {"posts_types.py": ""},
+                            "_functions": {"posts_functions.py": ""},
                         },
                     },
                 },
@@ -116,7 +116,7 @@ class TestStructureValidatorEdgeCases:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                     "my_package.egg-info": {  # Should be ignored via wildcard pattern

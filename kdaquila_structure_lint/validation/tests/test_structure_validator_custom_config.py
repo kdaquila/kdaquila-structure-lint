@@ -22,7 +22,7 @@ class TestStructureValidatorCustomConfig:
                 "lib": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },
@@ -45,14 +45,14 @@ class TestStructureValidatorCustomConfig:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },
                 "lib": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                         },
                     },
                 },
@@ -91,7 +91,7 @@ class TestStructureValidatorCustomConfig:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                             "py.typed": "",  # Custom allowed file - should be allowed
                         },
                     },
@@ -118,7 +118,7 @@ class TestStructureValidatorCustomConfig:
                 "src": {
                     "features": {
                         "my_feature": {
-                            "types": {"module.py": ""},
+                            "_types": {"module.py": ""},
                             ".venv": {  # Ignored directories
                                 "lib": {},
                             },

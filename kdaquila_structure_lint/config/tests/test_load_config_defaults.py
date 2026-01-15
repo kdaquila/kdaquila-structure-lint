@@ -21,7 +21,7 @@ class TestLoadConfigDefaults:
         assert config.line_limits.max_lines == 150
         assert config.structure.folder_depth == 2
         expected_folders = {
-            "types", "functions", "constants", "tests", "errors", "classes"
+            "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
         }
         assert config.structure.standard_folders == expected_folders
         assert config.structure.files_allowed_anywhere == {"__init__.py"}
