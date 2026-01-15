@@ -158,7 +158,7 @@ max_lines = 150
 
 [tool.structure-lint.structure]
 folder_depth = 2
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```

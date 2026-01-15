@@ -413,28 +413,74 @@ Consistent structure provides:
 
 **Note**: This is **opt-in by default** because it's highly opinionated. Only enable if your team agrees to this structure.
 
+### Underscore Convention
+
+The structure validator enforces a naming convention where all standard folders must begin with an underscore (e.g., `_types`, `_functions`). This convention serves an important purpose:
+
+**Why Underscore?**
+
+The underscore prefix signals "internal organizational structure, not public interface." It visually distinguishes structural/organizational folders from feature folders, making it immediately clear which folders represent code categories vs. domain concepts.
+
+**Two-Layer Enforcement**
+
+1. **Configuration Validation**: All entries in `standard_folders` must start with `_`. Invalid configuration raises an error at startup:
+
+   ```toml
+   # INVALID - will raise an error
+   [tool.structure-lint.structure]
+   standard_folders = ["_types", "models", "_functions"]  # "models" is invalid
+   ```
+
+   Error message:
+   ```
+   Invalid standard_folders: ['models']. All entries must start with underscore (e.g., '_models' not 'models')
+   ```
+
+2. **Folder Validation**: Using non-underscore versions of standard folder names in your codebase is forbidden. If `_types` is configured as a standard folder, then a folder named `types/` is a violation:
+
+   ```
+   src/features/auth/
+   └── types/           # ERROR: should be _types/
+       └── user.py
+   ```
+
+   Error message:
+   ```
+   src/features/auth/types: Folder name 'types' is forbidden (use underscore prefix: _types)
+   ```
+
+**Example**
+
+If your configuration has `standard_folders = ["_types", "_functions"]`:
+
+- `_types/` - Valid (standard folder)
+- `_functions/` - Valid (standard folder)
+- `types/` - Invalid (use `_types` instead)
+- `functions/` - Invalid (use `_functions` instead)
+- `services/` - Valid (custom feature folder, not a standard folder name)
+
 ### The Two Rules
 
 The structure validator enforces two simple rules:
 
 #### Rule 1: Standard Folders Cannot Have Subdirectories
 
-Standard folders (like `types/`, `functions/`, `constants/`, `tests/`, `errors/`, `classes/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
+Standard folders (like `_types/`, `_functions/`, `_constants/`, `_tests/`, `_errors/`, `_classes/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
 
 **Valid:**
 ```
 auth/
-├── types/
+├── _types/
 │   ├── user.py
 │   └── session.py
-└── functions/
+└── _functions/
     └── hash_password.py
 ```
 
 **Invalid:**
 ```
 auth/
-└── types/
+└── _types/
     └── models/        # ERROR: subdirectory in standard folder
         └── user.py
 ```
@@ -447,9 +493,9 @@ Python files can only appear in standard folders or in the `files_allowed_anywhe
 ```
 auth/
 ├── __init__.py              # Allowed everywhere
-├── types/
+├── _types/
 │   └── user.py              # In standard folder
-└── functions/
+└── _functions/
     └── hash.py              # In standard folder
 ```
 
@@ -458,7 +504,7 @@ auth/
 auth/
 ├── __init__.py
 ├── login.py                 # ERROR: not in standard folder
-└── types/
+└── _types/
     └── user.py
 ```
 
@@ -473,7 +519,7 @@ structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
 folder_depth = 2               # Max nesting depth for feature folders
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 files_allowed_anywhere = ["__init__.py"]
 ignored_folders = ["__pycache__", ".mypy_cache", "*.egg-info"]
 ```
@@ -488,23 +534,23 @@ project/
 │   └── features/
 │       ├── authentication/
 │       │   ├── __init__.py
-│       │   ├── types/
+│       │   ├── _types/
 │       │   │   └── user.py
-│       │   ├── functions/
+│       │   ├── _functions/
 │       │   │   └── hash_password.py
-│       │   ├── constants/
+│       │   ├── _constants/
 │       │   │   └── config.py
-│       │   ├── tests/
+│       │   ├── _tests/
 │       │   │   └── test_login.py
 │       │   └── oauth/                   # Feature folder (nested)
-│       │       ├── types/
+│       │       ├── _types/
 │       │       │   └── token.py
 │       │       └── google/              # Nested feature folder
-│       │           └── types/
+│       │           └── _types/
 │       │               └── credentials.py
 │       └── reporting/
-│           ├── types/
-│           └── functions/
+│           ├── _types/
+│           └── _functions/
 ```
 
 #### Invalid Examples
@@ -513,7 +559,7 @@ project/
 ```
 src/features/auth/
 ├── login.py          # ERROR: Files not allowed here
-└── types/
+└── _types/
 ```
 
 Error: `src/features/auth/: Disallowed files: ['login.py']`
@@ -521,11 +567,11 @@ Error: `src/features/auth/: Disallowed files: ['login.py']`
 **Subdirectory in standard folder:**
 ```
 src/features/auth/
-└── types/
+└── _types/
     └── models/       # ERROR: Standard folders cannot have subdirectories
 ```
 
-Error: `src/features/auth/types: Standard folder cannot have subdirectories`
+Error: `src/features/auth/_types: Standard folder cannot have subdirectories`
 
 **Exceeding depth limit:**
 ```
@@ -543,15 +589,15 @@ Unlike previous versions, standard folders and feature folders can now exist at 
 
 ```
 src/features/auth/
-├── types/                   # Standard folder
+├── _types/                  # Standard folder
 │   └── user.py
-├── functions/               # Standard folder
+├── _functions/              # Standard folder
 │   └── helper.py
 ├── oauth/                   # Feature folder (nested)
-│   └── types/
+│   └── _types/
 │       └── token.py
 └── password/                # Feature folder (nested)
-    └── functions/
+    └── _functions/
         └── hasher.py
 ```
 
@@ -561,17 +607,19 @@ src/features/auth/
 
 ```toml
 [tool.structure-lint.structure]
-standard_folders = ["models", "views", "controllers", "tests"]
+standard_folders = ["_models", "_views", "_controllers", "_tests"]
 ```
 
 Enables MVC-style organization:
 ```
 src/features/authentication/
-├── models/
-├── views/
-├── controllers/
-└── tests/
+├── _models/
+├── _views/
+├── _controllers/
+└── _tests/
 ```
+
+**Note**: All standard folder names must start with underscore. See [Underscore Convention](#underscore-convention) above.
 
 #### Multiple Roots
 
@@ -641,8 +689,8 @@ Don't fight the tool - customize it:
 
 ```toml
 [tool.structure-lint.structure]
-# Match your team's conventions
-standard_folders = ["types", "models", "services", "functions", "tests", "errors", "classes"]
+# Match your team's conventions (all names must start with underscore)
+standard_folders = ["_types", "_models", "_services", "_functions", "_tests", "_errors", "_classes"]
 folder_depth = 3  # Allow deeper nesting if needed
 ```
 
@@ -656,8 +704,8 @@ Add comments to your config explaining choices:
 search_paths = ["src"]
 
 [tool.structure-lint.structure]
-# Added "services" as standard folder for our microservice architecture
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes", "services"]
+# Added "_services" as standard folder for our microservice architecture
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_services"]
 ```
 
 ### When to Use Structure Validation

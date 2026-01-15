@@ -37,18 +37,18 @@ folder_depth = 3
 # - controllers: Request handlers
 # - services: Business logic layer
 # - repositories: Data access layer
-# - types: Type definitions
-# - functions: Helper functions
-# - tests: Unit and integration tests
+# - _types: Type definitions
+# - _functions: Helper functions
+# - _tests: Unit and integration tests
 standard_folders = [
     "models",
     "views",
     "controllers",
     "services",
     "repositories",
-    "types",
-    "functions",
-    "tests"
+    "_types",
+    "_functions",
+    "_tests"
 ]
 
 # Python files allowed in any directory (non-.py files like README.md are automatically ignored)
@@ -67,13 +67,13 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # │   │   │   ├── controllers/    (Login handler, Logout handler)
 # │   │   │   ├── services/       (Authentication service)
 # │   │   │   ├── repositories/   (User repository)
-# │   │   │   ├── types/          (API schemas)
-# │   │   │   ├── functions/       (Password hashing, JWT helpers)
-# │   │   │   ├── tests/
+# │   │   │   ├── _types/         (API schemas)
+# │   │   │   ├── _functions/     (Password hashing, JWT helpers)
+# │   │   │   ├── _tests/
 # │   │   │   └── oauth/          (feature folder, nested)
-# │   │   │       ├── types/
+# │   │   │       ├── _types/
 # │   │   │       └── google/     (nested feature folder)
-# │   │   │           └── types/
+# │   │   │           └── _types/
 # │   │   └── users/              (another feature at depth 0)
 # │   │       ├── models/
 # │   │       ├── controllers/
@@ -84,15 +84,15 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 # │   │   │   ├── views/          (Dashboard templates)
 # │   │   │   ├── controllers/    (Dashboard controller)
 # │   │   │   └── widgets/        (feature folder, nested)
-# │   │   │       └── types/
+# │   │   │       └── _types/
 # │   │   └── profile/
 # │   │       └── ...
 # │   │
 # │   └── services/               (base folder - shared services)
 # │       ├── email/
 # │       │   ├── services/
-# │       │   ├── types/
-# │       │   └── tests/
+# │       │   ├── _types/
+# │       │   └── _tests/
 # │       └── notifications/
 # │           └── ...
 # │
@@ -169,6 +169,6 @@ files_allowed_anywhere = ["__init__.py", "conftest.py"]
 #    - services/: Business logic, orchestration
 #    - controllers/: HTTP request handling
 #    - views/: Templates and rendering
-#    - types/: Type hints, protocols
-#    - functions/: Pure functions, helpers
+#    - _types/: Type hints, protocols
+#    - _functions/: Pure functions, helpers
 #

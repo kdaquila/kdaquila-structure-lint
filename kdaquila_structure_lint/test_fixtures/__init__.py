@@ -19,7 +19,7 @@ Constants (UPPERCASE):
 - SAMPLE_SYNTAX_ERROR_CONTENT: Content with syntax errors
 """
 
-from kdaquila_structure_lint.test_fixtures.functions import (
+from kdaquila_structure_lint.test_fixtures._functions import (
     SAMPLE_EMPTY_FILE_CONTENT,
     SAMPLE_MULTIPLE_DEFINITIONS_CONTENT,
     SAMPLE_SYNTAX_ERROR_CONTENT,
