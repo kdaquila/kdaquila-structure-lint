@@ -155,24 +155,24 @@ src/features/authentication/     # depth 0 (child of base folder)
 #### `structure.standard_folders`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["types", "functions", "constants", "tests", "errors", "classes"]`
+**Default**: `["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]`
 
 List of standard folder names that can appear in feature/module directories. These represent common supporting code categories and cannot contain subdirectories.
 
 ```toml
 [tool.structure-lint.structure]
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes", "models", "views"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "models", "views"]
 ```
 
 **Example Structure**:
 ```
 src/features/authentication/
-├── types/
-├── functions/
-├── constants/
-├── tests/
-├── errors/
-└── classes/
+├── _types/
+├── _functions/
+├── _constants/
+├── _tests/
+├── _errors/
+└── _classes/
 ```
 
 #### `structure.files_allowed_anywhere`
@@ -257,7 +257,7 @@ search_paths = ["src"]
 structure = true  # Opt-in
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 folder_depth = 2
 ```
 
@@ -275,7 +275,7 @@ structure = true
 max_lines = 200
 
 [tool.structure-lint.structure]
-standard_folders = ["models", "views", "controllers", "tests"]
+standard_folders = ["models", "views", "controllers", "_tests"]
 folder_depth = 3
 ```
 
@@ -315,7 +315,7 @@ structure = true
 max_lines = 100  # Very strict
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 folder_depth = 2
 files_allowed_anywhere = ["__init__.py"]
 ```
@@ -441,7 +441,7 @@ structure = true
 max_lines = 150
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 ```
 
 ### Behavioral Changes
@@ -483,7 +483,7 @@ search_paths = ["src"]  # Only validate src/
 # experiments/ and legacy/ are NOT validated (not in search_paths)
 
 [tool.structure-lint.structure]
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 folder_depth = 2
 ```
 

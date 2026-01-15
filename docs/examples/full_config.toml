@@ -35,7 +35,7 @@ folder_depth = 2
 
 # Standard folders that can appear inside feature/module directories
 # These represent common code organization patterns and cannot have subdirectories
-standard_folders = ["types", "functions", "constants", "tests", "errors", "classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
 
 # Python files allowed in any directory, even those that normally shouldn't contain files
 # Note: Non-.py files (like README.md, .gitkeep) are automatically ignored and don't need listing
@@ -66,14 +66,14 @@ ignored_folders = [
 # ├── src/
 # │   └── features/           (base folder)
 # │       ├── authentication/ (feature directory at depth 0)
-# │       │   ├── types/      (standard folder - files allowed here)
-# │       │   ├── functions/  (standard folder)
-# │       │   ├── constants/  (standard folder)
-# │       │   ├── tests/      (standard folder)
+# │       │   ├── _types/     (standard folder - files allowed here)
+# │       │   ├── _functions/ (standard folder)
+# │       │   ├── _constants/ (standard folder)
+# │       │   ├── _tests/     (standard folder)
 # │       │   └── oauth/      (feature folder at depth 1)
-# │       │       ├── types/
+# │       │       ├── _types/
 # │       │       └── google/ (depth 2)
-# │       │           └── types/
+# │       │           └── _types/
 # │       └── reporting/      (another feature at depth 0)
 # │           └── ...
 #
