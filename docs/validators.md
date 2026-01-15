@@ -413,6 +413,52 @@ Consistent structure provides:
 
 **Note**: This is **opt-in by default** because it's highly opinionated. Only enable if your team agrees to this structure.
 
+### Underscore Convention
+
+The structure validator enforces a naming convention where all standard folders must begin with an underscore (e.g., `_types`, `_functions`). This convention serves an important purpose:
+
+**Why Underscore?**
+
+The underscore prefix signals "internal organizational structure, not public interface." It visually distinguishes structural/organizational folders from feature folders, making it immediately clear which folders represent code categories vs. domain concepts.
+
+**Two-Layer Enforcement**
+
+1. **Configuration Validation**: All entries in `standard_folders` must start with `_`. Invalid configuration raises an error at startup:
+
+   ```toml
+   # INVALID - will raise an error
+   [tool.structure-lint.structure]
+   standard_folders = ["_types", "models", "_functions"]  # "models" is invalid
+   ```
+
+   Error message:
+   ```
+   Invalid standard_folders: ['models']. All entries must start with underscore (e.g., '_models' not 'models')
+   ```
+
+2. **Folder Validation**: Using non-underscore versions of standard folder names in your codebase is forbidden. If `_types` is configured as a standard folder, then a folder named `types/` is a violation:
+
+   ```
+   src/features/auth/
+   └── types/           # ERROR: should be _types/
+       └── user.py
+   ```
+
+   Error message:
+   ```
+   src/features/auth/types: Folder name 'types' is forbidden (use underscore prefix: _types)
+   ```
+
+**Example**
+
+If your configuration has `standard_folders = ["_types", "_functions"]`:
+
+- `_types/` - Valid (standard folder)
+- `_functions/` - Valid (standard folder)
+- `types/` - Invalid (use `_types` instead)
+- `functions/` - Invalid (use `_functions` instead)
+- `services/` - Valid (custom feature folder, not a standard folder name)
+
 ### The Two Rules
 
 The structure validator enforces two simple rules:
@@ -561,17 +607,19 @@ src/features/auth/
 
 ```toml
 [tool.structure-lint.structure]
-standard_folders = ["models", "views", "controllers", "_tests"]
+standard_folders = ["_models", "_views", "_controllers", "_tests"]
 ```
 
 Enables MVC-style organization:
 ```
 src/features/authentication/
-├── models/
-├── views/
-├── controllers/
+├── _models/
+├── _views/
+├── _controllers/
 └── _tests/
 ```
+
+**Note**: All standard folder names must start with underscore. See [Underscore Convention](#underscore-convention) above.
 
 #### Multiple Roots
 
@@ -641,8 +689,8 @@ Don't fight the tool - customize it:
 
 ```toml
 [tool.structure-lint.structure]
-# Match your team's conventions
-standard_folders = ["_types", "models", "services", "_functions", "_tests", "_errors", "_classes"]
+# Match your team's conventions (all names must start with underscore)
+standard_folders = ["_types", "_models", "_services", "_functions", "_tests", "_errors", "_classes"]
 folder_depth = 3  # Allow deeper nesting if needed
 ```
 
@@ -656,8 +704,8 @@ Add comments to your config explaining choices:
 search_paths = ["src"]
 
 [tool.structure-lint.structure]
-# Added "services" as standard folder for our microservice architecture
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "services"]
+# Added "_services" as standard folder for our microservice architecture
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_services"]
 ```
 
 ### When to Use Structure Validation

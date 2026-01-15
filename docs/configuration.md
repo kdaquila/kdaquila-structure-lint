@@ -159,10 +159,25 @@ src/features/authentication/     # depth 0 (child of base folder)
 
 List of standard folder names that can appear in feature/module directories. These represent common supporting code categories and cannot contain subdirectories.
 
+**Important: Underscore Requirement**
+
+All entries in `standard_folders` **must** start with an underscore (`_`). This is enforced at configuration load time. The underscore convention signals "internal organizational structure, not public interface" and distinguishes standard folders from feature folders.
+
 ```toml
+# Valid configuration
 [tool.structure-lint.structure]
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "models", "views"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_models", "_views"]
+
+# INVALID - will raise an error (entries must start with underscore)
+standard_folders = ["_types", "models", "_functions"]  # "models" is invalid
 ```
+
+Error for invalid configuration:
+```
+Invalid standard_folders: ['models']. All entries must start with underscore (e.g., '_models' not 'models')
+```
+
+Additionally, the validator forbids using non-underscore versions of standard folder names in your codebase. If `_types` is a standard folder, then `types/` is forbidden and flagged as a violation.
 
 **Example Structure**:
 ```
@@ -275,7 +290,7 @@ structure = true
 max_lines = 200
 
 [tool.structure-lint.structure]
-standard_folders = ["models", "views", "controllers", "_tests"]
+standard_folders = ["_models", "_views", "_controllers", "_tests"]
 folder_depth = 3
 ```
 
