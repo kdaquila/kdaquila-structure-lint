@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from kdaquila_structure_lint.config import load_config
 
 
@@ -46,14 +48,14 @@ max_lines = 100
         pyproject.write_text("""
 [tool.structure-lint.structure]
 folder_depth = 3
-standard_folders = ["types", "helpers"]
+standard_folders = ["_types", "_helpers"]
 files_allowed_anywhere = ["README.md", "NOTES.md"]
 """)
 
         config = load_config(project_root=tmp_path, config_path=pyproject)
 
         assert config.structure.folder_depth == 3
-        assert config.structure.standard_folders == {"types", "helpers"}
+        assert config.structure.standard_folders == {"_types", "_helpers"}
         assert config.structure.files_allowed_anywhere == {"README.md", "NOTES.md"}
 
     def test_load_config_with_full_custom_config(self, tmp_path: Path) -> None:
@@ -74,7 +76,7 @@ max_lines = 200
 
 [tool.structure-lint.structure]
 folder_depth = 1
-standard_folders = ["utils"]
+standard_folders = ["_utils"]
 files_allowed_anywhere = ["README.md"]
 """)
 
@@ -88,7 +90,7 @@ files_allowed_anywhere = ["README.md"]
         assert config.validators.one_per_file is False
         assert config.line_limits.max_lines == 200
         assert config.structure.folder_depth == 1
-        assert config.structure.standard_folders == {"utils"}
+        assert config.structure.standard_folders == {"_utils"}
         assert config.structure.files_allowed_anywhere == {"README.md"}
 
     def test_load_structure_files_allowed_anywhere_and_ignored(
@@ -117,3 +119,17 @@ ignored_folders = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
             "dist",
             ".egg-info",
         }
+
+
+def test_standard_folders_without_underscore_raises_error(tmp_path: Path) -> None:
+    """Config with non-underscore standard folders should raise ValueError."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text('''
+[tool.structure-lint]
+enabled = true
+
+[tool.structure-lint.structure]
+standard_folders = ["_types", "models", "_functions"]
+''')
+    with pytest.raises(ValueError, match="Invalid standard_folders"):
+        load_config(tmp_path)

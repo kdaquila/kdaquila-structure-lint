@@ -119,6 +119,14 @@ def load_config(
         ),
     )
 
+    # Validate all standard folders start with underscore
+    invalid_folders = {f for f in structure.standard_folders if not f.startswith("_")}
+    if invalid_folders:
+        raise ValueError(
+            f"Invalid standard_folders: {sorted(invalid_folders)}. "
+            f"All entries must start with underscore (e.g., '_models' not 'models')"
+        )
+
     return Config(
         enabled=enabled,
         project_root=project_root,
