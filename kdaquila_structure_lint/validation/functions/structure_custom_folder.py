@@ -6,6 +6,18 @@ from kdaquila_structure_lint.config import Config
 from kdaquila_structure_lint.validation.functions.pattern_match import matches_any_pattern
 
 
+def get_forbidden_folder_names(standard_folders: set[str]) -> set[str]:
+    """Generate forbidden folder names from standard folders.
+
+    If standard_folders contains "_types", then "types" is forbidden.
+    """
+    forbidden = set()
+    for folder in standard_folders:
+        if folder.startswith("_"):
+            forbidden.add(folder[1:])  # Remove leading underscore
+    return forbidden
+
+
 def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
     """Validate custom folder in structured base.
 
@@ -35,6 +47,14 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
             errors.append(f"{path}: Standard folder cannot have subdirectories")
         return errors
 
+    # Check if this folder uses a forbidden name (non-underscore version of standard folder)
+    forbidden_names = get_forbidden_folder_names(config.structure.standard_folders)
+    if path.name in forbidden_names:
+        errors.append(
+            f"{path}: Folder name '{path.name}' is forbidden (use underscore prefix: _{path.name})"
+        )
+        return errors
+
     # Check disallowed files (Rule 3) - only applies to feature folders
     py_files = [c.name for c in path.iterdir() if c.is_file() and c.suffix == ".py"]
     disallowed = [f for f in py_files if f not in config.structure.files_allowed_anywhere]
@@ -60,6 +80,12 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
             ]
             if subdirs:
                 errors.append(f"{child}: Standard folder cannot have subdirectories")
+        elif child.name in forbidden_names:
+            # Forbidden folder name (non-underscore version of standard folder)
+            errors.append(
+                f"{child}: Folder name '{child.name}' is forbidden "
+                f"(use underscore prefix: _{child.name})"
+            )
         # Feature folder
         # Check depth limit
         elif depth >= config.structure.folder_depth:
