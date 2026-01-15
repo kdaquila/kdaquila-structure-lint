@@ -1,21 +1,61 @@
-"""Main configuration object."""
+"""Configuration types for structure-lint."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-
-from kdaquila_structure_lint.config._types.line_limits_config import LineLimitsConfig
-from kdaquila_structure_lint.config._types.one_per_file_config import OnePerFileConfig
-from kdaquila_structure_lint.config._types.structure_config import StructureConfig
-from kdaquila_structure_lint.config._types.validator_toggles import ValidatorToggles
 
 
 @dataclass
 class Config:
-    """Master configuration object."""
-    enabled: bool
-    project_root: Path
-    search_paths: list[str]
-    validators: ValidatorToggles
-    line_limits: LineLimitsConfig
-    one_per_file: OnePerFileConfig
-    structure: StructureConfig
+    """Master configuration for structure-lint."""
+
+    @dataclass
+    class Validators:
+        """Control which validators are enabled."""
+        structure: bool = False      # Opt-in (too opinionated)
+        line_limits: bool = True     # Enabled by default
+        one_per_file: bool = True    # Enabled by default
+
+    @dataclass
+    class LineLimits:
+        """Configuration for line limits validator."""
+        max_lines: int = 150
+
+    @dataclass
+    class OnePerFile:
+        """Configuration for one-per-file validator.
+
+        Currently empty - reserved for future one_per_file specific settings.
+        """
+        pass  # Placeholder for future options
+
+    @dataclass
+    class Structure:
+        """Configuration for structure validator."""
+        folder_depth: int = 2
+        standard_folders: set[str] = field(
+            default_factory=lambda: {
+                "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
+            }
+        )
+        files_allowed_anywhere: set[str] = field(default_factory=lambda: {"__init__.py"})
+        ignored_folders: set[str] = field(
+            default_factory=lambda: {
+                "__pycache__",
+                ".mypy_cache",
+                ".pytest_cache",
+                ".ruff_cache",
+                ".hypothesis",
+                ".tox",
+                ".coverage",
+                "*.egg-info",  # matches any .egg-info directory
+            }
+        )
+
+    # Instance fields
+    enabled: bool = True
+    project_root: Path = field(default_factory=Path.cwd)
+    search_paths: list[str] = field(default_factory=lambda: ["src"])
+    validators: Validators = field(default_factory=Validators)
+    line_limits: LineLimits = field(default_factory=LineLimits)
+    one_per_file: OnePerFile = field(default_factory=OnePerFile)
+    structure: Structure = field(default_factory=Structure)
