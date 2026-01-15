@@ -2,13 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.config import (
-    Config,
-    LineLimitsConfig,
-    OnePerFileConfig,
-    StructureConfig,
-    ValidatorToggles,
-)
+from kdaquila_structure_lint.config import Config
 
 
 def create_minimal_config(tmp_path: Path) -> Config:
@@ -24,8 +18,8 @@ def create_minimal_config(tmp_path: Path) -> Config:
         enabled=True,
         project_root=tmp_path,
         search_paths=["src"],
-        validators=ValidatorToggles(),
-        line_limits=LineLimitsConfig(),
-        one_per_file=OnePerFileConfig(),
-        structure=StructureConfig(),
+        validators=Config.Validators(),
+        line_limits=Config.LineLimits(),
+        one_per_file=Config.OnePerFile(),
+        structure=Config.Structure(),
     )

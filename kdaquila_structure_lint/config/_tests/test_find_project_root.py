@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.monkeypatch import MonkeyPatch
 
-from kdaquila_structure_lint.config import find_project_root
+from kdaquila_structure_lint.config._functions.project_root import find_project_root
 
 
 class TestFindProjectRoot:

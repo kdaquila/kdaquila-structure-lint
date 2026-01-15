@@ -2,13 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.config import (
-    Config,
-    LineLimitsConfig,
-    OnePerFileConfig,
-    StructureConfig,
-    ValidatorToggles,
-)
+from kdaquila_structure_lint.config import Config
 
 
 def create_custom_config(tmp_path: Path) -> Config:
@@ -24,16 +18,16 @@ def create_custom_config(tmp_path: Path) -> Config:
         enabled=True,
         project_root=tmp_path,
         search_paths=["src", "lib"],
-        validators=ValidatorToggles(
+        validators=Config.Validators(
             structure=True,
             line_limits=True,
             one_per_file=True,
         ),
-        line_limits=LineLimitsConfig(
+        line_limits=Config.LineLimits(
             max_lines=100,
         ),
-        one_per_file=OnePerFileConfig(),
-        structure=StructureConfig(
+        one_per_file=Config.OnePerFile(),
+        structure=Config.Structure(
             folder_depth=3,
             standard_folders={"_types", "_functions", "_helpers"},
             files_allowed_anywhere={"README.md", "NOTES.md"},
