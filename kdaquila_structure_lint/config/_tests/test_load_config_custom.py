@@ -120,16 +120,17 @@ ignored_folders = ["__pycache__", ".venv", "build", "dist", ".egg-info"]
             ".egg-info",
         }
 
-
-def test_standard_folders_without_underscore_raises_error(tmp_path: Path) -> None:
-    """Config with non-underscore standard folders should raise ValueError."""
-    pyproject = tmp_path / "pyproject.toml"
-    pyproject.write_text('''
+    def test_standard_folders_without_underscore_raises_error(
+        self, tmp_path: Path
+    ) -> None:
+        """Config with non-underscore standard folders should raise ValueError."""
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text('''
 [tool.structure-lint]
 enabled = true
 
 [tool.structure-lint.structure]
 standard_folders = ["_types", "models", "_functions"]
 ''')
-    with pytest.raises(ValueError, match="Invalid standard_folders"):
-        load_config(tmp_path)
+        with pytest.raises(ValueError, match="Invalid standard_folders"):
+            load_config(tmp_path)

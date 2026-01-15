@@ -3,19 +3,10 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
+from kdaquila_structure_lint.validation._functions.forbidden_folder_names import (
+    get_forbidden_folder_names,
+)
 from kdaquila_structure_lint.validation._functions.pattern_match import matches_any_pattern
-
-
-def get_forbidden_folder_names(standard_folders: set[str]) -> set[str]:
-    """Generate forbidden folder names from standard folders.
-
-    If standard_folders contains "_types", then "types" is forbidden.
-    """
-    forbidden = set()
-    for folder in standard_folders:
-        if folder.startswith("_"):
-            forbidden.add(folder[1:])  # Remove leading underscore
-    return forbidden
 
 
 def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
