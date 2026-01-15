@@ -102,7 +102,7 @@ def load_config(
         )
 
     default_standard_folders = [
-        "types", "functions", "constants", "tests", "errors", "classes"
+        "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
     ]
     structure = StructureConfig(
         folder_depth=structure_data.get("folder_depth", 2),
