@@ -1,4 +1,7 @@
-"""Configuration module for structure-lint."""
+"""Configuration loading and management for structure-lint.
+
+This module re-exports everything from the config package for backward compatibility.
+"""
 
 from kdaquila_structure_lint.config._functions.loader import load_config
 from kdaquila_structure_lint.config._functions.project_root import find_project_root
