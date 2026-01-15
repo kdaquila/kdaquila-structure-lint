@@ -4,13 +4,7 @@ import sys
 from pathlib import Path
 
 from kdaquila_structure_lint.config._functions.project_root import find_project_root
-from kdaquila_structure_lint.config._types import (
-    Config,
-    LineLimitsConfig,
-    OnePerFileConfig,
-    StructureConfig,
-    ValidatorToggles,
-)
+from kdaquila_structure_lint.config._types import Config
 
 # Python 3.11+ has tomllib, older versions need tomli
 if sys.version_info >= (3, 11):
@@ -53,7 +47,7 @@ def load_config(
 
     # Validators section
     validators_data = user_config.get("validators", {})
-    validators = ValidatorToggles(
+    validators = Config.Validators(
         structure=validators_data.get("structure", False),
         line_limits=validators_data.get("line_limits", True),
         one_per_file=validators_data.get("one_per_file", True),
@@ -69,7 +63,7 @@ def load_config(
             "Use 'search_paths' at the root level of [tool.structure-lint] instead."
         )
 
-    line_limits = LineLimitsConfig(
+    line_limits = Config.LineLimits(
         max_lines=line_limits_data.get("max_lines", 150),
     )
 
@@ -83,7 +77,7 @@ def load_config(
             "Use 'search_paths' at the root level of [tool.structure-lint] instead."
         )
 
-    one_per_file = OnePerFileConfig()
+    one_per_file = Config.OnePerFile()
 
     # Structure section
     structure_data = user_config.get("structure", {})
@@ -104,7 +98,7 @@ def load_config(
     default_standard_folders = [
         "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
     ]
-    structure = StructureConfig(
+    structure = Config.Structure(
         folder_depth=structure_data.get("folder_depth", 2),
         standard_folders=set(
             structure_data.get("standard_folders", default_standard_folders)
