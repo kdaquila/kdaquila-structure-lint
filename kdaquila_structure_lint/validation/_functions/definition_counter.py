@@ -3,9 +3,7 @@
 This module re-exports everything from the definition_counter modules for backward compatibility.
 """
 
-from kdaquila_structure_lint.validation._functions.definition_counter_counter import (
-    count_top_level_definitions,
-)
+from kdaquila_structure_lint.definition_counter import count_top_level_definitions
 from kdaquila_structure_lint.validation._functions.definition_counter_validator import (
     validate_file_definitions,
 )

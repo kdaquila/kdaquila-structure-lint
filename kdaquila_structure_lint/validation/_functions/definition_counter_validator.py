@@ -2,9 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.validation._functions.definition_counter_counter import (
-    count_top_level_definitions,
-)
+from kdaquila_structure_lint.definition_counter import count_top_level_definitions
 
 
 def validate_file_definitions(file_path: Path) -> str | None:
