@@ -4,17 +4,24 @@ This document provides detailed information about each validator in `kdaquila-st
 
 ## Overview
 
-The package includes three validators:
+The package includes three validators that work with both **Python** and **TypeScript** files:
 
 1. **Line Limits Validator** - Enforces maximum lines per file (enabled by default)
-2. **One-Per-File Validator** - Ensures single definition per file (enabled by default)
+2. **One-Per-File Validator** - Ensures single definition per file using folder-aware rules (enabled by default)
 3. **Structure Validator** - Enforces folder organization (opt-in only)
+
+### Supported File Types
+
+| Language | Extensions |
+|----------|------------|
+| Python | `.py` |
+| TypeScript | `.ts`, `.tsx` |
 
 ## Line Limits Validator
 
 ### Purpose
 
-Enforces a maximum number of lines per Python file to encourage modular, focused code.
+Enforces a maximum number of lines per file (Python and TypeScript) to encourage modular, focused code.
 
 ### Rationale
 
@@ -29,7 +36,7 @@ The default limit of 150 lines strikes a balance between being permissive enough
 
 ### Rules
 
-1. Count total lines in each Python file (including blank lines and comments)
+1. Count total lines in each Python/TypeScript file (including blank lines and comments)
 2. Report files exceeding `max_lines` threshold
 3. Search only in configured `search_paths`
 4. Automatically exclude common directories:
@@ -174,7 +181,7 @@ max_lines = 150
 
 ### Purpose
 
-Ensures each Python file contains at most one top-level function or class definition.
+Ensures files contain at most one top-level function or class definition, using **folder-aware rules** to apply appropriate checks based on the folder name and file type.
 
 ### Rationale
 
@@ -185,18 +192,25 @@ Single-definition files provide:
 - **Testability**: Easier to write focused unit tests
 - **Refactoring**: Simpler to move and reorganize code
 
-### Rules
+### Folder-Aware Rules
 
-1. Count top-level functions and classes in each Python file
-2. Ignore:
-   - Imports
-   - Module-level constants
-   - Helper functions inside classes
-   - Nested functions
-   - `__init__.py` files (allowed to have 0 or multiple definitions)
-3. Allow 0 definitions (empty files or only constants)
-4. Allow 1 definition (pass)
-5. Report files with 2+ definitions (fail)
+The validator determines which rule to apply based on:
+1. The **folder name** containing the file (e.g., `_functions`, `_classes`, `_components`)
+2. The **file type** (Python vs TypeScript)
+
+| Folder | Python Rule | TypeScript Rule |
+|--------|-------------|-----------------|
+| `_functions` | 1 function | 1 function |
+| `_classes` | 1 class | 1 class |
+| `_components` | - | 1 function (React component) |
+| `_hooks` | - | 1 function (React hook) |
+| `_types` | no limit | no limit |
+| `_constants` | no limit | no limit |
+
+**Notes:**
+- `_types` and `_constants` folders are exempt from one-per-file rules (they often contain multiple definitions)
+- `_components` and `_hooks` only apply to TypeScript files (React patterns)
+- Files in other folders are not validated by this rule
 
 ### Configuration
 
@@ -206,15 +220,29 @@ search_paths = ["src"]  # Default - applies to all validators
 
 [tool.structure-lint.validators]
 one_per_file = true  # Enable/disable
+
+[tool.structure-lint.one_per_file]
+# TypeScript rules (all default: true)
+ts_fun_in_functions = true   # Enforce 1 function per TS file in _functions
+ts_fun_in_components = true  # Enforce 1 function per TS file in _components
+ts_fun_in_hooks = true       # Enforce 1 function per TS file in _hooks
+ts_cls_in_classes = true     # Enforce 1 class per TS file in _classes
+
+# Python rules (all default: true)
+py_fun_in_functions = true   # Enforce 1 function per PY file in _functions
+py_cls_in_classes = true     # Enforce 1 class per PY file in _classes
+
+# Exclusion patterns
+excluded_patterns = ["*.d.ts"]  # Skip TypeScript declaration files
 ```
 
 ### Examples
 
-#### Passing Examples
+#### Python Examples
 
-**Single class:**
+**Single class in `_classes` folder (passing):**
 ```python
-# src/features/auth/user.py
+# src/features/auth/_classes/user.py
 """User model."""
 
 from dataclasses import dataclass
@@ -232,9 +260,9 @@ class User:
         return len(self.username) <= MAX_USERNAME_LENGTH
 ```
 
-**Single function:**
+**Single function in `_functions` folder (passing):**
 ```python
-# src/functions/formatters/date_formatter.py
+# src/features/dates/_functions/format_date.py
 """Format dates for display."""
 
 from datetime import datetime
@@ -246,83 +274,115 @@ def format_date(date: datetime, format: str = DEFAULT_FORMAT) -> str:
     return date.strftime(format)
 ```
 
-**Empty file or constants only:**
+**Multiple types in `_types` folder (passing - no limit):**
 ```python
-# src/constants/api_keys.py
-"""API configuration."""
+# src/features/auth/_types/models.py
+"""Authentication types."""
 
-API_BASE_URL = "https://api.example.com"
-API_TIMEOUT = 30
-MAX_RETRIES = 3
+from dataclasses import dataclass
+from typing import Protocol
+
+@dataclass
+class User:
+    username: str
+    email: str
+
+@dataclass
+class Session:
+    token: str
+    user_id: int
+
+class Authenticatable(Protocol):
+    def authenticate(self) -> bool: ...
 ```
 
-#### Failing Examples
-
-**Multiple classes:**
+**Multiple classes in `_classes` folder (failing):**
 ```python
-# src/models/models.py  # BAD: Multiple models
-"""User and authentication models."""
+# src/features/auth/_classes/models.py  # BAD
+"""Multiple models in one file."""
 
 class User:
-    """User model."""
     pass
 
 class Session:  # Second class - violation!
-    """Session model."""
-    pass
-
-class Token:  # Third class - violation!
-    """Token model."""
     pass
 ```
 
 Output:
 ```
-Found 1 file(s) with multiple definitions:
+✗ src/features/auth/_classes/models.py: 2 classes (expected 1)
+  - User (class)
+  - Session (class)
+```
 
-  src/models/models.py: 3 definitions (expected 1)
-    - User (class)
-    - Session (class)
-    - Token (class)
+#### TypeScript Examples
 
-Consider splitting into separate files for better modularity.
+**Single component in `_components` folder (passing):**
+```tsx
+// src/features/buttons/_components/PrimaryButton.tsx
+import React from 'react';
+
+interface Props {
+  label: string;
+  onClick: () => void;
+}
+
+export function PrimaryButton({ label, onClick }: Props) {
+  return (
+    <button className="primary" onClick={onClick}>
+      {label}
+    </button>
+  );
+}
+```
+
+**Single hook in `_hooks` folder (passing):**
+```tsx
+// src/features/auth/_hooks/useAuth.ts
+import { useState, useEffect } from 'react';
+
+export function useAuth() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // ... auth logic
+  }, []);
+
+  return { user, loading };
+}
+```
+
+**Multiple components in `_components` folder (failing):**
+```tsx
+// src/features/buttons/_components/buttons.tsx  # BAD
+export function PrimaryButton() { /* ... */ }
+export function SecondaryButton() { /* ... */ }  // Second component - violation!
+```
+
+Output:
+```
+✗ src/features/buttons/_components/buttons.tsx: 2 functions (expected 1)
+  - PrimaryButton (function)
+  - SecondaryButton (function)
 ```
 
 **Better approach:**
 ```
-src/models/
-├── user.py      # Only User class
-├── session.py   # Only Session class
-└── token.py     # Only Token class
-```
-
-**Multiple functions:**
-```python
-# src/functions/helpers.py  # BAD: Grab-bag of functions
-"""Various helper functions."""
-
-def format_date(date): ...   # First function
-def parse_date(string): ...  # Second function - violation!
-def validate_email(email): ... # Third function - violation!
-```
-
-**Better approach:**
-```
-src/functions/
-├── date_formatter.py      # Only format_date
-├── date_parser.py         # Only parse_date
-└── email_validator.py     # Only validate_email
+src/features/buttons/_components/
+├── PrimaryButton.tsx     # Only PrimaryButton
+└── SecondaryButton.tsx   # Only SecondaryButton
 ```
 
 ### Special Cases
 
-#### `__init__.py` Files
+#### `__init__.py` and `index.ts`/`index.tsx` Files
 
-`__init__.py` files are **exempt** from this rule. They commonly contain:
-- Multiple imports
-- Package-level constants
-- Re-exports
-- Initialization code
+These files are **exempt** from one-per-file rules:
+- `__init__.py` - Python package initialization
+- `index.ts` / `index.tsx` - TypeScript barrel exports
+
+They commonly contain multiple re-exports:
 
 ```python
 # src/features/auth/__init__.py
@@ -336,22 +396,42 @@ from .logout import logout
 __all__ = ["User", "Session", "login", "logout"]
 ```
 
-#### Type Aliases and Protocols
+```tsx
+// src/features/buttons/_components/index.ts
+export { PrimaryButton } from './PrimaryButton';
+export { SecondaryButton } from './SecondaryButton';
+export { IconButton } from './IconButton';
+```
 
-Type aliases count as definitions:
+#### TypeScript Declaration Files (`.d.ts`)
 
-```python
-# src/types/user_types.py
-"""User-related types."""
+Declaration files are **excluded by default** since they commonly contain multiple type definitions:
 
-from typing import Protocol
+```typescript
+// src/types/api.d.ts - automatically excluded
+interface User { ... }
+interface Session { ... }
+interface Token { ... }
+```
 
-class Authenticatable(Protocol):  # This counts as 1 definition
-    """Protocol for authenticatable objects."""
-    def authenticate(self) -> bool: ...
+You can customize exclusion patterns:
+```toml
+[tool.structure-lint.one_per_file]
+excluded_patterns = ["*.d.ts", "*.generated.ts"]
 ```
 
 ### Customization Options
+
+#### Disable Specific Rules
+
+```toml
+[tool.structure-lint.one_per_file]
+# Allow multiple functions in _functions folders for TypeScript
+ts_fun_in_functions = false
+
+# But still enforce for Python
+py_fun_in_functions = true
+```
 
 #### Change Search Paths
 
@@ -360,7 +440,7 @@ class Authenticatable(Protocol):  # This counts as 1 definition
 search_paths = ["src"]  # Only check src/ (applies to all validators)
 ```
 
-#### Disable Temporarily
+#### Disable Entirely
 
 ```toml
 [tool.structure-lint.validators]
@@ -377,11 +457,11 @@ For projects with violations:
 4. **Test**: Ensure tests still pass after splitting
 5. **Repeat**: Tackle larger files
 
-Example refactoring:
+Example refactoring (Python):
 
 **Before:**
 ```python
-# src/functions/string_functions.py (3 definitions)
+# src/features/utils/_functions/string_helpers.py (3 definitions)
 def capitalize_words(s): ...
 def snake_to_camel(s): ...
 def truncate_string(s, length): ...
@@ -389,10 +469,29 @@ def truncate_string(s, length): ...
 
 **After:**
 ```
-src/functions/
-├── word_capitalizer.py   # capitalize_words
-├── case_converter.py     # snake_to_camel
-└── string_truncator.py   # truncate_string
+src/features/utils/_functions/
+├── capitalize_words.py    # capitalize_words
+├── snake_to_camel.py      # snake_to_camel
+└── truncate_string.py     # truncate_string
+```
+
+Example refactoring (TypeScript):
+
+**Before:**
+```tsx
+// src/features/buttons/_components/Buttons.tsx (3 components)
+export function PrimaryButton() { ... }
+export function SecondaryButton() { ... }
+export function IconButton() { ... }
+```
+
+**After:**
+```
+src/features/buttons/_components/
+├── PrimaryButton.tsx
+├── SecondaryButton.tsx
+├── IconButton.tsx
+└── index.ts  # Re-exports all components
 ```
 
 ---
@@ -465,7 +564,7 @@ The structure validator enforces two simple rules:
 
 #### Rule 1: Standard Folders Cannot Have Subdirectories
 
-Standard folders (like `_types/`, `_functions/`, `_constants/`, `_tests/`, `_errors/`, `_classes/`) are leaf nodes in your folder tree. They contain Python files directly but cannot contain subdirectories.
+Standard folders (like `_types/`, `_functions/`, `_constants/`, `_tests/`, `_errors/`, `_classes/`, `_components/`, `_hooks/`) are leaf nodes in your folder tree. They contain source files directly but cannot contain subdirectories.
 
 **Valid:**
 ```
@@ -519,8 +618,8 @@ structure = true  # Must opt-in explicitly
 
 [tool.structure-lint.structure]
 folder_depth = 2               # Max nesting depth for feature folders
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
-files_allowed_anywhere = ["__init__.py"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]
+files_allowed_anywhere = ["__init__.py", "index.ts", "index.tsx"]
 ignored_folders = ["__pycache__", ".mypy_cache", "*.egg-info"]
 ```
 
@@ -542,6 +641,10 @@ project/
 │       │   │   └── config.py
 │       │   ├── _tests/
 │       │   │   └── test_login.py
+│       │   ├── _components/             # React components (TypeScript)
+│       │   │   └── LoginForm.tsx
+│       │   ├── _hooks/                  # React hooks (TypeScript)
+│       │   │   └── useAuth.ts
 │       │   └── oauth/                   # Feature folder (nested)
 │       │       ├── _types/
 │       │       │   └── token.py
