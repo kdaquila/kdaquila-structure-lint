@@ -16,13 +16,13 @@ class TestOnePerFileValidatorErrors:
     def test_syntax_error_reported_as_failure(
         self, tmp_path: Path, capsys: CaptureFixture[str]
     ) -> None:
-        """Should report files with syntax errors."""
+        """Should report files with syntax errors in _functions folder."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         # Create file with syntax error
         content = "def broken(\n    # Missing closing paren\n"
-        create_python_file(tmp_path, "src/broken.py", content)
+        create_python_file(tmp_path, "src/_functions/broken.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -36,20 +36,20 @@ class TestOnePerFileValidatorErrors:
     ) -> None:
         """Should use relative paths in error messages."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         # Create violating file
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/multi.py", content)
+        create_python_file(tmp_path, "src/_functions/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
 
         # Error message should use relative path
         assert (
-            "src" in captured.out
-            or "src\\multi.py" in captured.out
-            or "src/multi.py" in captured.out
+            "_functions" in captured.out
+            or "_functions\\multi.py" in captured.out
+            or "_functions/multi.py" in captured.out
         )
         assert exit_code == 1
 
@@ -58,13 +58,13 @@ class TestOnePerFileValidatorErrors:
     ) -> None:
         """Should report all violations, not just first one."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         # Create multiple violating files
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/file1.py", content)
-        create_python_file(tmp_path, "src/file2.py", content)
-        create_python_file(tmp_path, "src/file3.py", content)
+        create_python_file(tmp_path, "src/_functions/file1.py", content)
+        create_python_file(tmp_path, "src/_functions/file2.py", content)
+        create_python_file(tmp_path, "src/_functions/file3.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -80,7 +80,7 @@ class TestOnePerFileValidatorErrors:
     ) -> None:
         """Should show names of definitions in error message."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         content = """def hello():
     pass
@@ -91,7 +91,7 @@ def world():
 class Greeting:
     pass
 """
-        create_python_file(tmp_path, "src/multi.py", content)
+        create_python_file(tmp_path, "src/_functions/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -103,9 +103,9 @@ class Greeting:
         assert exit_code == 1
 
     def test_unicode_in_definition_names(self, tmp_path: Path) -> None:
-        """Should handle Unicode in definition names."""
+        """Should handle Unicode in definition names in _functions folder."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         # Python allows Unicode identifiers
         content = """def функция():
@@ -114,7 +114,7 @@ class Greeting:
 def 函数():
     pass
 """
-        create_python_file(tmp_path, "src/unicode.py", content)
+        create_python_file(tmp_path, "src/_functions/unicode.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
