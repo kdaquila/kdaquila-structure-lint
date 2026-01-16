@@ -35,11 +35,19 @@ class Config:
 
     @dataclass
     class OnePerFile:
-        """Configuration for one-per-file validator.
+        """Configuration for one-per-file validator."""
+        # TypeScript folder-specific rules
+        ts_fun_in_functions: bool = True
+        ts_fun_in_components: bool = True
+        ts_fun_in_hooks: bool = True
+        ts_cls_in_classes: bool = True
 
-        Currently empty - reserved for future one_per_file specific settings.
-        """
-        pass  # Placeholder for future options
+        # Python folder-specific rules
+        py_fun_in_functions: bool = True
+        py_cls_in_classes: bool = True
+
+        # Exclusion patterns (glob patterns for files to skip)
+        excluded_patterns: list[str] = field(default_factory=lambda: ["*.d.ts"])
 
     @dataclass
     class Structure:
