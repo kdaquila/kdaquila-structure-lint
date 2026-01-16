@@ -52,7 +52,7 @@ packages = ["kdaquila_structure_lint"]
 
 [tool.structure-lint]
 enabled = true
-search_paths = ["kdaquila_structure_lint", "typescript_fixtures"]
+search_paths = ["kdaquila_structure_lint"]
 
 [tool.structure-lint.validators]
 line_limits = true
