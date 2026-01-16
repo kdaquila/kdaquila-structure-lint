@@ -6,7 +6,7 @@ Enforces a line limit to encourage modular, focused files.
 import sys
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation._functions.file_finder import find_python_files
+from kdaquila_structure_lint.validation._functions.file_finder import find_source_files
 from kdaquila_structure_lint.validation._functions.line_counter_validator import validate_file_lines
 
 
@@ -26,7 +26,7 @@ def validate_line_limits(config: Config) -> int:
             continue
 
         print(f"  Scanning {search_path}/...")
-        python_files = find_python_files(path)
+        python_files = find_source_files(path, extensions={".py"})
 
         for file_path in python_files:
             # Make path relative to project root for cleaner error messages

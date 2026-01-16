@@ -5,8 +5,6 @@ based on which standard folder the file is in.
 """
 
 import sys
-from fnmatch import fnmatch
-from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
 from kdaquila_structure_lint.definition_counter import count_top_level_definitions
@@ -14,39 +12,12 @@ from kdaquila_structure_lint.validation._functions.file_finder import find_sourc
 from kdaquila_structure_lint.validation._functions.folder_detector import (
     get_standard_folder,
 )
-
-
-def get_rule_for_file(file_path: Path, folder: str | None, config: Config) -> bool | None:
-    """
-    Get the applicable rule for a file based on its folder and language.
-
-    Returns True if rule is enabled, False if disabled, None if no rule applies.
-    """
-    if folder is None:
-        return None  # File not in a standard folder - no validation
-
-    lang = "ts" if file_path.suffix in {".ts", ".tsx"} else "py"
-
-    # Map folder to rule
-    rule_map = {
-        ("ts", "_functions"): config.one_per_file.ts_fun_in_functions,
-        ("ts", "_components"): config.one_per_file.ts_fun_in_components,
-        ("ts", "_hooks"): config.one_per_file.ts_fun_in_hooks,
-        ("ts", "_classes"): config.one_per_file.ts_cls_in_classes,
-        ("py", "_functions"): config.one_per_file.py_fun_in_functions,
-        ("py", "_classes"): config.one_per_file.py_cls_in_classes,
-    }
-
-    return rule_map.get((lang, folder))  # Returns None for _types, _constants, etc.
-
-
-def is_excluded(file_path: Path, excluded_patterns: list[str]) -> bool:
-    """Check if file matches any excluded pattern."""
-    file_name = file_path.name
-    for pattern in excluded_patterns:
-        if fnmatch(file_name, pattern):
-            return True
-    return False
+from kdaquila_structure_lint.validation._functions.validator_one_per_file_exclusion import (
+    is_excluded,
+)
+from kdaquila_structure_lint.validation._functions.validator_one_per_file_rule import (
+    get_rule_for_file,
+)
 
 
 def validate_one_per_file(config: Config) -> int:

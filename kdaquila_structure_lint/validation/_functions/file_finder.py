@@ -18,12 +18,3 @@ def find_source_files(root: Path, extensions: set[str] = {".py", ".ts", ".tsx"})
                 continue
             source_files.append(file)
     return sorted(source_files, key=lambda p: p.stat().st_mtime, reverse=True)
-
-
-# Backward-compatible alias
-def find_python_files(root: Path) -> list[Path]:
-    """Find all Python files in root, excluding common non-source directories.
-
-    Deprecated: Use find_source_files(root, extensions={".py"}) instead.
-    """
-    return find_source_files(root, extensions={".py"})
