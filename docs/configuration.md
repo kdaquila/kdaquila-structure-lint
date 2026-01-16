@@ -108,6 +108,94 @@ Enable the one-per-file validator that ensures single top-level definition per f
 one_per_file = false  # Disable one-per-file checking
 ```
 
+### One-Per-File Configuration
+
+Settings for the one-per-file validator. This validator uses folder-aware rules to apply appropriate checks based on the folder name and file type.
+
+#### `one_per_file.ts_fun_in_functions`
+
+**Type**: `bool`
+**Default**: `true`
+
+Enforce one function per TypeScript file in `_functions` folders.
+
+```toml
+[tool.structure-lint.one_per_file]
+ts_fun_in_functions = true
+```
+
+#### `one_per_file.ts_fun_in_components`
+
+**Type**: `bool`
+**Default**: `true`
+
+Enforce one function (React component) per TypeScript file in `_components` folders.
+
+```toml
+[tool.structure-lint.one_per_file]
+ts_fun_in_components = true
+```
+
+#### `one_per_file.ts_fun_in_hooks`
+
+**Type**: `bool`
+**Default**: `true`
+
+Enforce one function (React hook) per TypeScript file in `_hooks` folders.
+
+```toml
+[tool.structure-lint.one_per_file]
+ts_fun_in_hooks = true
+```
+
+#### `one_per_file.ts_cls_in_classes`
+
+**Type**: `bool`
+**Default**: `true`
+
+Enforce one class per TypeScript file in `_classes` folders.
+
+```toml
+[tool.structure-lint.one_per_file]
+ts_cls_in_classes = true
+```
+
+#### `one_per_file.py_fun_in_functions`
+
+**Type**: `bool`
+**Default**: `true`
+
+Enforce one function per Python file in `_functions` folders.
+
+```toml
+[tool.structure-lint.one_per_file]
+py_fun_in_functions = true
+```
+
+#### `one_per_file.py_cls_in_classes`
+
+**Type**: `bool`
+**Default**: `true`
+
+Enforce one class per Python file in `_classes` folders.
+
+```toml
+[tool.structure-lint.one_per_file]
+py_cls_in_classes = true
+```
+
+#### `one_per_file.excluded_patterns`
+
+**Type**: `list[str]`
+**Default**: `["*.d.ts"]`
+
+List of glob patterns for files to exclude from one-per-file validation. TypeScript declaration files (`.d.ts`) are excluded by default since they commonly contain multiple type definitions.
+
+```toml
+[tool.structure-lint.one_per_file]
+excluded_patterns = ["*.d.ts", "*.generated.ts"]
+```
+
 ### Line Limits Configuration
 
 Settings for the line limits validator.
@@ -155,9 +243,11 @@ src/features/authentication/     # depth 0 (child of base folder)
 #### `structure.standard_folders`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]`
+**Default**: `["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]`
 
 List of standard folder names that can appear in feature/module directories. These represent common supporting code categories and cannot contain subdirectories.
+
+**Note**: `_components` and `_hooks` are included by default for TypeScript/React projects.
 
 **Important: Underscore Requirement**
 
@@ -166,7 +256,7 @@ All entries in `standard_folders` **must** start with an underscore (`_`). This 
 ```toml
 # Valid configuration
 [tool.structure-lint.structure]
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_models", "_views"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks", "_models", "_views"]
 
 # INVALID - will raise an error (entries must start with underscore)
 standard_folders = ["_types", "models", "_functions"]  # "models" is invalid
@@ -187,21 +277,25 @@ src/features/authentication/
 ├── _constants/
 ├── _tests/
 ├── _errors/
-└── _classes/
+├── _classes/
+├── _components/    # TypeScript/React components
+└── _hooks/         # TypeScript/React hooks
 ```
 
 #### `structure.files_allowed_anywhere`
 
 **Type**: `list[str]` (converted to set internally)
-**Default**: `["__init__.py"]`
+**Default**: `["__init__.py", "index.ts", "index.tsx"]`
 
-List of Python files that are allowed in any directory, even those that normally shouldn't contain files directly.
+List of files that are allowed in any directory, even those that normally shouldn't contain files directly.
 
-**Important**: The structure validator only validates `.py` files. Non-Python files (like `README.md`, `.gitkeep`, `py.typed`, etc.) are automatically ignored and do not need to be listed here.
+**Note**: `index.ts` and `index.tsx` are included by default for TypeScript/React projects, as they serve a similar purpose to `__init__.py` (re-exporting from a directory).
+
+**Important**: The structure validator only validates `.py`, `.ts`, and `.tsx` files. Other files (like `README.md`, `.gitkeep`, `py.typed`, etc.) are automatically ignored and do not need to be listed here.
 
 ```toml
 [tool.structure-lint.structure]
-files_allowed_anywhere = ["__init__.py", "conftest.py"]
+files_allowed_anywhere = ["__init__.py", "index.ts", "index.tsx", "conftest.py"]
 ```
 
 **Note**: In v2.0.0, `internally_allowed_files` was merged into this setting (previously called `allowed_files`). The setting was renamed to `files_allowed_anywhere` to better reflect its purpose now that non-.py files are automatically ignored.
@@ -272,7 +366,7 @@ search_paths = ["src"]
 structure = true  # Opt-in
 
 [tool.structure-lint.structure]
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]
 folder_depth = 2
 ```
 
@@ -330,9 +424,9 @@ structure = true
 max_lines = 100  # Very strict
 
 [tool.structure-lint.structure]
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]
 folder_depth = 2
-files_allowed_anywhere = ["__init__.py"]
+files_allowed_anywhere = ["__init__.py", "index.ts", "index.tsx"]
 ```
 
 ## Configuration Validation
@@ -408,6 +502,56 @@ enabled = true  # Enabled locally
 3. **Team Alignment**: Discuss and agree on limits before enforcing in CI/CD
 4. **Opt-In Validation**: Only directories in `search_paths` are validated - leave out directories you don't want to enforce structure on
 5. **Document Choices**: Add comments in `pyproject.toml` explaining your configuration choices
+
+## Migration from v7.x
+
+Version 8.0.0 adds TypeScript support and folder-aware one-per-file rules. Here's what changed:
+
+### New Configuration Section
+
+A new `[tool.structure-lint.one_per_file]` section is available for fine-grained control:
+
+```toml
+[tool.structure-lint.one_per_file]
+# TypeScript rules (all default: true)
+ts_fun_in_functions = true   # Enforce 1 function per TS file in _functions
+ts_fun_in_components = true  # Enforce 1 function per TS file in _components
+ts_fun_in_hooks = true       # Enforce 1 function per TS file in _hooks
+ts_cls_in_classes = true     # Enforce 1 class per TS file in _classes
+
+# Python rules (all default: true)
+py_fun_in_functions = true   # Enforce 1 function per PY file in _functions
+py_cls_in_classes = true     # Enforce 1 class per PY file in _classes
+
+# Exclusion patterns
+excluded_patterns = ["*.d.ts"]  # Skip TypeScript declaration files
+```
+
+### New Default Standard Folders
+
+The `standard_folders` default now includes TypeScript/React folders:
+
+| v7.x Default | v8.0.0 Default |
+|--------------|----------------|
+| `["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]` | `["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]` |
+
+### New Default Files Allowed Anywhere
+
+The `files_allowed_anywhere` default now includes TypeScript index files:
+
+| v7.x Default | v8.0.0 Default |
+|--------------|----------------|
+| `["__init__.py"]` | `["__init__.py", "index.ts", "index.tsx"]` |
+
+### Behavioral Changes
+
+1. **TypeScript Support**: The linter now validates `.ts` and `.tsx` files in addition to `.py` files.
+
+2. **Folder-Aware Rules**: One-per-file validation now uses the containing folder name to determine which rule applies. For example, files in `_functions` are checked for one function, while files in `_classes` are checked for one class.
+
+3. **`.d.ts` Exclusion**: TypeScript declaration files are excluded by default since they commonly contain multiple type definitions.
+
+4. **No Migration Required**: If you're upgrading from v7.x, your existing configuration will continue to work. TypeScript files will automatically be validated using the new defaults.
 
 ## Migration from v4.x
 

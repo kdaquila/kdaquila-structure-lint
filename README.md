@@ -1,13 +1,13 @@
 # kdaquila-structure-lint
 
-Opinionated Python project structure and code quality linter.
+Opinionated Python and TypeScript project structure and code quality linter.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
 ## Overview
 
-`kdaquila-structure-lint` is a Python linter that enforces code quality and project structure conventions. It provides three validators that can be enabled independently:
+`kdaquila-structure-lint` is a linter that enforces code quality and project structure conventions for **Python and TypeScript** projects. It provides three validators that can be enabled independently:
 
 - **Line Limits Validator** (enabled by default) - Enforces maximum line count per file
 - **One-Per-File Validator** (enabled by default) - Ensures single function/class per file
@@ -65,9 +65,14 @@ structure-lint
 
 ## Features
 
+### Supported Languages
+
+- **Python** (`.py` files)
+- **TypeScript** (`.ts`, `.tsx` files) - with React/hooks support
+
 ### Line Limits Validator
 
-Enforces a maximum number of lines per Python file to encourage modular, maintainable code.
+Enforces a maximum number of lines per file to encourage modular, maintainable code.
 
 **Default**: 150 lines per file
 
@@ -93,25 +98,49 @@ Running line limit validation...
 
 ### One-Per-File Validator
 
-Ensures each Python file contains at most one top-level function or class definition, promoting better organization and discoverability.
+Ensures files contain at most one top-level function or class definition. Uses **folder-aware rules** to apply appropriate checks:
+
+| Folder | Python Rule | TypeScript Rule |
+|--------|-------------|-----------------|
+| `_functions` | 1 function | 1 function |
+| `_classes` | 1 class | 1 class |
+| `_components` | - | 1 function (React component) |
+| `_hooks` | - | 1 function (React hook) |
+| `_types`, `_constants` | no limit | no limit |
 
 **Configuration**:
 ```toml
 [tool.structure-lint]
 search_paths = ["src"]  # Applies to all validators
+
+[tool.structure-lint.one_per_file]
+# TypeScript rules (all default: true)
+ts_fun_in_functions = true
+ts_fun_in_components = true
+ts_fun_in_hooks = true
+ts_cls_in_classes = true
+
+# Python rules (all default: true)
+py_fun_in_functions = true
+py_cls_in_classes = true
+
+# Skip type definition files
+excluded_patterns = ["*.d.ts"]
 ```
 
-**Example Output**:
+**Example Output (Python)**:
 ```
-============================================================
-Running one-per-file validation...
-============================================================
-✗ src/functions/helpers.py: 3 definitions (expected 1)
+✗ src/_functions/helpers.py: 3 definitions (expected 1)
   - format_date (function)
   - parse_date (function)
   - DateFormatter (class)
+```
 
-1 file violates one-per-file rule
+**Example Output (TypeScript)**:
+```
+✗ src/_components/buttons.tsx: 2 definitions (expected 1)
+  - PrimaryButton (function)
+  - SecondaryButton (function)
 ```
 
 ### Structure Validator (Opt-in)
@@ -156,10 +185,22 @@ one_per_file = true      # Default: enabled
 [tool.structure-lint.line_limits]
 max_lines = 150
 
+[tool.structure-lint.one_per_file]
+# TypeScript rules
+ts_fun_in_functions = true
+ts_fun_in_components = true
+ts_fun_in_hooks = true
+ts_cls_in_classes = true
+# Python rules
+py_fun_in_functions = true
+py_cls_in_classes = true
+# Exclusions
+excluded_patterns = ["*.d.ts"]
+
 [tool.structure-lint.structure]
 folder_depth = 2
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
-files_allowed_anywhere = ["__init__.py"]
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]
+files_allowed_anywhere = ["__init__.py", "index.ts", "index.tsx"]
 ignored_folders = ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".hypothesis", ".tox", ".coverage", "*.egg-info"]
 ```
 
@@ -172,6 +213,7 @@ Example configurations are available in the `docs/examples/` directory:
 - [`minimal_config.toml`](docs/examples/minimal_config.toml) - Bare minimum configuration
 - [`full_config.toml`](docs/examples/full_config.toml) - All options with defaults
 - [`custom_structure.toml`](docs/examples/custom_structure.toml) - Custom structure validation setup
+- [`typescript_react.toml`](docs/examples/typescript_react.toml) - React/TypeScript project configuration
 
 ## Command-Line Interface
 

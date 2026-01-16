@@ -77,7 +77,15 @@ def load_config(
             "Use 'search_paths' at the root level of [tool.structure-lint] instead."
         )
 
-    one_per_file = Config.OnePerFile()
+    one_per_file = Config.OnePerFile(
+        ts_fun_in_functions=one_per_file_data.get("ts_fun_in_functions", True),
+        ts_fun_in_components=one_per_file_data.get("ts_fun_in_components", True),
+        ts_fun_in_hooks=one_per_file_data.get("ts_fun_in_hooks", True),
+        ts_cls_in_classes=one_per_file_data.get("ts_cls_in_classes", True),
+        py_fun_in_functions=one_per_file_data.get("py_fun_in_functions", True),
+        py_cls_in_classes=one_per_file_data.get("py_cls_in_classes", True),
+        excluded_patterns=one_per_file_data.get("excluded_patterns", ["*.d.ts"]),
+    )
 
     # Structure section
     structure_data = user_config.get("structure", {})
@@ -96,14 +104,17 @@ def load_config(
         )
 
     default_standard_folders = [
-        "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
+        "_types", "_functions", "_constants", "_tests", "_errors", "_classes",
+        "_components", "_hooks"
     ]
     structure = Config.Structure(
         folder_depth=structure_data.get("folder_depth", 2),
         standard_folders=set(
             structure_data.get("standard_folders", default_standard_folders)
         ),
-        files_allowed_anywhere=set(structure_data.get("files_allowed_anywhere", ["__init__.py"])),
+        files_allowed_anywhere=set(
+            structure_data.get("files_allowed_anywhere", ["__init__.py", "index.ts", "index.tsx"])
+        ),
         ignored_folders=set(
             structure_data.get(
                 "ignored_folders",

@@ -21,10 +21,11 @@ class TestLoadConfigDefaults:
         assert config.line_limits.max_lines == 150
         assert config.structure.folder_depth == 2
         expected_folders = {
-            "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
+            "_types", "_functions", "_constants", "_tests", "_errors", "_classes",
+            "_components", "_hooks"
         }
         assert config.structure.standard_folders == expected_folders
-        assert config.structure.files_allowed_anywhere == {"__init__.py"}
+        assert config.structure.files_allowed_anywhere == {"__init__.py", "index.ts", "index.tsx"}
         assert config.structure.ignored_folders == {
             "__pycache__",
             ".mypy_cache",

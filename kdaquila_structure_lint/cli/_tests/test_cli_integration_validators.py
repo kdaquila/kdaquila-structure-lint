@@ -43,10 +43,12 @@ one_per_file = true
 structure = false
 """)
 
-        (tmp_path / "src").mkdir()
-        # Valid for line limits, invalid for one-per-file
+        (tmp_path / "src" / "_functions").mkdir(parents=True)
+        # Valid for line limits, invalid for one-per-file (multiple functions in _functions)
         create_python_file(
-            tmp_path, "src/module.py", "def func1():\n    pass\n\ndef func2():\n    pass\n"
+            tmp_path,
+            "src/_functions/module.py",
+            "def func1():\n    pass\n\ndef func2():\n    pass\n",
         )
 
         exit_code = main(["--project-root", str(tmp_path)])

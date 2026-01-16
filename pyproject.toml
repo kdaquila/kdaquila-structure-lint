@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kdaquila-structure-lint"
-version = "7.0.0"
+version = "8.0.0"
 description = "Opinionated Python project structure and code quality linter"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -29,7 +29,12 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 
-dependencies = ["tomli>=2.0.0;python_version<'3.11'"]
+dependencies = [
+    "tomli>=2.0.0;python_version<'3.11'",
+    "tree-sitter>=0.21.0",
+    "tree-sitter-python>=0.21.0",
+    "tree-sitter-typescript>=0.21.0",
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0.0", "mypy>=1.8.0", "ruff>=0.3.0"]

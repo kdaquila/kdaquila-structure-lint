@@ -11,7 +11,8 @@
 # Master switch to enable/disable entire linter
 enabled = true
 
-# Directories to search for Python files (relative to project root)
+# Directories to search for source files (relative to project root)
+# Supports Python (.py) and TypeScript (.ts, .tsx) files
 # This applies to ALL validators (line_limits, one_per_file, structure)
 # The tool automatically excludes: .venv/, __pycache__/, .git/, node_modules/
 search_paths = ["src"]
@@ -22,8 +23,25 @@ structure = false      # Opt-in (default: disabled) - enforces folder structure
 line_limits = true     # Default: enabled - enforces max lines per file
 one_per_file = true    # Default: enabled - enforces single definition per file
 
+[tool.structure-lint.one_per_file]
+# TypeScript folder-specific rules
+# These control which folders enforce the one-per-file rule for TypeScript files
+ts_fun_in_functions = true   # Enforce 1 function per TS file in _functions folders
+ts_fun_in_components = true  # Enforce 1 function per TS file in _components folders
+ts_fun_in_hooks = true       # Enforce 1 function per TS file in _hooks folders
+ts_cls_in_classes = true     # Enforce 1 class per TS file in _classes folders
+
+# Python folder-specific rules
+# These control which folders enforce the one-per-file rule for Python files
+py_fun_in_functions = true   # Enforce 1 function per PY file in _functions folders
+py_cls_in_classes = true     # Enforce 1 class per PY file in _classes folders
+
+# File exclusion patterns (glob patterns for files to skip)
+# TypeScript declaration files are excluded by default
+excluded_patterns = ["*.d.ts"]
+
 [tool.structure-lint.line_limits]
-# Maximum number of lines allowed per Python file
+# Maximum number of lines allowed per file (Python and TypeScript)
 max_lines = 150
 
 [tool.structure-lint.structure]
@@ -35,11 +53,13 @@ folder_depth = 2
 
 # Standard folders that can appear inside feature/module directories
 # These represent common code organization patterns and cannot have subdirectories
-standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes"]
+# Includes _components and _hooks for TypeScript/React projects
+standard_folders = ["_types", "_functions", "_constants", "_tests", "_errors", "_classes", "_components", "_hooks"]
 
-# Python files allowed in any directory, even those that normally shouldn't contain files
-# Note: Non-.py files (like README.md, .gitkeep) are automatically ignored and don't need listing
-files_allowed_anywhere = ["__init__.py"]
+# Files allowed in any directory, even those that normally shouldn't contain files
+# Includes index.ts/index.tsx for TypeScript barrel exports (similar to __init__.py)
+# Note: Non-source files (like README.md, .gitkeep) are automatically ignored
+files_allowed_anywhere = ["__init__.py", "index.ts", "index.tsx"]
 
 # Folder name patterns to ignore during structure validation
 # Supports wildcards (e.g., *.egg-info matches my_package.egg-info)
@@ -66,10 +86,12 @@ ignored_folders = [
 # ├── src/
 # │   └── features/           (base folder)
 # │       ├── authentication/ (feature directory at depth 0)
-# │       │   ├── _types/     (standard folder - files allowed here)
-# │       │   ├── _functions/ (standard folder)
-# │       │   ├── _constants/ (standard folder)
-# │       │   ├── _tests/     (standard folder)
+# │       │   ├── _types/     (standard folder - Python/TypeScript types)
+# │       │   ├── _functions/ (standard folder - functions)
+# │       │   ├── _constants/ (standard folder - constants)
+# │       │   ├── _tests/     (standard folder - tests)
+# │       │   ├── _components/(standard folder - React components, TypeScript)
+# │       │   ├── _hooks/     (standard folder - React hooks, TypeScript)
 # │       │   └── oauth/      (feature folder at depth 1)
 # │       │       ├── _types/
 # │       │       └── google/ (depth 2)
@@ -88,4 +110,5 @@ ignored_folders = [
 # 5. Only include directories you want validated in search_paths
 # 6. Adjust folder_depth for deeper or shallower nesting limits
 # 7. Disable validators you don't want with false
+# 8. Use one_per_file options to customize folder-aware rules for each language
 #

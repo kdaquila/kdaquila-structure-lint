@@ -14,16 +14,16 @@ class TestOnePerFileValidatorConfig:
     """Tests for configuration and path handling."""
 
     def test_custom_search_paths(self, tmp_path: Path) -> None:
-        """Should check custom search paths."""
+        """Should check custom search paths with standard folders."""
         config = create_minimal_config(tmp_path)
         config.search_paths = ["lib", "app"]
 
-        (config.project_root / "lib").mkdir()
+        (config.project_root / "lib" / "_functions").mkdir(parents=True)
         (config.project_root / "app").mkdir()
 
-        # Create violating file in lib
+        # Create violating file in lib/_functions
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "lib/module.py", content)
+        create_python_file(tmp_path, "lib/_functions/module.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -35,9 +35,10 @@ class TestOnePerFileValidatorConfig:
         config = create_minimal_config(tmp_path)
         config.search_paths = ["nonexistent", "src"]
 
-        # Create valid file in src
-        (config.project_root / "src").mkdir()
-        (config.project_root / "src" / "module.py").write_text("def hello():\n    pass\n")
+        # Create valid file in src/_functions
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
+        module_path = config.project_root / "src" / "_functions" / "module.py"
+        module_path.write_text("def hello():\n    pass\n")
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -63,13 +64,13 @@ class TestOnePerFileValidatorConfig:
         assert exit_code == 0
 
     def test_nested_directories(self, tmp_path: Path) -> None:
-        """Should check files in nested directories."""
+        """Should check files in nested _functions directories."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src" / "sub" / "deep").mkdir(parents=True)
+        (config.project_root / "src" / "sub" / "_functions").mkdir(parents=True)
 
-        # Create violating file in nested directory
+        # Create violating file in nested _functions directory
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/sub/deep/module.py", content)
+        create_python_file(tmp_path, "src/sub/_functions/module.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

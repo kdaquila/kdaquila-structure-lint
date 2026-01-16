@@ -14,16 +14,16 @@ class TestOnePerFileValidatorDecorators:
     """Tests for decorator handling."""
 
     def test_file_with_decorators_counted_once(self, tmp_path: Path) -> None:
-        """Should count decorated functions as single definition."""
+        """Should count decorated functions as single definition in _functions folder."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         content = """@decorator
 @another_decorator
 def decorated():
     pass
 """
-        create_python_file(tmp_path, "src/decorated.py", content)
+        create_python_file(tmp_path, "src/_functions/decorated.py", content)
 
         # Only one definition despite decorators
         exit_code = validate_one_per_file(config)
@@ -32,9 +32,9 @@ def decorated():
     def test_file_with_multiple_decorated_functions_fails(
         self, tmp_path: Path
     ) -> None:
-        """Should count each decorated function separately."""
+        """Should count each decorated function separately in _functions folder."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         content = """@decorator1
 def func1():
@@ -44,7 +44,7 @@ def func1():
 def func2():
     pass
 """
-        create_python_file(tmp_path, "src/multi_decorated.py", content)
+        create_python_file(tmp_path, "src/_functions/multi_decorated.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -54,10 +54,10 @@ def func2():
     ) -> None:
         """Should produce clear output format."""
         config = create_minimal_config(tmp_path)
-        (config.project_root / "src").mkdir()
+        (config.project_root / "src" / "_functions").mkdir(parents=True)
 
-        # Valid case
-        create_python_file(tmp_path, "src/good.py", "def hello():\n    pass\n")
+        # Valid case in _functions folder
+        create_python_file(tmp_path, "src/_functions/good.py", "def hello():\n    pass\n")
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
