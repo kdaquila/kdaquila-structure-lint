@@ -23,7 +23,9 @@ def get_standard_folder(file_path: Path, standard_folders: set[str]) -> str | No
         "_functions"
         >>> get_standard_folder(Path("src/auth/helpers.py"), {"_functions", "_types"})
         None
-        >>> get_standard_folder(Path("src/_types/models/_functions/foo.py"), {"_functions", "_types"})
+        >>> get_standard_folder(
+        ...     Path("src/_types/models/_functions/foo.py"), {"_functions", "_types"}
+        ... )
         "_functions"  # Returns innermost match
     """
     for part in reversed(file_path.parts):

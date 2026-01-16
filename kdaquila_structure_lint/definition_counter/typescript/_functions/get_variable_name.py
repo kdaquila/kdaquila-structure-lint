@@ -3,7 +3,7 @@
 from tree_sitter import Node
 
 
-def _get_variable_name(node: Node) -> str | None:
+def get_variable_name(node: Node) -> str | None:
     """Extract variable name from a variable_declarator node."""
     for child in node.children:
         if child.type == "identifier":

@@ -112,7 +112,9 @@ def load_config(
         standard_folders=set(
             structure_data.get("standard_folders", default_standard_folders)
         ),
-        files_allowed_anywhere=set(structure_data.get("files_allowed_anywhere", ["__init__.py", "index.ts", "index.tsx"])),
+        files_allowed_anywhere=set(
+            structure_data.get("files_allowed_anywhere", ["__init__.py", "index.ts", "index.tsx"])
+        ),
         ignored_folders=set(
             structure_data.get(
                 "ignored_folders",

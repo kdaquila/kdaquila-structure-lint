@@ -9,8 +9,10 @@ EXCLUDE_DIRS = {
 }
 
 
-def find_source_files(root: Path, extensions: set[str] = {".py", ".ts", ".tsx"}) -> list[Path]:
+def find_source_files(root: Path, extensions: set[str] | None = None) -> list[Path]:
     """Find all source files in root, excluding common non-source directories."""
+    if extensions is None:
+        extensions = {".py", ".ts", ".tsx"}
     source_files = []
     for ext in extensions:
         for file in root.rglob(f"*{ext}"):

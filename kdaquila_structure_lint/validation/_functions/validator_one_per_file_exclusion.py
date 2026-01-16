@@ -11,7 +11,4 @@ from pathlib import Path
 def is_excluded(file_path: Path, excluded_patterns: list[str]) -> bool:
     """Check if file matches any excluded pattern."""
     file_name = file_path.name
-    for pattern in excluded_patterns:
-        if fnmatch(file_name, pattern):
-            return True
-    return False
+    return any(fnmatch(file_name, pattern) for pattern in excluded_patterns)

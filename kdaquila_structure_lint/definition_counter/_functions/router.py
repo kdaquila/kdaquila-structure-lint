@@ -14,11 +14,10 @@ def count_top_level_definitions(file_path: Path) -> tuple[int, list[str]] | None
 
     if suffix == ".py":
         return count_python_definitions(file_path)
-    elif suffix in {".ts", ".tsx"}:
-        from kdaquila_structure_lint.definition_counter.typescript import (
+    if suffix in {".ts", ".tsx"}:
+        from kdaquila_structure_lint.definition_counter.typescript import (  # noqa: PLC0415
             count_typescript_definitions,
         )
 
         return count_typescript_definitions(file_path)
-    else:
-        return None
+    return None

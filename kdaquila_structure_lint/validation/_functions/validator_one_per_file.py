@@ -74,12 +74,13 @@ def validate_one_per_file(config: Config) -> int:
             count, names = result
             if count > 1:
                 # Determine construct type based on folder
-                if folder in {"_classes"}:
-                    construct_type = "classes"
-                else:
-                    construct_type = "functions"
+                construct_type = "classes" if folder in {"_classes"} else "functions"
 
-                error = f"{relative_path}: {count} {construct_type} in {folder} folder (max 1): {', '.join(names)}"
+                names_str = ", ".join(names)
+                error = (
+                    f"{relative_path}: {count} {construct_type} in {folder} folder "
+                    f"(max 1): {names_str}"
+                )
                 errors.append(error)
 
     if errors:

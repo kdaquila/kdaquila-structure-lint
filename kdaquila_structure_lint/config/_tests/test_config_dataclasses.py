@@ -23,10 +23,11 @@ class TestConfigDataclasses:
         config = Config.Structure()
         assert config.folder_depth == 2
         expected_folders = {
-            "_types", "_functions", "_constants", "_tests", "_errors", "_classes"
+            "_types", "_functions", "_constants", "_tests", "_errors", "_classes",
+            "_components", "_hooks"
         }
         assert config.standard_folders == expected_folders
-        assert config.files_allowed_anywhere == {"__init__.py"}
+        assert config.files_allowed_anywhere == {"__init__.py", "index.ts", "index.tsx"}
         assert config.ignored_folders == {
             "__pycache__",
             ".mypy_cache",

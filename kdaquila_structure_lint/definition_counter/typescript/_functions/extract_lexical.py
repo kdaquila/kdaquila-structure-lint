@@ -2,15 +2,17 @@
 
 from tree_sitter import Node
 
-from kdaquila_structure_lint.definition_counter.typescript._functions.function_check import (
-    _is_function_assignment,
+from kdaquila_structure_lint.definition_counter.typescript._functions import (
+    is_function_assignment as ifa_module,
 )
-from kdaquila_structure_lint.definition_counter.typescript._functions.variable_name import (
-    _get_variable_name,
+from kdaquila_structure_lint.definition_counter.typescript._functions.get_variable_name import (
+    get_variable_name,
 )
 
+is_function_assignment = ifa_module.is_function_assignment
 
-def _extract_definitions_from_lexical_declaration(node: Node) -> list[str]:
+
+def extract_definitions_from_lexical_declaration(node: Node) -> list[str]:
     """Extract function definitions from const declarations.
 
     Only counts const declarations that assign arrow functions or function expressions.
@@ -30,10 +32,9 @@ def _extract_definitions_from_lexical_declaration(node: Node) -> list[str]:
 
     # Look for variable_declarator children
     for child in node.children:
-        if child.type == "variable_declarator":
-            if _is_function_assignment(child):
-                name = _get_variable_name(child)
-                if name:
-                    definitions.append(name)
+        if child.type == "variable_declarator" and is_function_assignment(child):
+            name = get_variable_name(child)
+            if name:
+                definitions.append(name)
 
     return definitions

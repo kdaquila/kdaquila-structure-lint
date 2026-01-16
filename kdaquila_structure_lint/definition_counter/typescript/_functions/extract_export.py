@@ -2,15 +2,15 @@
 
 from tree_sitter import Node
 
-from kdaquila_structure_lint.definition_counter.typescript._functions.body_check import (
-    _has_function_body,
+from kdaquila_structure_lint.definition_counter.typescript._functions.extract_lexical import (
+    extract_definitions_from_lexical_declaration,
 )
-from kdaquila_structure_lint.definition_counter.typescript._functions.lexical import (
-    _extract_definitions_from_lexical_declaration,
+from kdaquila_structure_lint.definition_counter.typescript._functions.has_function_body import (
+    has_function_body,
 )
 
 
-def _extract_definitions_from_export_statement(node: Node) -> list[str]:
+def extract_definitions_from_export_statement(node: Node) -> list[str]:
     """Extract definitions from export statements.
 
     Handles:
@@ -28,7 +28,7 @@ def _extract_definitions_from_export_statement(node: Node) -> list[str]:
 
     for child in node.children:
         if child.type == "function_declaration":
-            if _has_function_body(child):
+            if has_function_body(child):
                 name = None
                 for subchild in child.children:
                     if subchild.type == "identifier":
@@ -36,15 +36,7 @@ def _extract_definitions_from_export_statement(node: Node) -> list[str]:
                         break
                 definitions.append(name if name else "<default>")
 
-        elif child.type == "class_declaration":
-            name = None
-            for subchild in child.children:
-                if subchild.type == "type_identifier":
-                    name = subchild.text.decode("utf-8") if subchild.text else None
-                    break
-            definitions.append(name if name else "<default>")
-
-        elif child.type == "abstract_class_declaration":
+        elif child.type in {"class_declaration", "abstract_class_declaration"}:
             name = None
             for subchild in child.children:
                 if subchild.type == "type_identifier":
@@ -62,6 +54,6 @@ def _extract_definitions_from_export_statement(node: Node) -> list[str]:
 
         elif child.type == "lexical_declaration":
             # export const foo = () => {}
-            definitions.extend(_extract_definitions_from_lexical_declaration(child))
+            definitions.extend(extract_definitions_from_lexical_declaration(child))
 
     return definitions

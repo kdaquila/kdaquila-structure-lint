@@ -37,7 +37,8 @@ class TestOnePerFileValidatorConfig:
 
         # Create valid file in src/_functions
         (config.project_root / "src" / "_functions").mkdir(parents=True)
-        (config.project_root / "src" / "_functions" / "module.py").write_text("def hello():\n    pass\n")
+        module_path = config.project_root / "src" / "_functions" / "module.py"
+        module_path.write_text("def hello():\n    pass\n")
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
