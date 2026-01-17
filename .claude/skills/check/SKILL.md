@@ -1,6 +1,6 @@
 ---
 name: check
-description: Run all development checks (ruff, mypy, pytest, structure-lint) to verify code changes. Use after completing any code modifications.
+description: Verify and validate code changes by running all checks (ruff, mypy, pytest, structure-lint). Use to verify changes, validate code, or confirm everything passes before committing.
 ---
 
 # Check
