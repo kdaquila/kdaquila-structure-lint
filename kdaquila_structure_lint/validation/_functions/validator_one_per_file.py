@@ -12,6 +12,9 @@ from kdaquila_structure_lint.validation._functions.file_finder import find_sourc
 from kdaquila_structure_lint.validation._functions.folder_detector import (
     get_standard_folder,
 )
+from kdaquila_structure_lint.validation._functions.validator_filename_match import (
+    validate_filename_matches_definition,
+)
 from kdaquila_structure_lint.validation._functions.validator_one_per_file_exclusion import (
     is_excluded,
 )
@@ -27,6 +30,7 @@ def validate_one_per_file(config: Config) -> int:
     standard_folders = config.structure.standard_folders
     excluded_patterns = config.one_per_file.excluded_patterns
     errors = []
+    name_errors = []  # For filename mismatch errors
 
     print("🔍 Checking for one function/class per file...\n")
 
@@ -82,12 +86,28 @@ def validate_one_per_file(config: Config) -> int:
                     f"(max 1): {names_str}"
                 )
                 errors.append(error)
+            elif count == 1:
+                name_error = validate_filename_matches_definition(file_path, names)
+                if name_error:
+                    name_errors.append(f"{relative_path}: {name_error}")
+
+    errors_found = False
 
     if errors:
+        errors_found = True
         print(f"\n❌ Found {len(errors)} file(s) with multiple definitions:\n")
         for error in errors:
             print(f"  • {error}")
         print("\n💡 Consider splitting into separate files for better modularity.")
+
+    if name_errors:
+        errors_found = True
+        print(f"\n❌ Found {len(name_errors)} file(s) with mismatched filenames:\n")
+        for error in name_errors:
+            print(f"  • {error}")
+        print("\n💡 Rename the file to match the definition, or vice versa.")
+
+    if errors_found:
         return 1
 
     print("\n✅ All files have at most one top-level function or class!")
