@@ -6,7 +6,7 @@ import sys
 
 def run(cmd: str) -> bool:
     """Run a command and return True if it succeeded."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Running: {cmd}")
     print("=" * 60)
     result = subprocess.run(cmd, shell=True, check=False)
@@ -18,8 +18,8 @@ def main() -> int:
     checks = [
         "uv run ruff check .",
         "uv run mypy .",
-        "uv run pytest",
         "uv run structure-lint",
+        "uv run pytest",
     ]
 
     failed = []
@@ -27,7 +27,7 @@ def main() -> int:
         if not run(cmd):
             failed.append(cmd)
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     if failed:
         print("FAILED:")
         for cmd in failed:
