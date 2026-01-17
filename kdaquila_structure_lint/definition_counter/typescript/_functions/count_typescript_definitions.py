@@ -2,16 +2,16 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.definition_counter.typescript._functions.extract_definitions_from_export_statement import (
+from kdaquila_structure_lint.definition_counter.typescript._functions.extract_definitions_from_export_statement import (  # noqa: E501
     extract_definitions_from_export_statement,
 )
-from kdaquila_structure_lint.definition_counter.typescript._functions.extract_definitions_from_lexical_declaration import (
+from kdaquila_structure_lint.definition_counter.typescript._functions.extract_definitions_from_lexical_declaration import (  # noqa: E501
     extract_definitions_from_lexical_declaration,
 )
+from kdaquila_structure_lint.definition_counter.typescript._functions.get_parser import get_parser
 from kdaquila_structure_lint.definition_counter.typescript._functions.has_function_body import (
     has_function_body,
 )
-from kdaquila_structure_lint.definition_counter.typescript._functions.get_parser import get_parser
 
 
 def count_typescript_definitions(file_path: Path) -> tuple[int, list[str]] | None:

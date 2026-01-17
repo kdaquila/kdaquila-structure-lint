@@ -27,7 +27,5 @@ def should_skip_filename_match(file_path: Path) -> bool:
     # Python test files
     if file_name.startswith("test_") and file_name.endswith(".py"):
         return True
-    if file_name.endswith("_test.py"):
-        return True
 
-    return False
+    return file_name.endswith("_test.py")
