@@ -5,7 +5,7 @@ from pathlib import Path
 from _pytest.capture import CaptureFixture
 
 from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
-from kdaquila_structure_lint.validation._functions.validator_one_per_file import (
+from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
 
@@ -37,7 +37,7 @@ class TestOnePerFileValidatorConfig:
 
         # Create valid file in src/_functions
         (config.project_root / "src" / "_functions").mkdir(parents=True)
-        module_path = config.project_root / "src" / "_functions" / "module.py"
+        module_path = config.project_root / "src" / "_functions" / "hello.py"
         module_path.write_text("def hello():\n    pass\n")
 
         exit_code = validate_one_per_file(config)

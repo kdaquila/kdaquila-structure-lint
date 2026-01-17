@@ -5,7 +5,7 @@ from pathlib import Path
 from _pytest.capture import CaptureFixture
 
 from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
-from kdaquila_structure_lint.validation._functions.validator_line_limits import validate_line_limits
+from kdaquila_structure_lint.validation._functions.validate_line_limits import validate_line_limits
 
 
 class TestLineLimitsValidatorConfigPaths:

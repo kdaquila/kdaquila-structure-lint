@@ -6,8 +6,8 @@ Enforces a line limit to encourage modular, focused files.
 import sys
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation._functions.file_finder import find_source_files
-from kdaquila_structure_lint.validation._functions.line_counter_validator import validate_file_lines
+from kdaquila_structure_lint.validation._functions.find_source_files import find_source_files
+from kdaquila_structure_lint.validation._functions.validate_file_lines import validate_file_lines
 
 
 def validate_line_limits(config: Config) -> int:

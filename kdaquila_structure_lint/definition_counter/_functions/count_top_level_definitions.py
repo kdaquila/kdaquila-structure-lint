@@ -2,7 +2,9 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.definition_counter._functions.python import count_python_definitions
+from kdaquila_structure_lint.definition_counter._functions.count_python_definitions import (
+    count_python_definitions,
+)
 
 
 def count_top_level_definitions(file_path: Path) -> tuple[int, list[str]] | None:

@@ -2,7 +2,7 @@
 
 from tree_sitter import Node
 
-from kdaquila_structure_lint.definition_counter.typescript._functions.extract_lexical import (
+from kdaquila_structure_lint.definition_counter.typescript._functions.extract_definitions_from_lexical_declaration import (  # noqa: E501
     extract_definitions_from_lexical_declaration,
 )
 from kdaquila_structure_lint.definition_counter.typescript._functions.has_function_body import (

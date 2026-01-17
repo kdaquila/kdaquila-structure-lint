@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
-from kdaquila_structure_lint.validation._functions.validator_one_per_file import (
+from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
 
@@ -105,7 +105,7 @@ export const mainFunction = (): string => {
     return 'main';
 };
 """
-        create_python_file(tmp_path, "src/_functions/main.ts", content)
+        create_python_file(tmp_path, "src/_functions/mainFunction.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0

@@ -2,14 +2,12 @@
 
 from tree_sitter import Node
 
-from kdaquila_structure_lint.definition_counter.typescript._functions import (
-    is_function_assignment as ifa_module,
-)
 from kdaquila_structure_lint.definition_counter.typescript._functions.get_variable_name import (
     get_variable_name,
 )
-
-is_function_assignment = ifa_module.is_function_assignment
+from kdaquila_structure_lint.definition_counter.typescript._functions.is_function_assignment import (  # noqa: E501
+    is_function_assignment,
+)
 
 
 def extract_definitions_from_lexical_declaration(node: Node) -> list[str]:

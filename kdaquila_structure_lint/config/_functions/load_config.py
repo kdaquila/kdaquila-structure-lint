@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-from kdaquila_structure_lint.config._functions.project_root import find_project_root
+from kdaquila_structure_lint.config._functions.find_project_root import find_project_root
 from kdaquila_structure_lint.config._types import Config
 
 # Python 3.11+ has tomllib, older versions need tomli
