@@ -8,7 +8,7 @@ See functions/structure modules for detailed validation logic.
 import sys
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation._functions.structure_src_tree import validate_src_tree
+from kdaquila_structure_lint.validation._functions.validate_src_tree import validate_src_tree
 
 
 def validate_structure(config: Config) -> int:

@@ -8,17 +8,17 @@ import sys
 
 from kdaquila_structure_lint.config import Config
 from kdaquila_structure_lint.definition_counter import count_top_level_definitions
-from kdaquila_structure_lint.validation._functions.file_finder import find_source_files
-from kdaquila_structure_lint.validation._functions.folder_detector import (
+from kdaquila_structure_lint.validation._functions.find_source_files import find_source_files
+from kdaquila_structure_lint.validation._functions.get_standard_folder import (
     get_standard_folder,
 )
 from kdaquila_structure_lint.validation._functions.validate_filename_matches_definition import (
     validate_filename_matches_definition,
 )
-from kdaquila_structure_lint.validation._functions.validator_one_per_file_exclusion import (
+from kdaquila_structure_lint.validation._functions.is_excluded import (
     is_excluded,
 )
-from kdaquila_structure_lint.validation._functions.validator_one_per_file_rule import (
+from kdaquila_structure_lint.validation._functions.get_rule_for_file import (
     get_rule_for_file,
 )
 

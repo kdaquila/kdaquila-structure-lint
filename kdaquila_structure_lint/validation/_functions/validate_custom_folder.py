@@ -3,10 +3,10 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.validation._functions.forbidden_folder_names import (
+from kdaquila_structure_lint.validation._functions.get_forbidden_folder_names import (
     get_forbidden_folder_names,
 )
-from kdaquila_structure_lint.validation._functions.pattern_match import matches_any_pattern
+from kdaquila_structure_lint.validation._functions.matches_any_pattern import matches_any_pattern
 
 
 def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
