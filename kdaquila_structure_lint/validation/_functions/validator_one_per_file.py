@@ -12,7 +12,7 @@ from kdaquila_structure_lint.validation._functions.file_finder import find_sourc
 from kdaquila_structure_lint.validation._functions.folder_detector import (
     get_standard_folder,
 )
-from kdaquila_structure_lint.validation._functions.validator_filename_match import (
+from kdaquila_structure_lint.validation._functions.validate_filename_matches_definition import (
     validate_filename_matches_definition,
 )
 from kdaquila_structure_lint.validation._functions.validator_one_per_file_exclusion import (
