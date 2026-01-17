@@ -57,7 +57,7 @@ def func2():
         (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         # Valid case in _functions folder
-        create_python_file(tmp_path, "src/_functions/good.py", "def hello():\n    pass\n")
+        create_python_file(tmp_path, "src/_functions/hello.py", "def hello():\n    pass\n")
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()

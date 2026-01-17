@@ -105,7 +105,7 @@ export const mainFunction = (): string => {
     return 'main';
 };
 """
-        create_python_file(tmp_path, "src/_functions/main.ts", content)
+        create_python_file(tmp_path, "src/_functions/mainFunction.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0

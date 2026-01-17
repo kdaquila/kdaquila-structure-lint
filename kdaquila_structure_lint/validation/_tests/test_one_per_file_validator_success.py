@@ -18,8 +18,8 @@ class TestOnePerFileValidatorSuccess:
         (config.project_root / "src" / "_classes").mkdir(parents=True)
 
         # Create files with single definitions in standard folders
-        create_python_file(tmp_path, "src/_functions/func.py", "def hello():\n    pass\n")
-        create_python_file(tmp_path, "src/_classes/cls.py", "class MyClass:\n    pass\n")
+        create_python_file(tmp_path, "src/_functions/hello.py", "def hello():\n    pass\n")
+        create_python_file(tmp_path, "src/_classes/MyClass.py", "class MyClass:\n    pass\n")
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -61,7 +61,7 @@ DEFAULT_NAME = "test"
 def process():
     pass
 """
-        create_python_file(tmp_path, "src/_functions/module.py", content)
+        create_python_file(tmp_path, "src/_functions/process.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
