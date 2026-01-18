@@ -503,6 +503,97 @@ enabled = true  # Enabled locally
 4. **Opt-In Validation**: Only directories in `search_paths` are validated - leave out directories you don't want to enforce structure on
 5. **Document Choices**: Add comments in `pyproject.toml` explaining your configuration choices
 
+## Migration from v9.x
+
+Version 10.0.0 introduces stricter one-per-file validation that now detects and reports **extra definitions** in validated files.
+
+### What Changed
+
+In v9.x, the one-per-file validator only checked the count of the primary definition type (e.g., ensuring exactly 1 function in a `_functions` folder). Files could still contain additional types, interfaces, constants, or helper definitions alongside the main function/class.
+
+In v10.0.0, the validator now enforces that files contain **only** the expected definition - no extras allowed.
+
+### What Gets Flagged
+
+**TypeScript** (in `_functions`, `_classes`, `_components`, `_hooks` folders):
+- Type aliases (`type Foo = ...`)
+- Interfaces (`interface Foo { ... }`)
+- Enums (`enum Foo { ... }`)
+- Constants (`const FOO = ...`, `let bar = ...`)
+
+**Python** (in `_functions`, `_classes` folders):
+- Top-level assignments (`FOO = ...`, `bar = ...`)
+
+### What's Still Allowed
+
+- Import statements
+- Module docstrings
+- Python dunders (`__all__`, `__version__`, etc.)
+- `TYPE_CHECKING` blocks
+- Decorators on the main definition
+
+### Migration Steps
+
+1. **Run the linter** to identify files with extra definitions:
+   ```bash
+   structure-lint
+   ```
+
+2. **For each violation**, move the extra definitions to appropriate folders:
+
+   **Before (fails in v10.0.0):**
+   ```python
+   # src/features/dates/_functions/format_date.py
+   DEFAULT_FORMAT = "%Y-%m-%d"  # Extra definition!
+
+   def format_date(date, fmt=DEFAULT_FORMAT):
+       return date.strftime(fmt)
+   ```
+
+   **After (passes):**
+   ```python
+   # src/features/dates/_constants/formats.py
+   DEFAULT_DATE_FORMAT = "%Y-%m-%d"
+   ```
+   ```python
+   # src/features/dates/_functions/format_date.py
+   from ..._constants.formats import DEFAULT_DATE_FORMAT
+
+   def format_date(date, fmt=DEFAULT_DATE_FORMAT):
+       return date.strftime(fmt)
+   ```
+
+3. **For TypeScript files with inline interfaces:**
+
+   **Before (fails in v10.0.0):**
+   ```tsx
+   // src/features/buttons/_components/Button.tsx
+   interface Props { label: string; }  // Extra definition!
+
+   export function Button({ label }: Props) { ... }
+   ```
+
+   **After (passes):**
+   ```tsx
+   // src/features/buttons/_types/button_props.ts
+   export interface ButtonProps { label: string; }
+   ```
+   ```tsx
+   // src/features/buttons/_components/Button.tsx
+   import type { ButtonProps } from '../_types/button_props';
+
+   export function Button({ label }: ButtonProps) { ... }
+   ```
+
+### Recommended Folder Organization
+
+| Extra Definition Type | Move To |
+|----------------------|---------|
+| Types, interfaces, enums | `_types` folder |
+| Constants | `_constants` folder |
+| Helper functions | `_functions` folder (separate file) |
+| Helper classes | `_classes` folder (separate file) |
+
 ## Migration from v7.x
 
 Version 8.0.0 adds TypeScript support and folder-aware one-per-file rules. Here's what changed:
