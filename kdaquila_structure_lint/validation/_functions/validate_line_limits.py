@@ -1,4 +1,4 @@
-"""Validates that Python files do not exceed maximum line count.
+"""Validates that source files do not exceed maximum line count.
 
 Enforces a line limit to encourage modular, focused files.
 """
@@ -17,7 +17,7 @@ def validate_line_limits(config: Config) -> int:
     search_paths = config.search_paths
     errors = []
 
-    print(f"🔍 Checking Python files for {max_lines} line limit...\n")
+    print(f"🔍 Checking source files for {max_lines} line limit...\n")
 
     for search_path in search_paths:
         path = project_root / search_path
@@ -26,7 +26,7 @@ def validate_line_limits(config: Config) -> int:
             continue
 
         print(f"  Scanning {search_path}/...")
-        python_files = find_source_files(path, extensions={".py"})
+        python_files = find_source_files(path)
 
         for file_path in python_files:
             # Make path relative to project root for cleaner error messages
@@ -48,7 +48,7 @@ def validate_line_limits(config: Config) -> int:
         print("\n💡 Consider splitting large files into smaller, focused modules.")
         return 1
 
-    print(f"\n✅ All Python files are within {max_lines} line limit!")
+    print(f"\n✅ All source files are within {max_lines} line limit!")
     return 0
 
 
