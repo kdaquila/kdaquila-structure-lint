@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_line_limits import validate_line_limits
 
 
@@ -15,8 +15,8 @@ class TestLineLimitsValidatorBasic:
         (config.project_root / "src").mkdir()
 
         # Create files within limit
-        create_python_file(tmp_path, "src/small1.py", "def hello():\n    pass\n")
-        create_python_file(tmp_path, "src/small2.py", "# Comment\npass\n")
+        create_source_file(tmp_path, "src/small1.py", "def hello():\n    pass\n")
+        create_source_file(tmp_path, "src/small2.py", "# Comment\npass\n")
 
         exit_code = validate_line_limits(config)
         assert exit_code == 0
@@ -29,7 +29,7 @@ class TestLineLimitsValidatorBasic:
 
         # Create file that exceeds limit
         long_content = "\n".join([f"# Line {i}" for i in range(1, 21)])
-        create_python_file(tmp_path, "src/too_long.py", long_content)
+        create_source_file(tmp_path, "src/too_long.py", long_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1
@@ -41,9 +41,9 @@ class TestLineLimitsValidatorBasic:
         (config.project_root / "src").mkdir()
 
         # Create mix of valid and invalid files
-        create_python_file(tmp_path, "src/good.py", "def hello():\n    pass\n")
+        create_source_file(tmp_path, "src/good.py", "def hello():\n    pass\n")
         long_content = "\n".join([f"# Line {i}" for i in range(1, 21)])
-        create_python_file(tmp_path, "src/bad.py", long_content)
+        create_source_file(tmp_path, "src/bad.py", long_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1
@@ -53,7 +53,7 @@ class TestLineLimitsValidatorBasic:
         config = create_minimal_config(tmp_path)
         (config.project_root / "src").mkdir()
 
-        create_python_file(tmp_path, "src/empty.py", "")
+        create_source_file(tmp_path, "src/empty.py", "")
 
         exit_code = validate_line_limits(config)
         assert exit_code == 0
@@ -66,7 +66,7 @@ class TestLineLimitsValidatorBasic:
 
         # Create file with exactly 10 lines
         content = "\n".join([f"# Line {i}" for i in range(1, 11)])
-        create_python_file(tmp_path, "src/exact.py", content)
+        create_source_file(tmp_path, "src/exact.py", content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 0
@@ -79,7 +79,20 @@ class TestLineLimitsValidatorBasic:
 
         # Create file with 11 lines
         content = "\n".join([f"# Line {i}" for i in range(1, 12)])
-        create_python_file(tmp_path, "src/over.py", content)
+        create_source_file(tmp_path, "src/over.py", content)
+
+        exit_code = validate_line_limits(config)
+        assert exit_code == 1
+
+    def test_tsx_file_exceeds_limit(self, tmp_path: Path) -> None:
+        """Should fail when a TypeScript file exceeds line limit."""
+        config = create_minimal_config(tmp_path)
+        config.line_limits.max_lines = 10
+        (config.project_root / "src").mkdir()
+
+        # Create TypeScript file that exceeds limit
+        long_content = "\n".join([f"// Line {i}" for i in range(1, 21)])
+        create_source_file(tmp_path, "src/too_long.tsx", long_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1

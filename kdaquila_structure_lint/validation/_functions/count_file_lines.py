@@ -1,4 +1,4 @@
-"""Count lines in Python files."""
+"""Count lines in source files."""
 
 from pathlib import Path
 

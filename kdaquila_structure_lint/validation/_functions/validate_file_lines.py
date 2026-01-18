@@ -1,4 +1,4 @@
-"""Validate line counts in Python files."""
+"""Validate line counts in source files."""
 
 from pathlib import Path
 

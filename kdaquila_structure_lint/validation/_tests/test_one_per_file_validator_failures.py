@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -22,7 +22,7 @@ class TestOnePerFileValidatorFailures:
 def func2():
     pass
 """
-        create_python_file(tmp_path, "src/_functions/multi.py", content)
+        create_source_file(tmp_path, "src/_functions/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -38,7 +38,7 @@ def func2():
 class Class2:
     pass
 """
-        create_python_file(tmp_path, "src/_classes/multi.py", content)
+        create_source_file(tmp_path, "src/_classes/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -54,7 +54,7 @@ class Class2:
 class MyClass:
     pass
 """
-        create_python_file(tmp_path, "src/_functions/mixed.py", content)
+        create_source_file(tmp_path, "src/_functions/mixed.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -70,7 +70,7 @@ class MyClass:
 def sync_func():
     pass
 """
-        create_python_file(tmp_path, "src/_functions/async.py", content)
+        create_source_file(tmp_path, "src/_functions/async.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

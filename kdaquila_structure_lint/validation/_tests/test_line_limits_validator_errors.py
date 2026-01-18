@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_line_limits import validate_line_limits
 
 
@@ -21,7 +21,7 @@ class TestLineLimitsValidatorErrors:
 
         # Create file that exceeds limit
         long_content = "\n".join([f"# Line {i}" for i in range(1, 15)])
-        create_python_file(tmp_path, "src/too_long.py", long_content)
+        create_source_file(tmp_path, "src/too_long.py", long_content)
 
         exit_code = validate_line_limits(config)
         captured = capsys.readouterr()
@@ -45,9 +45,9 @@ class TestLineLimitsValidatorErrors:
 
         # Create multiple violating files
         long_content = "\n".join([f"# Line {i}" for i in range(1, 15)])
-        create_python_file(tmp_path, "src/file1.py", long_content)
-        create_python_file(tmp_path, "src/file2.py", long_content)
-        create_python_file(tmp_path, "src/file3.py", long_content)
+        create_source_file(tmp_path, "src/file1.py", long_content)
+        create_source_file(tmp_path, "src/file2.py", long_content)
+        create_source_file(tmp_path, "src/file3.py", long_content)
 
         exit_code = validate_line_limits(config)
         captured = capsys.readouterr()
@@ -66,7 +66,7 @@ class TestLineLimitsValidatorErrors:
 
         # Create file with Unicode content
         unicode_content = "# こんにちは\n# Привет\n# مرحبا\npass\n"
-        create_python_file(tmp_path, "src/unicode.py", unicode_content)
+        create_source_file(tmp_path, "src/unicode.py", unicode_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 0
@@ -80,7 +80,7 @@ class TestLineLimitsValidatorErrors:
         # Create file with very long lines
         long_line = "x = " + "1" * 10000
         content = "\n".join([long_line] * 3)
-        create_python_file(tmp_path, "src/long_lines.py", content)
+        create_source_file(tmp_path, "src/long_lines.py", content)
 
         # 3 lines, should pass
         exit_code = validate_line_limits(config)

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -22,7 +22,7 @@ class TestOnePerFileValidatorErrors:
 
         # Create file with syntax error
         content = "def broken(\n    # Missing closing paren\n"
-        create_python_file(tmp_path, "src/_functions/broken.py", content)
+        create_source_file(tmp_path, "src/_functions/broken.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -40,7 +40,7 @@ class TestOnePerFileValidatorErrors:
 
         # Create violating file
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/_functions/multi.py", content)
+        create_source_file(tmp_path, "src/_functions/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -62,9 +62,9 @@ class TestOnePerFileValidatorErrors:
 
         # Create multiple violating files
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/_functions/file1.py", content)
-        create_python_file(tmp_path, "src/_functions/file2.py", content)
-        create_python_file(tmp_path, "src/_functions/file3.py", content)
+        create_source_file(tmp_path, "src/_functions/file1.py", content)
+        create_source_file(tmp_path, "src/_functions/file2.py", content)
+        create_source_file(tmp_path, "src/_functions/file3.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -91,7 +91,7 @@ def world():
 class Greeting:
     pass
 """
-        create_python_file(tmp_path, "src/_functions/multi.py", content)
+        create_source_file(tmp_path, "src/_functions/multi.py", content)
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()
@@ -114,7 +114,7 @@ class Greeting:
 def 函数():
     pass
 """
-        create_python_file(tmp_path, "src/_functions/unicode.py", content)
+        create_source_file(tmp_path, "src/_functions/unicode.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

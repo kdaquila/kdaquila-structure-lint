@@ -1,15 +1,15 @@
-"""Helper function for creating Python test files dynamically."""
+"""Helper function for creating source test files dynamically."""
 
 from pathlib import Path
 
 
-def create_python_file(
+def create_source_file(
     tmp_path: Path,
     relative_path: str,
     content: str,
     base_dir: Path | None = None,
 ) -> Path:
-    """Create a Python file at relative_path with given content.
+    """Create a source file at relative_path with given content.
 
     Args:
         tmp_path: The temporary path (used as default base directory).

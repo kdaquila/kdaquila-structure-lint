@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -27,7 +27,7 @@ export const Button = ({ label, onClick }: ButtonProps) => {
     return <button onClick={onClick}>{label}</button>;
 };
 """
-        create_python_file(tmp_path, "src/_components/Button.tsx", content)
+        create_source_file(tmp_path, "src/_components/Button.tsx", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -47,7 +47,7 @@ export const Footer = () => {
     return <footer>Footer</footer>;
 };
 """
-        create_python_file(tmp_path, "src/_components/layout.tsx", content)
+        create_source_file(tmp_path, "src/_components/layout.tsx", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

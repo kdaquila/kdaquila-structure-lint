@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
+from kdaquila_structure_lint.config._constants.defaults import DEFAULT_SUPPORTED_EXTENSIONS
 from kdaquila_structure_lint.validation._functions.get_forbidden_folder_names import (
     get_forbidden_folder_names,
 )
@@ -47,8 +48,11 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
         return errors
 
     # Check disallowed files (Rule 3) - only applies to feature folders
-    py_files = [c.name for c in path.iterdir() if c.is_file() and c.suffix == ".py"]
-    disallowed = [f for f in py_files if f not in config.structure.files_allowed_anywhere]
+    source_files = [
+        c.name for c in path.iterdir()
+        if c.is_file() and c.suffix in DEFAULT_SUPPORTED_EXTENSIONS
+    ]
+    disallowed = [f for f in source_files if f not in config.structure.files_allowed_anywhere]
     if disallowed:
         errors.append(f"{path}: Disallowed files: {disallowed}")
 
