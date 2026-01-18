@@ -98,15 +98,22 @@ Running line limit validation...
 
 ### One-Per-File Validator
 
-Ensures files contain at most one top-level function or class definition. Uses **folder-aware rules** to apply appropriate checks:
+Ensures files contain **only** one top-level function or class definition - no extra definitions allowed. Uses **folder-aware rules** to apply appropriate checks:
 
 | Folder | Python Rule | TypeScript Rule |
 |--------|-------------|-----------------|
-| `_functions` | 1 function | 1 function |
-| `_classes` | 1 class | 1 class |
-| `_components` | - | 1 function (React component) |
-| `_hooks` | - | 1 function (React hook) |
+| `_functions` | 1 function only | 1 function only |
+| `_classes` | 1 class only | 1 class only |
+| `_components` | - | 1 function only (React component) |
+| `_hooks` | - | 1 function only (React hook) |
 | `_types`, `_constants` | no limit | no limit |
+
+**What's NOT allowed** in one-per-file validated folders:
+- Extra type definitions (TypeScript `type`, `interface`, `enum`)
+- Constants or variable assignments
+- Additional functions or classes
+
+Move these to the appropriate folders (`_types`, `_constants`, etc.) instead.
 
 **Configuration**:
 ```toml
@@ -128,7 +135,7 @@ py_cls_in_classes = true
 excluded_patterns = ["*.d.ts"]
 ```
 
-**Example Output (Python)**:
+**Example Output (Python - multiple definitions)**:
 ```
 ✗ src/_functions/helpers.py: 3 definitions (expected 1)
   - format_date (function)
@@ -136,11 +143,17 @@ excluded_patterns = ["*.d.ts"]
   - DateFormatter (class)
 ```
 
-**Example Output (TypeScript)**:
+**Example Output (TypeScript - multiple definitions)**:
 ```
 ✗ src/_components/buttons.tsx: 2 definitions (expected 1)
   - PrimaryButton (function)
   - SecondaryButton (function)
+```
+
+**Example Output (extra definitions)**:
+```
+✗ src/_functions/format_date.py: extra definitions not allowed
+  - DEFAULT_FORMAT (assignment)
 ```
 
 ### Structure Validator (Opt-in)

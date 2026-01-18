@@ -86,12 +86,12 @@ export function helper2(): void {
 class TestTypeScriptEdgeCases:
     """Tests for TypeScript edge cases."""
 
-    def test_let_var_assignments_not_counted(self, tmp_path: Path) -> None:
-        """Should not count let/var function assignments as definitions."""
+    def test_let_var_assignments_flagged_as_extras(self, tmp_path: Path) -> None:
+        """Should flag let/var function assignments as extra definitions."""
         config = create_minimal_config(tmp_path)
         (config.project_root / "src" / "_functions").mkdir(parents=True)
 
-        content = """// let and var assignments should not be counted
+        content = """// let and var assignments should be flagged as extras
 let mutableFunction = () => {
     return 'mutable';
 };
@@ -100,7 +100,7 @@ var oldStyleFunction = function() {
     return 'old style';
 };
 
-// Only this const should be counted
+// Only this const should be counted as the main definition
 export const mainFunction = (): string => {
     return 'main';
 };
@@ -108,4 +108,4 @@ export const mainFunction = (): string => {
         create_source_file(tmp_path, "src/_functions/mainFunction.ts", content)
 
         exit_code = validate_one_per_file(config)
-        assert exit_code == 0
+        assert exit_code == 1  # Should fail due to let/var extras

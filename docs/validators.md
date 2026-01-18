@@ -191,6 +191,7 @@ Single-definition files provide:
 - **Modularity**: Natural boundaries for code organization
 - **Testability**: Easier to write focused unit tests
 - **Refactoring**: Simpler to move and reorganize code
+- **No Sneaky Extras**: Prevents types, constants, and helpers from accumulating alongside the main definition
 
 ### Folder-Aware Rules
 
@@ -246,8 +247,7 @@ excluded_patterns = ["*.d.ts"]  # Skip TypeScript declaration files
 """User model."""
 
 from dataclasses import dataclass
-
-MAX_USERNAME_LENGTH = 50  # Constants OK
+from ..._constants.limits import MAX_USERNAME_LENGTH
 
 @dataclass
 class User:
@@ -266,12 +266,11 @@ class User:
 """Format dates for display."""
 
 from datetime import datetime
+from ..._constants.formats import DEFAULT_DATE_FORMAT
 
-DEFAULT_FORMAT = "%Y-%m-%d"  # Constants OK
-
-def format_date(date: datetime, format: str = DEFAULT_FORMAT) -> str:
+def format_date(date: datetime, fmt: str = DEFAULT_DATE_FORMAT) -> str:
     """Format a date for display."""
-    return date.strftime(format)
+    return date.strftime(fmt)
 ```
 
 **Multiple types in `_types` folder (passing - no limit):**
@@ -321,13 +320,9 @@ Output:
 ```tsx
 // src/features/buttons/_components/PrimaryButton.tsx
 import React from 'react';
+import type { ButtonProps } from '../_types/button_props';
 
-interface Props {
-  label: string;
-  onClick: () => void;
-}
-
-export function PrimaryButton({ label, onClick }: Props) {
+export function PrimaryButton({ label, onClick }: ButtonProps) {
   return (
     <button className="primary" onClick={onClick}>
       {label}
@@ -373,6 +368,79 @@ src/features/buttons/_components/
 ├── PrimaryButton.tsx     # Only PrimaryButton
 └── SecondaryButton.tsx   # Only SecondaryButton
 ```
+
+### Extra Definitions
+
+In v10.0.0, the one-per-file validator enforces that files contain **only** the expected definition - no extra types, constants, or helper definitions alongside the main function or class.
+
+#### What Gets Flagged
+
+**TypeScript** (in `_functions`, `_classes`, `_components`, `_hooks` folders):
+- Type aliases (`type Foo = ...`)
+- Interfaces (`interface Foo { ... }`)
+- Enums (`enum Foo { ... }`)
+- Constants (`const FOO = ...`, `let bar = ...`)
+- Additional functions or classes
+
+**Python** (in `_functions`, `_classes` folders):
+- Top-level assignments (`FOO = ...`, `bar = ...`)
+- Additional functions or classes
+
+#### What's Allowed
+
+The following are always allowed in one-per-file validated files:
+- **Imports**: All import statements
+- **Docstrings**: Module-level docstrings
+- **Python dunders**: `__all__`, `__version__`, etc.
+- **TYPE_CHECKING blocks**: `if TYPE_CHECKING:` blocks for type-only imports
+- **Decorators**: Decorators on the main definition
+
+#### Failing Example (Extra Definitions)
+
+**Python file with constant (failing):**
+```python
+# src/features/dates/_functions/format_date.py
+"""Format dates for display."""
+
+from datetime import datetime
+
+DEFAULT_FORMAT = "%Y-%m-%d"  # ERROR: extra definition not allowed
+
+def format_date(date: datetime, fmt: str = DEFAULT_FORMAT) -> str:
+    """Format a date for display."""
+    return date.strftime(fmt)
+```
+
+Output:
+```
+✗ src/features/dates/_functions/format_date.py: extra definitions not allowed
+  - DEFAULT_FORMAT (assignment)
+```
+
+**TypeScript file with interface (failing):**
+```tsx
+// src/features/buttons/_components/PrimaryButton.tsx
+import React from 'react';
+
+interface Props {  // ERROR: extra definition not allowed
+  label: string;
+  onClick: () => void;
+}
+
+export function PrimaryButton({ label, onClick }: Props) {
+  return <button onClick={onClick}>{label}</button>;
+}
+```
+
+Output:
+```
+✗ src/features/buttons/_components/PrimaryButton.tsx: extra definitions not allowed
+  - Props (interface)
+```
+
+**How to fix**: Move extra definitions to appropriate folders:
+- Types/interfaces to `_types` folder
+- Constants to `_constants` folder
 
 ### Special Cases
 

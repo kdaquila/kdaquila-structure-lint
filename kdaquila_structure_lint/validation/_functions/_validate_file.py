@@ -3,7 +3,10 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
-from kdaquila_structure_lint.definition_counter import count_top_level_definitions
+from kdaquila_structure_lint.definition_counter import (
+    count_top_level_definitions,
+    detect_extra_definitions,
+)
 from kdaquila_structure_lint.validation._functions.get_rule_for_file import (
     get_rule_for_file,
 )
@@ -75,3 +78,13 @@ def _validate_file(
         name_error = validate_filename_matches_definition(file_path, names)
         if name_error:
             name_errors.append(f"{relative_path}: {name_error}")
+
+    # Check for extra definitions (types, constants, etc.)
+    if count <= 1:
+        extras = detect_extra_definitions(file_path)
+        if extras:
+            extras_str = ", ".join(extras)
+            errors.append(
+                f"{relative_path}: Extra definitions not allowed in {folder} folder: "
+                f"{extras_str}"
+            )
