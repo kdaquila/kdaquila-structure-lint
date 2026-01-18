@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config import Config
+from kdaquila_structure_lint.config._constants.defaults import DEFAULT_SUPPORTED_EXTENSIONS
 from kdaquila_structure_lint.validation._functions.matches_any_pattern import matches_any_pattern
 from kdaquila_structure_lint.validation._functions.validate_custom_folder import (
     validate_custom_folder,
@@ -21,8 +22,8 @@ def validate_src_tree(root: Path, config: Config) -> list[str]:
     # Validate all subdirectories in src/ as base folders
     # No exact match required - accept any folders
 
-    py_files = [c.name for c in root.iterdir() if c.is_file() and c.suffix == ".py"]
-    disallowed = [f for f in py_files if f not in config.structure.files_allowed_anywhere]
+    source_files = [c.name for c in root.iterdir() if c.is_file() and c.suffix in DEFAULT_SUPPORTED_EXTENSIONS]
+    disallowed = [f for f in source_files if f not in config.structure.files_allowed_anywhere]
     if disallowed:
         errors.append(f"{root}: Files not allowed in root: {disallowed}")
 
