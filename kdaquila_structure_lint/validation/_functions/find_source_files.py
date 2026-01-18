@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from kdaquila_structure_lint.config._constants.defaults import DEFAULT_SUPPORTED_EXTENSIONS
+
 EXCLUDE_DIRS = {
     ".git", ".hg", ".svn",
     ".venv", "venv", "node_modules", "__pycache__",
@@ -12,7 +14,7 @@ EXCLUDE_DIRS = {
 def find_source_files(root: Path, extensions: set[str] | None = None) -> list[Path]:
     """Find all source files in root, excluding common non-source directories."""
     if extensions is None:
-        extensions = {".py", ".ts", ".tsx"}
+        extensions = set(DEFAULT_SUPPORTED_EXTENSIONS)
     source_files = []
     for ext in extensions:
         for file in root.rglob(f"*{ext}"):

@@ -1,5 +1,7 @@
 """Default configuration values for structure-lint."""
 
+DEFAULT_SUPPORTED_EXTENSIONS = frozenset({".py", ".ts", ".tsx"})
+
 # Validators defaults
 DEFAULT_STRUCTURE_ENABLED = False  # Opt-in (too opinionated)
 DEFAULT_LINE_LIMITS_ENABLED = True
