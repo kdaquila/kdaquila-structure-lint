@@ -9,7 +9,7 @@ from kdaquila_structure_lint.test_fixtures._functions.create_custom_config impor
 from kdaquila_structure_lint.test_fixtures._functions.create_minimal_config import (
     create_minimal_config,
 )
-from kdaquila_structure_lint.test_fixtures._functions.create_python_file import create_python_file
+from kdaquila_structure_lint.test_fixtures._functions.create_source_file import create_source_file
 from kdaquila_structure_lint.test_fixtures._functions.create_temp_project import create_temp_project
 from kdaquila_structure_lint.test_fixtures._functions.create_temp_project_with_pyproject import (
     create_temp_project_with_pyproject,
@@ -39,7 +39,7 @@ __all__ = [
     "build_structure",
     "create_custom_config",
     "create_minimal_config",
-    "create_python_file",
+    "create_source_file",
     "create_temp_project",
     "create_temp_project_with_pyproject",
 ]

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -38,7 +38,7 @@ export function isProduct(obj: unknown): obj is Product {
     return typeof obj === 'object' && obj !== null && 'id' in obj && 'price' in obj;
 }
 """
-        create_python_file(tmp_path, "src/_types/models.ts", content)
+        create_source_file(tmp_path, "src/_types/models.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -58,7 +58,7 @@ declare function functionTwo(): void;
 declare class ClassOne {}
 declare class ClassTwo {}
 """
-        create_python_file(tmp_path, "src/_functions/types.d.ts", content)
+        create_source_file(tmp_path, "src/_functions/types.d.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -77,7 +77,7 @@ export function helper2(): void {
     console.log('helper2');
 }
 """
-        create_python_file(tmp_path, "src/utils/helpers.ts", content)
+        create_source_file(tmp_path, "src/utils/helpers.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -105,7 +105,7 @@ export const mainFunction = (): string => {
     return 'main';
 };
 """
-        create_python_file(tmp_path, "src/_functions/mainFunction.ts", content)
+        create_source_file(tmp_path, "src/_functions/mainFunction.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0

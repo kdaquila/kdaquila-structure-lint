@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -23,7 +23,7 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating file in lib/_functions
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "lib/_functions/module.py", content)
+        create_source_file(tmp_path, "lib/_functions/module.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -70,7 +70,7 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating file in nested _functions directory
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/sub/_functions/module.py", content)
+        create_source_file(tmp_path, "src/sub/_functions/module.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -85,8 +85,8 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating files in excluded directories
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/.venv/lib.py", content)
-        create_python_file(tmp_path, "src/venv/lib.py", content)
+        create_source_file(tmp_path, "src/.venv/lib.py", content)
+        create_source_file(tmp_path, "src/venv/lib.py", content)
 
         # Should pass because excluded directories are ignored
         exit_code = validate_one_per_file(config)
@@ -100,7 +100,7 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating file in __pycache__
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/__pycache__/module.py", content)
+        create_source_file(tmp_path, "src/__pycache__/module.py", content)
 
         # Should pass because __pycache__ is excluded
         exit_code = validate_one_per_file(config)
@@ -114,7 +114,7 @@ class TestOnePerFileValidatorConfig:
 
         # Create violating file in .git
         content = "def func1():\n    pass\n\ndef func2():\n    pass\n"
-        create_python_file(tmp_path, "src/.git/hooks.py", content)
+        create_source_file(tmp_path, "src/.git/hooks.py", content)
 
         # Should pass because .git is excluded
         exit_code = validate_one_per_file(config)

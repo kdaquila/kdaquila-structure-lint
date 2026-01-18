@@ -5,7 +5,7 @@ from pathlib import Path
 from _pytest.monkeypatch import MonkeyPatch
 
 from kdaquila_structure_lint.cli import main
-from kdaquila_structure_lint.test_fixtures import create_python_file
+from kdaquila_structure_lint.test_fixtures import create_source_file
 
 
 class TestCLIIntegrationPaths:
@@ -44,7 +44,7 @@ structure = false
 """)
 
         (tmp_path / "src").mkdir()
-        create_python_file(tmp_path, "src/module.py", "def hello():\n    pass\n")
+        create_source_file(tmp_path, "src/module.py", "def hello():\n    pass\n")
 
         monkeypatch.chdir(tmp_path)
         exit_code = main(["--project-root", "."])

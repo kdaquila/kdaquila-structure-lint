@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.cli import main
-from kdaquila_structure_lint.test_fixtures import create_python_file
+from kdaquila_structure_lint.test_fixtures import create_source_file
 
 
 class TestCLIExitCodes:
@@ -24,7 +24,7 @@ structure = false
 
         # Create valid Python files
         (tmp_path / "src").mkdir()
-        create_python_file(tmp_path, "src/module.py", "def hello():\n    return 'world'\n")
+        create_source_file(tmp_path, "src/module.py", "def hello():\n    return 'world'\n")
 
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 0
@@ -48,7 +48,7 @@ max_lines = 5
         # Create file that violates line limit
         (tmp_path / "src").mkdir()
         long_content = "\n".join([f"# Line {i}" for i in range(1, 20)])
-        create_python_file(tmp_path, "src/module.py", long_content)
+        create_source_file(tmp_path, "src/module.py", long_content)
 
         exit_code = main(["--project-root", str(tmp_path)])
         assert exit_code == 1

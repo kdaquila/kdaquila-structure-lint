@@ -8,7 +8,7 @@ Helper Functions (create_ prefix):
 - create_temp_project_with_pyproject: Creates a temporary project with pyproject.toml
 - create_minimal_config: Creates a Config object with defaults
 - create_custom_config: Creates a Config object with custom settings
-- create_python_file: Factory for creating test files
+- create_source_file: Factory for creating test files
 - build_structure: Builds folder structures from nested dictionaries
 
 Constants (UPPERCASE):
@@ -28,7 +28,7 @@ from kdaquila_structure_lint.test_fixtures._functions import (
     build_structure,
     create_custom_config,
     create_minimal_config,
-    create_python_file,
+    create_source_file,
     create_temp_project,
     create_temp_project_with_pyproject,
 )
@@ -42,7 +42,7 @@ __all__ = [
     "build_structure",
     "create_custom_config",
     "create_minimal_config",
-    "create_python_file",
+    "create_source_file",
     "create_temp_project",
     "create_temp_project_with_pyproject",
 ]

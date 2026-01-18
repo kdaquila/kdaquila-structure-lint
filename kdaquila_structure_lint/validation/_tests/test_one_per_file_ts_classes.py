@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -28,7 +28,7 @@ class TestTypeScriptClassesFolder:
     }
 }
 """
-        create_python_file(tmp_path, "src/_classes/UserService.ts", content)
+        create_source_file(tmp_path, "src/_classes/UserService.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -50,7 +50,7 @@ export class ProductService {
     }
 }
 """
-        create_python_file(tmp_path, "src/_classes/services.ts", content)
+        create_source_file(tmp_path, "src/_classes/services.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1

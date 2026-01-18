@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_line_limits import validate_line_limits
 
 
@@ -22,7 +22,7 @@ class TestLineLimitsValidatorConfigPaths:
 
         # Create file in lib
         long_content = "\n".join([f"# Line {i}" for i in range(1, 10)])
-        create_python_file(tmp_path, "lib/module.py", long_content)
+        create_source_file(tmp_path, "lib/module.py", long_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1
@@ -68,7 +68,7 @@ class TestLineLimitsValidatorConfigPaths:
         (config.project_root / "src").mkdir()
 
         # Create file with 4 lines
-        create_python_file(tmp_path, "src/module.py", "line1\nline2\nline3\nline4\n")
+        create_source_file(tmp_path, "src/module.py", "line1\nline2\nline3\nline4\n")
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1

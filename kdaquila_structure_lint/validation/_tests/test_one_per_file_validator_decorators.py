@@ -4,7 +4,7 @@ from pathlib import Path
 
 from _pytest.capture import CaptureFixture
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -23,7 +23,7 @@ class TestOnePerFileValidatorDecorators:
 def decorated():
     pass
 """
-        create_python_file(tmp_path, "src/_functions/decorated.py", content)
+        create_source_file(tmp_path, "src/_functions/decorated.py", content)
 
         # Only one definition despite decorators
         exit_code = validate_one_per_file(config)
@@ -44,7 +44,7 @@ def func1():
 def func2():
     pass
 """
-        create_python_file(tmp_path, "src/_functions/multi_decorated.py", content)
+        create_source_file(tmp_path, "src/_functions/multi_decorated.py", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -57,7 +57,7 @@ def func2():
         (config.project_root / "src" / "_functions").mkdir(parents=True)
 
         # Valid case in _functions folder
-        create_python_file(tmp_path, "src/_functions/hello.py", "def hello():\n    pass\n")
+        create_source_file(tmp_path, "src/_functions/hello.py", "def hello():\n    pass\n")
 
         exit_code = validate_one_per_file(config)
         captured = capsys.readouterr()

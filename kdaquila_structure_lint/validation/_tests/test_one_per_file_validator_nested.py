@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -21,7 +21,7 @@ class TestOnePerFileValidatorNested:
         pass
     return inner
 """
-        create_python_file(tmp_path, "src/_functions/outer.py", content)
+        create_source_file(tmp_path, "src/_functions/outer.py", content)
 
         # Only one top-level definition (outer)
         exit_code = validate_one_per_file(config)
@@ -36,7 +36,7 @@ class TestOnePerFileValidatorNested:
     class Inner:
         pass
 """
-        create_python_file(tmp_path, "src/_classes/Outer.py", content)
+        create_source_file(tmp_path, "src/_classes/Outer.py", content)
 
         # Only one top-level definition (Outer)
         exit_code = validate_one_per_file(config)
@@ -57,7 +57,7 @@ class TestOnePerFileValidatorNested:
     async def method3(self):
         pass
 """
-        create_python_file(tmp_path, "src/_classes/MyClass.py", content)
+        create_source_file(tmp_path, "src/_classes/MyClass.py", content)
 
         # Only one top-level definition (MyClass)
         exit_code = validate_one_per_file(config)

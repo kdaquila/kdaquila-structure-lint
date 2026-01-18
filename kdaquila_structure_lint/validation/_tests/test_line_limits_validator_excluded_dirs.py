@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_line_limits import validate_line_limits
 
 
@@ -20,8 +20,8 @@ class TestLineLimitsValidatorExcludedDirs:
 
         # Create long files in excluded directories
         long_content = "\n".join([f"# Line {i}" for i in range(1, 100)])
-        create_python_file(tmp_path, "src/.venv/lib.py", long_content)
-        create_python_file(tmp_path, "src/venv/lib.py", long_content)
+        create_source_file(tmp_path, "src/.venv/lib.py", long_content)
+        create_source_file(tmp_path, "src/venv/lib.py", long_content)
 
         # Should pass because excluded directories are ignored
         exit_code = validate_line_limits(config)
@@ -36,7 +36,7 @@ class TestLineLimitsValidatorExcludedDirs:
 
         # Create long file in __pycache__
         long_content = "\n".join([f"# Line {i}" for i in range(1, 100)])
-        create_python_file(tmp_path, "src/__pycache__/module.py", long_content)
+        create_source_file(tmp_path, "src/__pycache__/module.py", long_content)
 
         # Should pass because __pycache__ is excluded
         exit_code = validate_line_limits(config)
@@ -51,7 +51,7 @@ class TestLineLimitsValidatorExcludedDirs:
 
         # Create long file in .git
         long_content = "\n".join([f"# Line {i}" for i in range(1, 100)])
-        create_python_file(tmp_path, "src/.git/hooks.py", long_content)
+        create_source_file(tmp_path, "src/.git/hooks.py", long_content)
 
         # Should pass because .git is excluded
         exit_code = validate_line_limits(config)
@@ -65,7 +65,7 @@ class TestLineLimitsValidatorExcludedDirs:
 
         # Create file in nested directory
         long_content = "\n".join([f"# Line {i}" for i in range(1, 10)])
-        create_python_file(tmp_path, "src/sub/deep/module.py", long_content)
+        create_source_file(tmp_path, "src/sub/deep/module.py", long_content)
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1

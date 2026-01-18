@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_python_file
+from kdaquila_structure_lint.test_fixtures import create_minimal_config, create_source_file
 from kdaquila_structure_lint.validation._functions.validate_one_per_file import (
     validate_one_per_file,
 )
@@ -20,7 +20,7 @@ class TestTypeScriptFunctionsFolder:
     return a + b;
 }
 """
-        create_python_file(tmp_path, "src/_functions/calculateSum.ts", content)
+        create_source_file(tmp_path, "src/_functions/calculateSum.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -34,7 +34,7 @@ class TestTypeScriptFunctionsFolder:
     return date.toISOString();
 };
 """
-        create_python_file(tmp_path, "src/_functions/formatDate.ts", content)
+        create_source_file(tmp_path, "src/_functions/formatDate.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
@@ -52,7 +52,7 @@ export function subtract(a: number, b: number): number {
     return a - b;
 }
 """
-        create_python_file(tmp_path, "src/_functions/math.ts", content)
+        create_source_file(tmp_path, "src/_functions/math.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
@@ -81,7 +81,7 @@ export function processUser(input: UserInput): UserResponse {
     return { id: 1, user: input };
 }
 """
-        create_python_file(tmp_path, "src/_functions/processUser.ts", content)
+        create_source_file(tmp_path, "src/_functions/processUser.ts", content)
 
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
