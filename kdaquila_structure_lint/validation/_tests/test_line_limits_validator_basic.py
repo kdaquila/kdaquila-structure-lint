@@ -83,3 +83,16 @@ class TestLineLimitsValidatorBasic:
 
         exit_code = validate_line_limits(config)
         assert exit_code == 1
+
+    def test_tsx_file_exceeds_limit(self, tmp_path: Path) -> None:
+        """Should fail when a TypeScript file exceeds line limit."""
+        config = create_minimal_config(tmp_path)
+        config.line_limits.max_lines = 10
+        (config.project_root / "src").mkdir()
+
+        # Create TypeScript file that exceeds limit
+        long_content = "\n".join([f"// Line {i}" for i in range(1, 21)])
+        create_source_file(tmp_path, "src/too_long.tsx", long_content)
+
+        exit_code = validate_line_limits(config)
+        assert exit_code == 1

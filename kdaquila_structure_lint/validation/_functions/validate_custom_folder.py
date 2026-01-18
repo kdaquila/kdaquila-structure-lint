@@ -48,7 +48,10 @@ def validate_custom_folder(path: Path, config: Config, depth: int) -> list[str]:
         return errors
 
     # Check disallowed files (Rule 3) - only applies to feature folders
-    source_files = [c.name for c in path.iterdir() if c.is_file() and c.suffix in DEFAULT_SUPPORTED_EXTENSIONS]
+    source_files = [
+        c.name for c in path.iterdir()
+        if c.is_file() and c.suffix in DEFAULT_SUPPORTED_EXTENSIONS
+    ]
     disallowed = [f for f in source_files if f not in config.structure.files_allowed_anywhere]
     if disallowed:
         errors.append(f"{path}: Disallowed files: {disallowed}")
