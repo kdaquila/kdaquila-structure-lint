@@ -2,10 +2,10 @@
 
 from pathlib import Path
 
-from kdaquila_structure_lint.definition_counter._functions.detect_python_extras import (
+from kdaquila_structure_lint.definition_counter._functions.detect_python_extra_definitions import (
     detect_python_extra_definitions,
 )
-from kdaquila_structure_lint.definition_counter.typescript._functions.detect_typescript_extra_definitions import (
+from kdaquila_structure_lint.definition_counter.typescript._functions.detect_typescript_extra_definitions import (  # noqa: E501
     detect_typescript_extra_definitions,
 )
 

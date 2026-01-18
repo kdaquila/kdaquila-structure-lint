@@ -3,12 +3,7 @@
 from pathlib import Path
 
 from kdaquila_structure_lint.config._constants.defaults import DEFAULT_SUPPORTED_EXTENSIONS
-
-EXCLUDE_DIRS = {
-    ".git", ".hg", ".svn",
-    ".venv", "venv", "node_modules", "__pycache__",
-    "dist", "build", ".next", "coverage", ".turbo"
-}
+from kdaquila_structure_lint.validation._constants.exclude_dirs import EXCLUDE_DIRS
 
 
 def find_source_files(root: Path, extensions: set[str] | None = None) -> list[Path]:
