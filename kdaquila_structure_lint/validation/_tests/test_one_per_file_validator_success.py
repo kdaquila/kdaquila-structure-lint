@@ -50,8 +50,8 @@ from features.config import Config
         exit_code = validate_one_per_file(config)
         assert exit_code == 0
 
-    def test_file_with_constants_and_function_passes(self, tmp_path: Path) -> None:
-        """Should pass when file in _functions has constants plus one function."""
+    def test_file_with_constants_and_function_fails(self, tmp_path: Path) -> None:
+        """Should fail when file in _functions has constants (extras) plus one function."""
         config = create_minimal_config(tmp_path)
         (config.project_root / "src" / "_functions").mkdir(parents=True)
 
@@ -64,4 +64,4 @@ def process():
         create_source_file(tmp_path, "src/_functions/process.py", content)
 
         exit_code = validate_one_per_file(config)
-        assert exit_code == 0
+        assert exit_code == 1  # Should fail due to constants being extra definitions

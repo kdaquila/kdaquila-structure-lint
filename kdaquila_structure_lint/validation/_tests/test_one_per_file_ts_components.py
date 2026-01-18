@@ -12,18 +12,13 @@ class TestTypeScriptComponentsFolder:
     """Tests for TypeScript files in _components folder."""
 
     def test_single_component_passes(self, tmp_path: Path) -> None:
-        """Should pass when TSX file has single component."""
+        """Should pass when TSX file has single component with no extras."""
         config = create_minimal_config(tmp_path)
         (config.project_root / "src" / "_components").mkdir(parents=True)
 
         content = """import React from 'react';
 
-interface ButtonProps {
-    label: string;
-    onClick: () => void;
-}
-
-export const Button = ({ label, onClick }: ButtonProps) => {
+export const Button = ({ label, onClick }: { label: string; onClick: () => void }) => {
     return <button onClick={onClick}>{label}</button>;
 };
 """

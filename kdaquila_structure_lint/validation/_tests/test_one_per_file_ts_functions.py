@@ -57,8 +57,8 @@ export function subtract(a: number, b: number): number {
         exit_code = validate_one_per_file(config)
         assert exit_code == 1
 
-    def test_types_not_counted(self, tmp_path: Path) -> None:
-        """Should not count interfaces, types, or enums as definitions."""
+    def test_types_flagged_as_extras(self, tmp_path: Path) -> None:
+        """Should flag interfaces, types, and enums as extra definitions."""
         config = create_minimal_config(tmp_path)
         (config.project_root / "src" / "_functions").mkdir(parents=True)
 
@@ -84,4 +84,4 @@ export function processUser(input: UserInput): UserResponse {
         create_source_file(tmp_path, "src/_functions/processUser.ts", content)
 
         exit_code = validate_one_per_file(config)
-        assert exit_code == 0
+        assert exit_code == 1  # Should fail due to extra definitions
